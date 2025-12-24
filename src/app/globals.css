@@ -1,0 +1,209 @@
+@import "tailwindcss";
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+
+  /* Theme Colors */
+  --color-primary-start: #5c8c24;
+  --color-primary-end: #ced430;
+  --color-primary-gradient: linear-gradient(99.01deg, #5c8c24 -0.67%, #ced430);
+  --color-black: #000000;
+  --color-white: #ffffff;
+
+  /* Text Colors */
+  --color-text-primary: #000000;
+  --color-text-secondary: #ffffff;
+  --color-text-muted: #666666;
+
+  /* Background Colors */
+  --color-bg-primary: #ffffff;
+  --color-bg-secondary: #f5f9f0;
+  --color-bg-overlay: rgba(255, 255, 255, 0.9);
+
+  /* White to Light Green Gradient */
+  --color-white-green-gradient: linear-gradient(
+    135deg,
+    #ffffff 0%,
+    #f5f9f0 30%,
+    #eef5e6 60%,
+    #e8f2df 100%
+  );
+
+  /* Light Green Gradient Background */
+  --color-light-green-gradient: linear-gradient(
+    99.01deg,
+    #ffffff 0%,
+    #f8fbf3 50%,
+    rgba(92, 140, 36, 0.1) 80%,
+    rgba(206, 212, 48, 0.08) 100%
+  );
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Theme Utility Classes */
+.theme-gradient {
+  background: var(--color-primary-gradient);
+}
+
+.theme-gradient-text {
+  background: var(--color-primary-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.theme-primary-start {
+  color: var(--color-primary-start);
+}
+
+.theme-primary-end {
+  color: var(--color-primary-end);
+}
+
+.theme-bg-black {
+  background-color: var(--color-black);
+}
+
+.theme-bg-white {
+  background-color: var(--color-white);
+}
+
+.theme-text-black {
+  color: var(--color-black);
+}
+
+.theme-text-white {
+  color: var(--color-white);
+}
+
+.theme-hover-primary:hover {
+  color: var(--color-primary-end);
+  transition: color 0.3s ease;
+}
+
+/* Additional theme utilities */
+.theme-gradient-bg {
+  background: var(--color-primary-gradient);
+}
+
+.theme-border-primary {
+  border-color: var(--color-primary-start);
+}
+
+.theme-shadow-primary {
+  box-shadow: 0 4px 14px 0 rgba(92, 140, 36, 0.39);
+}
+
+.theme-bg-white-green-gradient {
+  background: var(--color-white-green-gradient);
+}
+
+.theme-bg-light-green-gradient {
+  background: var(--color-light-green-gradient);
+}
+
+/* Animations for homepage */
+@keyframes blob {
+  0% {
+    transform: translate(0px, 0px) scale(1);
+  }
+  33% {
+    transform: translate(30px, -50px) scale(1.1);
+  }
+  66% {
+    transform: translate(-20px, 20px) scale(0.9);
+  }
+  100% {
+    transform: translate(0px, 0px) scale(1);
+  }
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-20px) rotate(5deg);
+  }
+}
+
+@keyframes blob {
+  0% {
+    transform: translate(0px, 0px) scale(1);
+  }
+  33% {
+    transform: translate(30px, -50px) scale(1.1);
+  }
+  66% {
+    transform: translate(-20px, 20px) scale(0.9);
+  }
+  100% {
+    transform: translate(0px, 0px) scale(1);
+  }
+}
+
+.animate-blob {
+  animation: blob 7s infinite;
+}
+
+.animation-delay-2000 {
+  animation-delay: 2s;
+}
+
+.animation-delay-4000 {
+  animation-delay: 4s;
+}
+
+.animate-blob {
+  animation: blob 7s infinite;
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+.animate-float-delayed {
+  animation: float 8s ease-in-out infinite;
+  animation-delay: 2s;
+}
+
+.animation-delay-2000 {
+  animation-delay: 2s;
+}
+
+.animation-delay-4000 {
+  animation-delay: 4s;
+}
+
+.delay-75 {
+  animation-delay: 0.75s;
+}
+
+.delay-150 {
+  animation-delay: 1.5s;
+}
+
+.delay-200 {
+  animation-delay: 2s;
+}
