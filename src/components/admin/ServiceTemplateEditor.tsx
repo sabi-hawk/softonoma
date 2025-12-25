@@ -7,6 +7,8 @@ import {
   defaultServiceTemplateData,
   parseServiceTemplateData,
 } from "@/lib/service-template";
+import FileUpload from "@/components/admin/FileUpload";
+import IconUpload from "@/components/admin/IconUpload";
 
 interface ServiceTemplateEditorProps {
   initialContent: string;
@@ -28,14 +30,17 @@ export default function ServiceTemplateEditor({
   const [activeTab, setActiveTab] = useState<
     | "hero"
     | "overview"
-    | "features"
-    | "process"
-    | "benefits"
-    | "useCases"
+    | "stats"
+    | "subServices"
+    | "whyChooseUs"
     | "technologies"
-    | "caseStudies"
+    | "process"
+    | "portfolio"
+    | "partners"
+    | "cards"
     | "faq"
     | "cta"
+    | "sectionOrder"
   >("hero");
 
   // Update data when initialContent changes
@@ -97,12 +102,11 @@ export default function ServiceTemplateEditor({
         [section]: {
           ...prev[section],
           items:
-            section === "features" ||
-            section === "benefits" ||
-            section === "useCases" ||
             section === "technologies" ||
-            section === "caseStudies" ||
-            section === "faq"
+            section === "portfolio" ||
+            section === "faq" ||
+            section === "subServices" ||
+            section === "stats"
               ? items
               : undefined,
           steps: section === "process" ? items : undefined,
@@ -134,10 +138,12 @@ export default function ServiceTemplateEditor({
       // Initialize section if it doesn't exist (for optional sections)
       if (
         !prev[section] &&
-        (section === "useCases" ||
-          section === "technologies" ||
-          section === "caseStudies" ||
-          section === "faq")
+        (section === "technologies" ||
+          section === "portfolio" ||
+          section === "faq" ||
+          section === "subServices" ||
+          section === "stats" ||
+          section === "whyChooseUs")
       ) {
         return {
           ...prev,
@@ -163,21 +169,29 @@ export default function ServiceTemplateEditor({
     index: number
   ) => {
     setData((prev: ServiceTemplateData) => {
-      const sectionData = prev[section] as {
-        items?: unknown[];
-        steps?: unknown[];
-      };
-      const items = [...(sectionData.items || sectionData.steps || [])];
-      items.splice(index, 1);
       if (section === "process") {
+        const sectionData = prev[section] as
+          | {
+              steps?: unknown[];
+            }
+          | undefined;
+        const steps = [...(sectionData?.steps || [])];
+        steps.splice(index, 1);
         return {
           ...prev,
           [section]: {
             ...prev[section],
-            steps: items,
-          } as ServiceTemplateData[keyof ServiceTemplateData],
+            steps,
+          } as ServiceTemplateData["process"],
         };
       }
+      const sectionData = prev[section] as
+        | {
+            items?: unknown[];
+          }
+        | undefined;
+      const items = [...(sectionData?.items || [])];
+      items.splice(index, 1);
       return {
         ...prev,
         [section]: {
@@ -205,26 +219,58 @@ export default function ServiceTemplateEditor({
   const tabs = [
     { id: "hero", label: "Hero" },
     { id: "overview", label: "Overview" },
-    { id: "features", label: "Features" },
-    { id: "process", label: "Process" },
-    { id: "benefits", label: "Benefits" },
-    { id: "useCases", label: "Use Cases" },
+    { id: "stats", label: "Stats" },
+    { id: "subServices", label: "Sub Services" },
+    { id: "whyChooseUs", label: "Why Choose Us" },
     { id: "technologies", label: "Technologies" },
-    { id: "caseStudies", label: "Case Studies" },
+    { id: "process", label: "Process" },
+    { id: "portfolio", label: "Portfolio" },
+    { id: "partners", label: "Partners" },
+    { id: "cards", label: "Cards" },
     { id: "faq", label: "FAQ" },
     { id: "cta", label: "CTA" },
+    { id: "sectionOrder", label: "Section Order" },
   ];
 
   return (
     <div className="space-y-6">
-      {/* Tabs */}
+      {/* Tabs - Scrollable */}
       <div className="border-b border-gray-200 dark:border-gray-700">
-        <nav className="flex space-x-8 overflow-x-auto">
+        <nav
+          className="flex space-x-2 overflow-x-auto pb-px"
+          style={{ scrollbarWidth: "thin", scrollbarColor: "#cbd5e1 #f1f5f9" }}
+        >
+          <style jsx>{`
+            nav::-webkit-scrollbar {
+              height: 6px;
+            }
+            nav::-webkit-scrollbar-track {
+              background: #f1f5f9;
+            }
+            nav::-webkit-scrollbar-thumb {
+              background: #cbd5e1;
+              border-radius: 3px;
+            }
+            nav::-webkit-scrollbar-thumb:hover {
+              background: #94a3b8;
+            }
+            @media (prefers-color-scheme: dark) {
+              nav::-webkit-scrollbar-track {
+                background: #1e293b;
+              }
+              nav::-webkit-scrollbar-thumb {
+                background: #475569;
+              }
+              nav::-webkit-scrollbar-thumb:hover {
+                background: #64748b;
+              }
+            }
+          `}</style>
           {tabs.map((tab) => (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id as typeof activeTab)}
-              className={`whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm ${
+              className={`shrink-0 whitespace-nowrap py-4 px-3 border-b-2 font-medium text-sm transition-colors ${
                 activeTab === tab.id
                   ? "border-blue-500 text-blue-600 dark:text-blue-400"
                   : "border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300"
@@ -244,6 +290,23 @@ export default function ServiceTemplateEditor({
               <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
                 Hero Section
               </h3>
+              <p className="text-sm text-gray-500 dark:text-gray-400">
+                Note: Hero section is always active and cannot be disabled.
+              </p>
+              <div>
+                <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
+                  Breadcrumbs
+                </label>
+                <input
+                  type="text"
+                  value={data.hero.breadcrumbs || ""}
+                  onChange={(e) =>
+                    updateField("hero", "breadcrumbs", e.target.value)
+                  }
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                  placeholder="Home > Services > AI Development"
+                />
+              </div>
               <div>
                 <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
                   Title
@@ -257,19 +320,6 @@ export default function ServiceTemplateEditor({
               </div>
               <div>
                 <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
-                  Subtitle
-                </label>
-                <input
-                  type="text"
-                  value={data.hero.subtitle}
-                  onChange={(e) =>
-                    updateField("hero", "subtitle", e.target.value)
-                  }
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
                   Description
                 </label>
                 <textarea
@@ -278,13 +328,13 @@ export default function ServiceTemplateEditor({
                     updateField("hero", "description", e.target.value)
                   }
                   className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                  rows={3}
+                  rows={4}
                 />
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
-                    Primary Button Text
+                    Button Text
                   </label>
                   <input
                     type="text"
@@ -297,7 +347,7 @@ export default function ServiceTemplateEditor({
                 </div>
                 <div>
                   <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
-                    Primary Button Link
+                    Button Link
                   </label>
                   <input
                     type="text"
@@ -309,66 +359,21 @@ export default function ServiceTemplateEditor({
                   />
                 </div>
               </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
-                    Secondary Button Text
-                  </label>
-                  <input
-                    type="text"
-                    value={data.hero.secondaryButtonText || ""}
-                    onChange={(e) =>
-                      updateField("hero", "secondaryButtonText", e.target.value)
-                    }
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
-                    Secondary Button Link
-                  </label>
-                  <input
-                    type="text"
-                    value={data.hero.secondaryButtonLink || ""}
-                    onChange={(e) =>
-                      updateField("hero", "secondaryButtonLink", e.target.value)
-                    }
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                  />
-                </div>
-              </div>
-              <div>
-                <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
-                  Background Image URL (optional)
-                </label>
-                <input
-                  type="text"
-                  value={data.hero.backgroundImage || ""}
-                  onChange={(e) =>
-                    updateField("hero", "backgroundImage", e.target.value)
-                  }
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                  placeholder="https://example.com/image.jpg"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
-                  Background Video URL (optional)
-                </label>
-                <input
-                  type="text"
-                  value={data.hero.backgroundVideo || ""}
-                  onChange={(e) =>
-                    updateField("hero", "backgroundVideo", e.target.value)
-                  }
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                  placeholder="https://example.com/video.mp4"
-                />
-                <p className="text-xs text-gray-500 mt-1">
-                  Video will auto-play, loop, and be muted. Supports .mp4 and
-                  .webm
-                </p>
-              </div>
+              <FileUpload
+                label="Background Image (optional)"
+                value={data.hero.backgroundImage || ""}
+                onChange={(url) => updateField("hero", "backgroundImage", url)}
+                type="image"
+                folder="service-hero-backgrounds"
+              />
+              <FileUpload
+                label="Background Video (optional)"
+                value={data.hero.backgroundVideo || ""}
+                onChange={(url) => updateField("hero", "backgroundVideo", url)}
+                type="video"
+                folder="service-hero-backgrounds"
+                accept="video/mp4,video/webm"
+              />
               <div>
                 <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
                   Background Opacity (0-1)
@@ -398,9 +403,28 @@ export default function ServiceTemplateEditor({
 
           {activeTab === "overview" && (
             <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                Overview Section
-              </h3>
+              <div className="flex justify-between items-center">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                  Overview Section
+                </h3>
+                <label className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+                  <input
+                    type="checkbox"
+                    checked={data.overview.isActive !== false}
+                    onChange={(e) =>
+                      setData((prev) => ({
+                        ...prev,
+                        overview: {
+                          ...prev.overview,
+                          isActive: e.target.checked,
+                        },
+                      }))
+                    }
+                    className="rounded"
+                  />
+                  Active
+                </label>
+              </div>
               <div>
                 <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
                   Title
@@ -415,153 +439,708 @@ export default function ServiceTemplateEditor({
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
-                  Description
-                </label>
-                <textarea
-                  value={data.overview.description}
-                  onChange={(e) =>
-                    updateField("overview", "description", e.target.value)
-                  }
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                  rows={5}
-                />
+                <div className="flex justify-between items-center mb-2">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                    Paragraphs (with checkmarks)
+                  </label>
+                  <button
+                    onClick={() => {
+                      setData((prev) => ({
+                        ...prev,
+                        overview: {
+                          ...prev.overview,
+                          paragraphs: [
+                            ...(prev.overview.paragraphs || []),
+                            { text: "" },
+                          ],
+                        },
+                      }));
+                    }}
+                    className="px-3 py-1 bg-blue-600 text-white rounded text-sm hover:bg-blue-700"
+                  >
+                    Add Paragraph
+                  </button>
+                </div>
+                {data.overview.paragraphs?.map((para, index) => (
+                  <div key={index} className="mb-4 border p-3 rounded">
+                    <div className="flex justify-between items-center mb-2">
+                      <span className="text-xs font-medium text-gray-600">
+                        Paragraph {index + 1}
+                      </span>
+                      <button
+                        onClick={() => {
+                          setData((prev) => ({
+                            ...prev,
+                            overview: {
+                              ...prev.overview,
+                              paragraphs:
+                                prev.overview.paragraphs?.filter(
+                                  (_, i) => i !== index
+                                ) || [],
+                            },
+                          }));
+                        }}
+                        className="text-red-600 hover:text-red-800 text-xs"
+                      >
+                        Remove
+                      </button>
+                    </div>
+                    <textarea
+                      value={para.text}
+                      onChange={(e) => {
+                        setData((prev) => ({
+                          ...prev,
+                          overview: {
+                            ...prev.overview,
+                            paragraphs:
+                              prev.overview.paragraphs?.map((p, i) =>
+                                i === index ? { text: e.target.value } : p
+                              ) || [],
+                          },
+                        }));
+                      }}
+                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                      rows={3}
+                    />
+                  </div>
+                ))}
               </div>
-              <div>
-                <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
-                  Image URL (optional)
-                </label>
-                <input
-                  type="text"
-                  value={data.overview.image || ""}
-                  onChange={(e) =>
-                    updateField("overview", "image", e.target.value)
-                  }
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                  placeholder="https://example.com/image.jpg"
-                />
-              </div>
+              <FileUpload
+                label="Overview Image (optional)"
+                value={data.overview.image || ""}
+                onChange={(url) => updateField("overview", "image", url)}
+                type="image"
+                folder="service-overview"
+              />
             </div>
           )}
 
-          {activeTab === "features" && (
+          {activeTab === "stats" && (
             <div className="space-y-4">
               <div className="flex justify-between items-center">
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                  Features Section
+                  Stats Section
                 </h3>
-                <button
-                  onClick={() =>
-                    addArrayItem("features", {
-                      title: "",
-                      description: "",
-                      icon: "",
-                    })
-                  }
-                  className="px-3 py-1 bg-blue-600 text-white rounded text-sm hover:bg-blue-700"
-                >
-                  Add Feature
-                </button>
+                <div className="flex items-center gap-4">
+                  <label className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+                    <input
+                      type="checkbox"
+                      checked={data.stats?.isActive !== false}
+                      onChange={(e) =>
+                        setData((prev) => ({
+                          ...prev,
+                          stats: {
+                            ...(prev.stats || { items: [] }),
+                            isActive: e.target.checked,
+                          },
+                        }))
+                      }
+                      className="rounded"
+                    />
+                    Active
+                  </label>
+                  <button
+                    onClick={() => {
+                      if (!data.stats) {
+                        setData((prev) => ({
+                          ...prev,
+                          stats: { items: [] },
+                        }));
+                      }
+                      setData((prev) => ({
+                        ...prev,
+                        stats: {
+                          items: [
+                            ...(prev.stats?.items || []),
+                            { icon: "", value: "", label: "" },
+                          ],
+                        },
+                      }));
+                    }}
+                    className="px-3 py-1 bg-blue-600 text-white rounded text-sm hover:bg-blue-700"
+                  >
+                    Add Stat
+                  </button>
+                </div>
               </div>
-              <div>
-                <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
-                  Section Title
-                </label>
-                <input
-                  type="text"
-                  value={data.features.title}
-                  onChange={(e) =>
-                    updateField("features", "title", e.target.value)
-                  }
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
-                  Section Description
-                </label>
-                <textarea
-                  value={data.features.description}
-                  onChange={(e) =>
-                    updateField("features", "description", e.target.value)
-                  }
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                  rows={2}
-                />
-              </div>
-              {data.features.items.map((item, index) => (
+              {data.stats?.items.map((stat, index) => (
                 <div
                   key={index}
                   className="border border-gray-300 dark:border-gray-600 rounded p-4 space-y-2"
                 >
                   <div className="flex justify-between items-center">
                     <h4 className="font-medium text-gray-900 dark:text-white">
-                      Feature {index + 1}
+                      Stat {index + 1}
                     </h4>
                     <button
-                      onClick={() => removeArrayItem("features", index)}
+                      onClick={() => {
+                        setData((prev) => ({
+                          ...prev,
+                          stats: {
+                            items:
+                              prev.stats?.items?.filter(
+                                (_, i) => i !== index
+                              ) || [],
+                          },
+                        }));
+                      }}
                       className="text-red-600 hover:text-red-800 text-sm"
                     >
                       Remove
                     </button>
                   </div>
                   <div>
-                    <label className="block text-xs font-medium mb-1 text-gray-700 dark:text-gray-300">
-                      Icon (emoji or URL)
-                    </label>
-                    <input
-                      type="text"
-                      value={item.icon || ""}
-                      onChange={(e) =>
-                        updateArrayItem(
-                          "features",
-                          index,
-                          "icon",
-                          e.target.value
-                        )
-                      }
-                      className="w-full px-2 py-1 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
-                      placeholder="🚀 or https://..."
+                    <IconUpload
+                      label="Icon (emoji, URL, or upload image)"
+                      value={stat.icon || ""}
+                      onChange={(url) => {
+                        setData((prev) => ({
+                          ...prev,
+                          stats: {
+                            items:
+                              prev.stats?.items?.map((s, i) =>
+                                i === index ? { ...s, icon: url } : s
+                              ) || [],
+                          },
+                        }));
+                      }}
+                      folder="service-stats-icons"
+                      className="text-sm"
                     />
                   </div>
                   <div>
                     <label className="block text-xs font-medium mb-1 text-gray-700 dark:text-gray-300">
-                      Title
+                      Value
                     </label>
                     <input
                       type="text"
-                      value={item.title}
-                      onChange={(e) =>
-                        updateArrayItem(
-                          "features",
-                          index,
-                          "title",
-                          e.target.value
-                        )
-                      }
+                      value={stat.value}
+                      onChange={(e) => {
+                        setData((prev) => ({
+                          ...prev,
+                          stats: {
+                            items:
+                              prev.stats?.items?.map((s, i) =>
+                                i === index
+                                  ? { ...s, value: e.target.value }
+                                  : s
+                              ) || [],
+                          },
+                        }));
+                      }}
                       className="w-full px-2 py-1 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
+                      placeholder="400+"
                     />
                   </div>
                   <div>
                     <label className="block text-xs font-medium mb-1 text-gray-700 dark:text-gray-300">
-                      Description
+                      Label
                     </label>
-                    <textarea
-                      value={item.description}
-                      onChange={(e) =>
-                        updateArrayItem(
-                          "features",
-                          index,
-                          "description",
-                          e.target.value
-                        )
-                      }
+                    <input
+                      type="text"
+                      value={stat.label}
+                      onChange={(e) => {
+                        setData((prev) => ({
+                          ...prev,
+                          stats: {
+                            items:
+                              prev.stats?.items?.map((s, i) =>
+                                i === index
+                                  ? { ...s, label: e.target.value }
+                                  : s
+                              ) || [],
+                          },
+                        }));
+                      }}
                       className="w-full px-2 py-1 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
-                      rows={2}
+                      placeholder="Software Developers"
                     />
                   </div>
                 </div>
               ))}
+            </div>
+          )}
+
+          {activeTab === "subServices" && (
+            <div className="space-y-4">
+              <div className="flex justify-between items-center">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                  Sub Services Section
+                </h3>
+                <div className="flex items-center gap-4">
+                  <label className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+                    <input
+                      type="checkbox"
+                      checked={data.subServices?.isActive !== false}
+                      onChange={(e) =>
+                        setData((prev) => ({
+                          ...prev,
+                          subServices: {
+                            ...(prev.subServices || { title: "", items: [] }),
+                            isActive: e.target.checked,
+                          },
+                        }))
+                      }
+                      className="rounded"
+                    />
+                    Active
+                  </label>
+                  <button
+                    onClick={() => {
+                      if (!data.subServices) {
+                        setData((prev) => ({
+                          ...prev,
+                          subServices: {
+                            title: "",
+                            items: [],
+                          },
+                        }));
+                      }
+                      setData((prev) => ({
+                        ...prev,
+                        subServices: {
+                          ...prev.subServices!,
+                          items: [
+                            ...(prev.subServices?.items || []),
+                            { icon: "", title: "", description: "" },
+                          ],
+                        },
+                      }));
+                    }}
+                    className="px-3 py-1 bg-blue-600 text-white rounded text-sm hover:bg-blue-700"
+                  >
+                    Add Service
+                  </button>
+                </div>
+              </div>
+              {data.subServices && (
+                <>
+                  <div>
+                    <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
+                      Section Title
+                    </label>
+                    <input
+                      type="text"
+                      value={data.subServices.title}
+                      onChange={(e) =>
+                        setData((prev) => ({
+                          ...prev,
+                          subServices: {
+                            ...prev.subServices!,
+                            title: e.target.value,
+                          },
+                        }))
+                      }
+                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
+                      Section Description (optional)
+                    </label>
+                    <textarea
+                      value={data.subServices.description || ""}
+                      onChange={(e) =>
+                        setData((prev) => ({
+                          ...prev,
+                          subServices: {
+                            ...prev.subServices!,
+                            description: e.target.value,
+                          },
+                        }))
+                      }
+                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                      rows={2}
+                    />
+                  </div>
+                  {data.subServices.items.map((service, index) => (
+                    <div
+                      key={index}
+                      className="border border-gray-300 dark:border-gray-600 rounded p-4 space-y-2"
+                    >
+                      <div className="flex justify-between items-center">
+                        <h4 className="font-medium text-gray-900 dark:text-white">
+                          Service {index + 1}
+                        </h4>
+                        <button
+                          onClick={() => {
+                            setData((prev) => ({
+                              ...prev,
+                              subServices: {
+                                ...prev.subServices!,
+                                items:
+                                  prev.subServices?.items?.filter(
+                                    (_, i) => i !== index
+                                  ) || [],
+                              },
+                            }));
+                          }}
+                          className="text-red-600 hover:text-red-800 text-sm"
+                        >
+                          Remove
+                        </button>
+                      </div>
+                      <div>
+                        <IconUpload
+                          label="Icon (emoji, URL, or upload image)"
+                          value={service.icon || ""}
+                          onChange={(url) => {
+                            setData((prev) => ({
+                              ...prev,
+                              subServices: {
+                                ...prev.subServices!,
+                                items:
+                                  prev.subServices?.items?.map((s, i) =>
+                                    i === index ? { ...s, icon: url } : s
+                                  ) || [],
+                              },
+                            }));
+                          }}
+                          folder="service-subservices-icons"
+                          className="text-sm"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-medium mb-1 text-gray-700 dark:text-gray-300">
+                          Title
+                        </label>
+                        <input
+                          type="text"
+                          value={service.title}
+                          onChange={(e) => {
+                            setData((prev) => ({
+                              ...prev,
+                              subServices: {
+                                ...prev.subServices!,
+                                items:
+                                  prev.subServices?.items?.map((s, i) =>
+                                    i === index
+                                      ? { ...s, title: e.target.value }
+                                      : s
+                                  ) || [],
+                              },
+                            }));
+                          }}
+                          className="w-full px-2 py-1 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-medium mb-1 text-gray-700 dark:text-gray-300">
+                          Description
+                        </label>
+                        <textarea
+                          value={service.description}
+                          onChange={(e) => {
+                            setData((prev) => ({
+                              ...prev,
+                              subServices: {
+                                ...prev.subServices!,
+                                items:
+                                  prev.subServices?.items?.map((s, i) =>
+                                    i === index
+                                      ? { ...s, description: e.target.value }
+                                      : s
+                                  ) || [],
+                              },
+                            }));
+                          }}
+                          className="w-full px-2 py-1 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
+                          rows={2}
+                        />
+                      </div>
+                    </div>
+                  ))}
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
+                        CTA Button Text
+                      </label>
+                      <input
+                        type="text"
+                        value={data.subServices.ctaButtonText || ""}
+                        onChange={(e) =>
+                          setData((prev) => ({
+                            ...prev,
+                            subServices: {
+                              ...prev.subServices!,
+                              ctaButtonText: e.target.value,
+                            },
+                          }))
+                        }
+                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
+                        CTA Button Link
+                      </label>
+                      <input
+                        type="text"
+                        value={data.subServices.ctaButtonLink || ""}
+                        onChange={(e) =>
+                          setData((prev) => ({
+                            ...prev,
+                            subServices: {
+                              ...prev.subServices!,
+                              ctaButtonLink: e.target.value,
+                            },
+                          }))
+                        }
+                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                      />
+                    </div>
+                  </div>
+                </>
+              )}
+            </div>
+          )}
+
+          {activeTab === "whyChooseUs" && (
+            <div className="space-y-4">
+              <div className="flex justify-between items-center">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                  Why Choose Us Section
+                </h3>
+                <label className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+                  <input
+                    type="checkbox"
+                    checked={data.whyChooseUs?.isActive !== false}
+                    onChange={(e) =>
+                      setData((prev) => ({
+                        ...prev,
+                        whyChooseUs: {
+                          ...(prev.whyChooseUs || {
+                            title: "",
+                            items: [],
+                            certifications: [],
+                          }),
+                          isActive: e.target.checked,
+                        },
+                      }))
+                    }
+                    className="rounded"
+                  />
+                  Active
+                </label>
+              </div>
+              {data.whyChooseUs && (
+                <>
+                  <div>
+                    <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
+                      Title
+                    </label>
+                    <input
+                      type="text"
+                      value={data.whyChooseUs.title}
+                      onChange={(e) =>
+                        setData((prev) => ({
+                          ...prev,
+                          whyChooseUs: {
+                            ...prev.whyChooseUs!,
+                            title: e.target.value,
+                          },
+                        }))
+                      }
+                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
+                      Subtitle (optional)
+                    </label>
+                    <input
+                      type="text"
+                      value={data.whyChooseUs.subtitle || ""}
+                      onChange={(e) =>
+                        setData((prev) => ({
+                          ...prev,
+                          whyChooseUs: {
+                            ...prev.whyChooseUs!,
+                            subtitle: e.target.value,
+                          },
+                        }))
+                      }
+                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                    />
+                  </div>
+                  <div>
+                    <div className="flex justify-between items-center mb-2">
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                        Items (with checkmarks)
+                      </label>
+                      <button
+                        onClick={() => {
+                          setData((prev) => ({
+                            ...prev,
+                            whyChooseUs: {
+                              ...prev.whyChooseUs!,
+                              items: [
+                                ...(prev.whyChooseUs?.items || []),
+                                { text: "" },
+                              ],
+                            },
+                          }));
+                        }}
+                        className="px-3 py-1 bg-blue-600 text-white rounded text-sm hover:bg-blue-700"
+                      >
+                        Add Item
+                      </button>
+                    </div>
+                    {data.whyChooseUs.items?.map((item, index) => (
+                      <div key={index} className="mb-4 border p-3 rounded">
+                        <div className="flex justify-between items-center mb-2">
+                          <span className="text-xs font-medium text-gray-600">
+                            Item {index + 1}
+                          </span>
+                          <button
+                            onClick={() => {
+                              setData((prev) => ({
+                                ...prev,
+                                whyChooseUs: {
+                                  ...prev.whyChooseUs!,
+                                  items:
+                                    prev.whyChooseUs?.items?.filter(
+                                      (_, i) => i !== index
+                                    ) || [],
+                                },
+                              }));
+                            }}
+                            className="text-red-600 hover:text-red-800 text-xs"
+                          >
+                            Remove
+                          </button>
+                        </div>
+                        <input
+                          type="text"
+                          value={item.text}
+                          onChange={(e) => {
+                            setData((prev) => ({
+                              ...prev,
+                              whyChooseUs: {
+                                ...prev.whyChooseUs!,
+                                items:
+                                  prev.whyChooseUs?.items?.map((it, i) =>
+                                    i === index ? { text: e.target.value } : it
+                                  ) || [],
+                              },
+                            }));
+                          }}
+                          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                        />
+                      </div>
+                    ))}
+                  </div>
+                  <FileUpload
+                    label="Image (optional)"
+                    value={data.whyChooseUs.image || ""}
+                    onChange={(url) =>
+                      setData((prev) => ({
+                        ...prev,
+                        whyChooseUs: {
+                          ...prev.whyChooseUs!,
+                          image: url,
+                        },
+                      }))
+                    }
+                    type="image"
+                    folder="service-why-choose-us"
+                  />
+                  <div>
+                    <div className="flex justify-between items-center mb-2">
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                        Certifications (optional)
+                      </label>
+                      <button
+                        onClick={() => {
+                          setData((prev) => ({
+                            ...prev,
+                            whyChooseUs: {
+                              ...prev.whyChooseUs!,
+                              certifications: [
+                                ...(prev.whyChooseUs?.certifications || []),
+                                { name: "", image: "" },
+                              ],
+                            },
+                          }));
+                        }}
+                        className="px-3 py-1 bg-blue-600 text-white rounded text-sm hover:bg-blue-700"
+                      >
+                        Add Certification
+                      </button>
+                    </div>
+                    {data.whyChooseUs.certifications?.map((cert, index) => (
+                      <div key={index} className="mb-4 border p-3 rounded">
+                        <div className="flex justify-between items-center mb-2">
+                          <span className="text-xs font-medium text-gray-600">
+                            Certification {index + 1}
+                          </span>
+                          <button
+                            onClick={() => {
+                              setData((prev) => ({
+                                ...prev,
+                                whyChooseUs: {
+                                  ...prev.whyChooseUs!,
+                                  certifications:
+                                    prev.whyChooseUs?.certifications?.filter(
+                                      (_, i) => i !== index
+                                    ) || [],
+                                },
+                              }));
+                            }}
+                            className="text-red-600 hover:text-red-800 text-xs"
+                          >
+                            Remove
+                          </button>
+                        </div>
+                        <div className="mb-2">
+                          <label className="block text-xs font-medium mb-1 text-gray-700 dark:text-gray-300">
+                            Name
+                          </label>
+                          <input
+                            type="text"
+                            value={cert.name}
+                            onChange={(e) => {
+                              setData((prev) => ({
+                                ...prev,
+                                whyChooseUs: {
+                                  ...prev.whyChooseUs!,
+                                  certifications:
+                                    prev.whyChooseUs?.certifications?.map(
+                                      (c, i) =>
+                                        i === index
+                                          ? { ...c, name: e.target.value }
+                                          : c
+                                    ) || [],
+                                },
+                              }));
+                            }}
+                            className="w-full px-2 py-1 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
+                          />
+                        </div>
+                        <FileUpload
+                          label="Image (optional)"
+                          value={cert.image || ""}
+                          onChange={(url) => {
+                            setData((prev) => ({
+                              ...prev,
+                              whyChooseUs: {
+                                ...prev.whyChooseUs!,
+                                certifications:
+                                  prev.whyChooseUs?.certifications?.map(
+                                    (c, i) =>
+                                      i === index ? { ...c, image: url } : c
+                                  ) || [],
+                              },
+                            }));
+                          }}
+                          type="image"
+                          folder="service-certifications"
+                        />
+                      </div>
+                    ))}
+                  </div>
+                </>
+              )}
             </div>
           )}
 
@@ -571,18 +1150,41 @@ export default function ServiceTemplateEditor({
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
                   Process Section
                 </h3>
-                <button
-                  onClick={() =>
-                    addArrayItem("process", {
-                      number: "",
-                      title: "",
-                      description: "",
-                    })
-                  }
-                  className="px-3 py-1 bg-blue-600 text-white rounded text-sm hover:bg-blue-700"
-                >
-                  Add Step
-                </button>
+                <div className="flex items-center gap-4">
+                  <label className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+                    <input
+                      type="checkbox"
+                      checked={data.process?.isActive !== false}
+                      onChange={(e) =>
+                        setData((prev) => ({
+                          ...prev,
+                          process: {
+                            ...(prev.process || {
+                              title: "",
+                              description: "",
+                              steps: [],
+                            }),
+                            isActive: e.target.checked,
+                          },
+                        }))
+                      }
+                      className="rounded"
+                    />
+                    Active
+                  </label>
+                  <button
+                    onClick={() =>
+                      addArrayItem("process", {
+                        number: "",
+                        title: "",
+                        description: "",
+                      })
+                    }
+                    className="px-3 py-1 bg-blue-600 text-white rounded text-sm hover:bg-blue-700"
+                  >
+                    Add Step
+                  </button>
+                </div>
               </div>
               <div>
                 <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
@@ -590,7 +1192,7 @@ export default function ServiceTemplateEditor({
                 </label>
                 <input
                   type="text"
-                  value={data.process.title}
+                  value={data.process?.title || ""}
                   onChange={(e) =>
                     updateField("process", "title", e.target.value)
                   }
@@ -602,7 +1204,7 @@ export default function ServiceTemplateEditor({
                   Section Description
                 </label>
                 <textarea
-                  value={data.process.description}
+                  value={data.process?.description || ""}
                   onChange={(e) =>
                     updateField("process", "description", e.target.value)
                   }
@@ -610,7 +1212,7 @@ export default function ServiceTemplateEditor({
                   rows={2}
                 />
               </div>
-              {data.process.steps.map((step, index) => (
+              {data.process?.steps.map((step, index) => (
                 <div
                   key={index}
                   className="border border-gray-300 dark:border-gray-600 rounded p-4 space-y-2"
@@ -685,242 +1287,54 @@ export default function ServiceTemplateEditor({
             </div>
           )}
 
-          {activeTab === "benefits" && (
-            <div className="space-y-4">
-              <div className="flex justify-between items-center">
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                  Benefits Section
-                </h3>
-                <button
-                  onClick={() =>
-                    addArrayItem("benefits", { title: "", description: "" })
-                  }
-                  className="px-3 py-1 bg-blue-600 text-white rounded text-sm hover:bg-blue-700"
-                >
-                  Add Benefit
-                </button>
-              </div>
-              <div>
-                <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
-                  Section Title
-                </label>
-                <input
-                  type="text"
-                  value={data.benefits.title}
-                  onChange={(e) =>
-                    updateField("benefits", "title", e.target.value)
-                  }
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
-                  Section Description
-                </label>
-                <textarea
-                  value={data.benefits.description}
-                  onChange={(e) =>
-                    updateField("benefits", "description", e.target.value)
-                  }
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                  rows={2}
-                />
-              </div>
-              {data.benefits.items.map((item, index) => (
-                <div
-                  key={index}
-                  className="border border-gray-300 dark:border-gray-600 rounded p-4 space-y-2"
-                >
-                  <div className="flex justify-between items-center">
-                    <h4 className="font-medium text-gray-900 dark:text-white">
-                      Benefit {index + 1}
-                    </h4>
-                    <button
-                      onClick={() => removeArrayItem("benefits", index)}
-                      className="text-red-600 hover:text-red-800 text-sm"
-                    >
-                      Remove
-                    </button>
-                  </div>
-                  <div>
-                    <label className="block text-xs font-medium mb-1 text-gray-700 dark:text-gray-300">
-                      Title
-                    </label>
-                    <input
-                      type="text"
-                      value={item.title}
-                      onChange={(e) =>
-                        updateArrayItem(
-                          "benefits",
-                          index,
-                          "title",
-                          e.target.value
-                        )
-                      }
-                      className="w-full px-2 py-1 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-xs font-medium mb-1 text-gray-700 dark:text-gray-300">
-                      Description
-                    </label>
-                    <textarea
-                      value={item.description}
-                      onChange={(e) =>
-                        updateArrayItem(
-                          "benefits",
-                          index,
-                          "description",
-                          e.target.value
-                        )
-                      }
-                      className="w-full px-2 py-1 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
-                      rows={2}
-                    />
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-
-          {activeTab === "useCases" && (
-            <div className="space-y-4">
-              <div className="flex justify-between items-center">
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                  Use Cases Section
-                </h3>
-                <button
-                  onClick={() => {
-                    if (!data.useCases) {
-                      setData((prev) => ({
-                        ...prev,
-                        useCases: {
-                          title: "",
-                          description: "",
-                          items: [{ title: "", description: "" }],
-                        },
-                      }));
-                    } else {
-                      addArrayItem("useCases", { title: "", description: "" });
-                    }
-                  }}
-                  className="px-3 py-1 bg-blue-600 text-white rounded text-sm hover:bg-blue-700"
-                >
-                  Add Use Case
-                </button>
-              </div>
-              {data.useCases && (
-                <>
-                  <div>
-                    <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
-                      Section Title
-                    </label>
-                    <input
-                      type="text"
-                      value={data.useCases.title}
-                      onChange={(e) =>
-                        updateField("useCases", "title", e.target.value)
-                      }
-                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
-                      Section Description
-                    </label>
-                    <textarea
-                      value={data.useCases.description}
-                      onChange={(e) =>
-                        updateField("useCases", "description", e.target.value)
-                      }
-                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                      rows={2}
-                    />
-                  </div>
-                  {data.useCases.items.map((item, index) => (
-                    <div
-                      key={index}
-                      className="border border-gray-300 dark:border-gray-600 rounded p-4 space-y-2"
-                    >
-                      <div className="flex justify-between items-center">
-                        <h4 className="font-medium text-gray-900 dark:text-white">
-                          Use Case {index + 1}
-                        </h4>
-                        <button
-                          onClick={() => removeArrayItem("useCases", index)}
-                          className="text-red-600 hover:text-red-800 text-sm"
-                        >
-                          Remove
-                        </button>
-                      </div>
-                      <div>
-                        <label className="block text-xs font-medium mb-1 text-gray-700 dark:text-gray-300">
-                          Title
-                        </label>
-                        <input
-                          type="text"
-                          value={item.title}
-                          onChange={(e) =>
-                            updateArrayItem(
-                              "useCases",
-                              index,
-                              "title",
-                              e.target.value
-                            )
-                          }
-                          className="w-full px-2 py-1 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-xs font-medium mb-1 text-gray-700 dark:text-gray-300">
-                          Description
-                        </label>
-                        <textarea
-                          value={item.description}
-                          onChange={(e) =>
-                            updateArrayItem(
-                              "useCases",
-                              index,
-                              "description",
-                              e.target.value
-                            )
-                          }
-                          className="w-full px-2 py-1 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
-                          rows={2}
-                        />
-                      </div>
-                    </div>
-                  ))}
-                </>
-              )}
-            </div>
-          )}
-
           {activeTab === "technologies" && (
             <div className="space-y-4">
               <div className="flex justify-between items-center">
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
                   Technologies Section
                 </h3>
-                <button
-                  onClick={() => {
-                    if (!data.technologies) {
-                      setData((prev) => ({
-                        ...prev,
-                        technologies: {
-                          title: "",
-                          description: "",
-                          items: [{ name: "", icon: "" }],
-                        },
-                      }));
-                    } else {
-                      addArrayItem("technologies", { name: "", icon: "" });
-                    }
-                  }}
-                  className="px-3 py-1 bg-blue-600 text-white rounded text-sm hover:bg-blue-700"
-                >
-                  Add Technology
-                </button>
+                <div className="flex items-center gap-4">
+                  <label className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+                    <input
+                      type="checkbox"
+                      checked={data.technologies?.isActive !== false}
+                      onChange={(e) =>
+                        setData((prev) => ({
+                          ...prev,
+                          technologies: {
+                            ...(prev.technologies || {
+                              title: "",
+                              description: "",
+                              items: [],
+                            }),
+                            isActive: e.target.checked,
+                          },
+                        }))
+                      }
+                      className="rounded"
+                    />
+                    Active
+                  </label>
+                  <button
+                    onClick={() => {
+                      if (!data.technologies) {
+                        setData((prev) => ({
+                          ...prev,
+                          technologies: {
+                            title: "",
+                            description: "",
+                            items: [{ name: "", icon: "" }],
+                          },
+                        }));
+                      } else {
+                        addArrayItem("technologies", { name: "", icon: "" });
+                      }
+                    }}
+                    className="px-3 py-1 bg-blue-600 text-white rounded text-sm hover:bg-blue-700"
+                  >
+                    Add Technology
+                  </button>
+                </div>
               </div>
               {data.technologies && (
                 <>
@@ -971,48 +1385,28 @@ export default function ServiceTemplateEditor({
                         </button>
                       </div>
                       <div>
-                        <label className="block text-xs font-medium mb-1 text-gray-700 dark:text-gray-300">
-                          Logo Image URL or Emoji
-                        </label>
-                        <input
-                          type="text"
+                        <IconUpload
+                          label="Logo Image (emoji, URL, or upload image)"
                           value={item.icon || ""}
-                          onChange={(e) =>
-                            updateArrayItem(
-                              "technologies",
-                              index,
-                              "icon",
-                              e.target.value
-                            )
-                          }
-                          className="w-full px-2 py-1 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
-                          placeholder="https://example.com/logo.png or 🚀"
+                          onChange={(url) => {
+                            setData((prev) => ({
+                              ...prev,
+                              technologies: {
+                                ...prev.technologies!,
+                                items:
+                                  prev.technologies?.items?.map((t, i) =>
+                                    i === index ? { ...t, icon: url } : t
+                                  ) || [],
+                              },
+                            }));
+                          }}
+                          folder="service-technologies-icons"
+                          className="text-sm"
                         />
                         <p className="text-xs text-gray-500 mt-1">
-                          Use logo image URLs or emojis. Only the logo/emoji
-                          will be displayed.
+                          Use logo image URLs, emojis, or upload an image. Only
+                          the logo/emoji will be displayed.
                         </p>
-                        {item.icon &&
-                          (item.icon.startsWith("http") ||
-                            item.icon.startsWith("/")) && (
-                            <div className="mt-2">
-                              <img
-                                src={item.icon}
-                                alt="Logo"
-                                className="h-12 object-contain border rounded p-2 bg-white"
-                                onError={(e) => {
-                                  e.currentTarget.style.display = "none";
-                                }}
-                              />
-                            </div>
-                          )}
-                        {item.icon &&
-                          !item.icon.startsWith("http") &&
-                          !item.icon.startsWith("/") && (
-                            <div className="mt-2 p-2 border rounded bg-white text-center">
-                              <span className="text-3xl">{item.icon}</span>
-                            </div>
-                          )}
                       </div>
                     </div>
                   ))}
@@ -1021,37 +1415,80 @@ export default function ServiceTemplateEditor({
             </div>
           )}
 
-          {activeTab === "caseStudies" && (
+          {activeTab === "portfolio" && (
             <div className="space-y-4">
               <div className="flex justify-between items-center">
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                  Case Studies Section
+                  Portfolio Section
                 </h3>
-                <button
-                  onClick={() => {
-                    if (!data.caseStudies) {
-                      setData((prev) => ({
-                        ...prev,
-                        caseStudies: {
-                          title: "",
-                          description: "",
-                          items: [{ title: "", description: "", result: "" }],
-                        },
-                      }));
-                    } else {
-                      addArrayItem("caseStudies", {
-                        title: "",
-                        description: "",
-                        result: "",
-                      });
-                    }
-                  }}
-                  className="px-3 py-1 bg-blue-600 text-white rounded text-sm hover:bg-blue-700"
-                >
-                  Add Case Study
-                </button>
+                <div className="flex items-center gap-4">
+                  <label className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+                    <input
+                      type="checkbox"
+                      checked={data.portfolio?.isActive !== false}
+                      onChange={(e) =>
+                        setData((prev) => ({
+                          ...prev,
+                          portfolio: {
+                            ...(prev.portfolio || {
+                              title: "",
+                              projects: [],
+                            }),
+                            isActive: e.target.checked,
+                          },
+                        }))
+                      }
+                      className="rounded"
+                    />
+                    Active
+                  </label>
+                  <button
+                    onClick={() => {
+                      if (!data.portfolio) {
+                        setData((prev) => ({
+                          ...prev,
+                          portfolio: {
+                            title: "",
+                            description: "",
+                            projects: [
+                              {
+                                title: "",
+                                description: "",
+                                image: "",
+                                category: "",
+                                link: "",
+                                technologies: [],
+                              },
+                            ],
+                          },
+                        }));
+                      } else {
+                        setData((prev) => ({
+                          ...prev,
+                          portfolio: {
+                            ...prev.portfolio!,
+                            projects: [
+                              ...(prev.portfolio?.projects || []),
+                              {
+                                title: "",
+                                description: "",
+                                image: "",
+                                category: "",
+                                link: "",
+                                technologies: [],
+                              },
+                            ],
+                          },
+                        }));
+                      }
+                    }}
+                    className="px-3 py-1 bg-blue-600 text-white rounded text-sm hover:bg-blue-700"
+                  >
+                    Add Project
+                  </button>
+                </div>
               </div>
-              {data.caseStudies && (
+              {data.portfolio && (
                 <>
                   <div>
                     <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
@@ -1059,45 +1496,107 @@ export default function ServiceTemplateEditor({
                     </label>
                     <input
                       type="text"
-                      value={data.caseStudies.title}
+                      value={data.portfolio.title}
                       onChange={(e) =>
-                        updateField("caseStudies", "title", e.target.value)
+                        setData((prev) => ({
+                          ...prev,
+                          portfolio: {
+                            ...prev.portfolio!,
+                            title: e.target.value,
+                          },
+                        }))
                       }
                       className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                     />
                   </div>
                   <div>
                     <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
-                      Section Description
+                      Section Description (optional)
                     </label>
                     <textarea
-                      value={data.caseStudies.description}
+                      value={data.portfolio.description || ""}
                       onChange={(e) =>
-                        updateField(
-                          "caseStudies",
-                          "description",
-                          e.target.value
-                        )
+                        setData((prev) => ({
+                          ...prev,
+                          portfolio: {
+                            ...prev.portfolio!,
+                            description: e.target.value,
+                          },
+                        }))
                       }
                       className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                       rows={2}
                     />
                   </div>
-                  {data.caseStudies.items.map((item, index) => (
+                  {data.portfolio.projects.map((project, index) => (
                     <div
                       key={index}
                       className="border border-gray-300 dark:border-gray-600 rounded p-4 space-y-2"
                     >
                       <div className="flex justify-between items-center">
                         <h4 className="font-medium text-gray-900 dark:text-white">
-                          Case Study {index + 1}
+                          Project {index + 1}
                         </h4>
                         <button
-                          onClick={() => removeArrayItem("caseStudies", index)}
+                          onClick={() => {
+                            setData((prev) => ({
+                              ...prev,
+                              portfolio: {
+                                ...prev.portfolio!,
+                                projects:
+                                  prev.portfolio?.projects?.filter(
+                                    (_, i) => i !== index
+                                  ) || [],
+                              },
+                            }));
+                          }}
                           className="text-red-600 hover:text-red-800 text-sm"
                         >
                           Remove
                         </button>
+                      </div>
+                      <FileUpload
+                        label="Image (optional)"
+                        value={project.image || ""}
+                        onChange={(url) => {
+                          setData((prev) => ({
+                            ...prev,
+                            portfolio: {
+                              ...prev.portfolio!,
+                              projects:
+                                prev.portfolio?.projects?.map((p, i) =>
+                                  i === index ? { ...p, image: url } : p
+                                ) || [],
+                            },
+                          }));
+                        }}
+                        type="image"
+                        folder="service-portfolio"
+                      />
+                      <div>
+                        <label className="block text-xs font-medium mb-1 text-gray-700 dark:text-gray-300">
+                          Category (optional)
+                        </label>
+                        <input
+                          type="text"
+                          value={project.category || ""}
+                          onChange={(e) => {
+                            setData((prev) => ({
+                              ...prev,
+                              portfolio: {
+                                ...prev.portfolio!,
+                                projects:
+                                  prev.portfolio?.projects?.map((p, i) =>
+                                    i === index
+                                      ? { ...p, category: e.target.value }
+                                      : p
+                                  ) || [],
+                              },
+                            }));
+                          }}
+                          className="w-full px-2 py-1 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
+                          placeholder="AI and ML"
+                        />
                       </div>
                       <div>
                         <label className="block text-xs font-medium mb-1 text-gray-700 dark:text-gray-300">
@@ -1105,15 +1604,21 @@ export default function ServiceTemplateEditor({
                         </label>
                         <input
                           type="text"
-                          value={item.title}
-                          onChange={(e) =>
-                            updateArrayItem(
-                              "caseStudies",
-                              index,
-                              "title",
-                              e.target.value
-                            )
-                          }
+                          value={project.title}
+                          onChange={(e) => {
+                            setData((prev) => ({
+                              ...prev,
+                              portfolio: {
+                                ...prev.portfolio!,
+                                projects:
+                                  prev.portfolio?.projects?.map((p, i) =>
+                                    i === index
+                                      ? { ...p, title: e.target.value }
+                                      : p
+                                  ) || [],
+                              },
+                            }));
+                          }}
                           className="w-full px-2 py-1 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
                         />
                       </div>
@@ -1122,42 +1627,708 @@ export default function ServiceTemplateEditor({
                           Description
                         </label>
                         <textarea
-                          value={item.description}
-                          onChange={(e) =>
-                            updateArrayItem(
-                              "caseStudies",
-                              index,
-                              "description",
-                              e.target.value
-                            )
-                          }
+                          value={project.description}
+                          onChange={(e) => {
+                            setData((prev) => ({
+                              ...prev,
+                              portfolio: {
+                                ...prev.portfolio!,
+                                projects:
+                                  prev.portfolio?.projects?.map((p, i) =>
+                                    i === index
+                                      ? { ...p, description: e.target.value }
+                                      : p
+                                  ) || [],
+                              },
+                            }));
+                          }}
                           className="w-full px-2 py-1 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
-                          rows={2}
+                          rows={3}
                         />
                       </div>
                       <div>
                         <label className="block text-xs font-medium mb-1 text-gray-700 dark:text-gray-300">
-                          Result (optional)
+                          Link (optional)
                         </label>
                         <input
                           type="text"
-                          value={item.result || ""}
-                          onChange={(e) =>
-                            updateArrayItem(
-                              "caseStudies",
-                              index,
-                              "result",
-                              e.target.value
-                            )
-                          }
+                          value={project.link || ""}
+                          onChange={(e) => {
+                            setData((prev) => ({
+                              ...prev,
+                              portfolio: {
+                                ...prev.portfolio!,
+                                projects:
+                                  prev.portfolio?.projects?.map((p, i) =>
+                                    i === index
+                                      ? { ...p, link: e.target.value }
+                                      : p
+                                  ) || [],
+                              },
+                            }));
+                          }}
                           className="w-full px-2 py-1 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
-                          placeholder="Result achieved"
+                          placeholder="/project/1"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-medium mb-1 text-gray-700 dark:text-gray-300">
+                          Technologies (comma-separated, optional)
+                        </label>
+                        <input
+                          type="text"
+                          value={
+                            Array.isArray(project.technologies)
+                              ? project.technologies.join(", ")
+                              : ""
+                          }
+                          onChange={(e) => {
+                            const techs = e.target.value
+                              .split(",")
+                              .map((t) => t.trim())
+                              .filter((t) => t);
+                            setData((prev) => ({
+                              ...prev,
+                              portfolio: {
+                                ...prev.portfolio!,
+                                projects:
+                                  prev.portfolio?.projects?.map((p, i) =>
+                                    i === index
+                                      ? { ...p, technologies: techs }
+                                      : p
+                                  ) || [],
+                              },
+                            }));
+                          }}
+                          className="w-full px-2 py-1 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
+                          placeholder="React, Node.js, TypeScript"
                         />
                       </div>
                     </div>
                   ))}
                 </>
               )}
+            </div>
+          )}
+
+          {activeTab === "partners" && (
+            <div className="space-y-4">
+              <div className="flex justify-between items-center">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                  Partners Section
+                </h3>
+                <div className="flex items-center gap-4">
+                  <label className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+                    <input
+                      type="checkbox"
+                      checked={data.partners?.isActive !== false}
+                      onChange={(e) =>
+                        setData((prev) => ({
+                          ...prev,
+                          partners: {
+                            ...(prev.partners || {
+                              title: "",
+                              partners: [],
+                            }),
+                            isActive: e.target.checked,
+                          },
+                        }))
+                      }
+                      className="rounded"
+                    />
+                    Active
+                  </label>
+                  <button
+                    onClick={() => {
+                      if (!data.partners) {
+                        setData((prev) => ({
+                          ...prev,
+                          partners: {
+                            title: "",
+                            partners: [],
+                          },
+                        }));
+                      }
+                      setData((prev) => ({
+                        ...prev,
+                        partners: {
+                          ...prev.partners!,
+                          partners: [
+                            ...(prev.partners?.partners || []),
+                            { name: "", logo: "" },
+                          ],
+                        },
+                      }));
+                    }}
+                    className="px-3 py-1 bg-blue-600 text-white rounded text-sm hover:bg-blue-700"
+                  >
+                    Add Partner
+                  </button>
+                </div>
+              </div>
+              {data.partners && (
+                <>
+                  <div>
+                    <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
+                      Section Title
+                    </label>
+                    <input
+                      type="text"
+                      value={data.partners.title}
+                      onChange={(e) =>
+                        setData((prev) => ({
+                          ...prev,
+                          partners: {
+                            ...prev.partners!,
+                            title: e.target.value,
+                          },
+                        }))
+                      }
+                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
+                      Section Description (optional)
+                    </label>
+                    <textarea
+                      value={data.partners.description || ""}
+                      onChange={(e) =>
+                        setData((prev) => ({
+                          ...prev,
+                          partners: {
+                            ...prev.partners!,
+                            description: e.target.value,
+                          },
+                        }))
+                      }
+                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                      rows={2}
+                    />
+                  </div>
+                  {data.partners.partners.map((partner, index) => (
+                    <div
+                      key={index}
+                      className="border border-gray-300 dark:border-gray-600 rounded p-4 space-y-2"
+                    >
+                      <div className="flex justify-between items-center">
+                        <h4 className="font-medium text-gray-900 dark:text-white">
+                          Partner {index + 1}
+                        </h4>
+                        <button
+                          onClick={() => {
+                            setData((prev) => ({
+                              ...prev,
+                              partners: {
+                                ...prev.partners!,
+                                partners:
+                                  prev.partners?.partners?.filter(
+                                    (_, i) => i !== index
+                                  ) || [],
+                              },
+                            }));
+                          }}
+                          className="text-red-600 hover:text-red-800 text-sm"
+                        >
+                          Remove
+                        </button>
+                      </div>
+                      <div>
+                        <label className="block text-xs font-medium mb-1 text-gray-700 dark:text-gray-300">
+                          Name (optional)
+                        </label>
+                        <input
+                          type="text"
+                          value={partner.name || ""}
+                          onChange={(e) => {
+                            setData((prev) => ({
+                              ...prev,
+                              partners: {
+                                ...prev.partners!,
+                                partners:
+                                  prev.partners?.partners?.map((p, i) =>
+                                    i === index
+                                      ? { ...p, name: e.target.value }
+                                      : p
+                                  ) || [],
+                              },
+                            }));
+                          }}
+                          className="w-full px-2 py-1 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
+                        />
+                      </div>
+                      <div>
+                        <IconUpload
+                          label="Logo (emoji, URL, or upload image)"
+                          value={partner.logo || ""}
+                          onChange={(url) => {
+                            setData((prev) => ({
+                              ...prev,
+                              partners: {
+                                ...prev.partners!,
+                                partners:
+                                  prev.partners?.partners?.map((p, i) =>
+                                    i === index ? { ...p, logo: url } : p
+                                  ) || [],
+                              },
+                            }));
+                          }}
+                          folder="service-partners-logos"
+                          className="text-sm"
+                        />
+                      </div>
+                    </div>
+                  ))}
+                </>
+              )}
+            </div>
+          )}
+
+          {activeTab === "cards" && (
+            <div className="space-y-4">
+              <div className="flex justify-between items-center">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                  Cards Section
+                </h3>
+                <div className="flex items-center gap-4">
+                  <label className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+                    <input
+                      type="checkbox"
+                      checked={data.cards?.isActive !== false}
+                      onChange={(e) =>
+                        setData((prev) => ({
+                          ...prev,
+                          cards: {
+                            ...(prev.cards || {
+                              title: "",
+                              items: [],
+                            }),
+                            isActive: e.target.checked,
+                          },
+                        }))
+                      }
+                      className="rounded"
+                    />
+                    Active
+                  </label>
+                  <button
+                    onClick={() => {
+                      if (!data.cards) {
+                        setData((prev) => ({
+                          ...prev,
+                          cards: {
+                            title: "",
+                            items: [],
+                          },
+                        }));
+                      }
+                      setData((prev) => ({
+                        ...prev,
+                        cards: {
+                          ...prev.cards!,
+                          items: [
+                            ...(prev.cards?.items || []),
+                            {
+                              quote: "",
+                              author: "",
+                              role: "",
+                              company: "",
+                            },
+                          ],
+                        },
+                      }));
+                    }}
+                    className="px-3 py-1 bg-blue-600 text-white rounded text-sm hover:bg-blue-700"
+                  >
+                    Add Card
+                  </button>
+                </div>
+              </div>
+              {data.cards && (
+                <>
+                  <div>
+                    <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
+                      Section Title
+                    </label>
+                    <input
+                      type="text"
+                      value={data.cards.title}
+                      onChange={(e) =>
+                        setData((prev) => ({
+                          ...prev,
+                          cards: {
+                            ...prev.cards!,
+                            title: e.target.value,
+                          },
+                        }))
+                      }
+                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
+                      Section Description (optional)
+                    </label>
+                    <textarea
+                      value={data.cards.description || ""}
+                      onChange={(e) =>
+                        setData((prev) => ({
+                          ...prev,
+                          cards: {
+                            ...prev.cards!,
+                            description: e.target.value,
+                          },
+                        }))
+                      }
+                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                      rows={2}
+                    />
+                  </div>
+                  <div>
+                    <label className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+                      <input
+                        type="checkbox"
+                        checked={data.cards.showStars !== false}
+                        onChange={(e) =>
+                          setData((prev) => ({
+                            ...prev,
+                            cards: {
+                              ...prev.cards!,
+                              showStars: e.target.checked,
+                            },
+                          }))
+                        }
+                        className="rounded"
+                      />
+                      Show Star Ratings
+                    </label>
+                  </div>
+                  {data.cards.items.map((item, index) => (
+                    <div
+                      key={index}
+                      className="border border-gray-300 dark:border-gray-600 rounded p-4 space-y-2"
+                    >
+                      <div className="flex justify-between items-center">
+                        <h4 className="font-medium text-gray-900 dark:text-white">
+                          Card {index + 1}
+                        </h4>
+                        <button
+                          onClick={() => {
+                            setData((prev) => ({
+                              ...prev,
+                              cards: {
+                                ...prev.cards!,
+                                items:
+                                  prev.cards?.items?.filter(
+                                    (_, i) => i !== index
+                                  ) || [],
+                              },
+                            }));
+                          }}
+                          className="text-red-600 hover:text-red-800 text-sm"
+                        >
+                          Remove
+                        </button>
+                      </div>
+                      <div>
+                        <label className="block text-xs font-medium mb-1 text-gray-700 dark:text-gray-300">
+                          Quote
+                        </label>
+                        <textarea
+                          value={item.quote || ""}
+                          onChange={(e) => {
+                            setData((prev) => ({
+                              ...prev,
+                              cards: {
+                                ...prev.cards!,
+                                items:
+                                  prev.cards?.items?.map((c, i) =>
+                                    i === index
+                                      ? { ...c, quote: e.target.value }
+                                      : c
+                                  ) || [],
+                              },
+                            }));
+                          }}
+                          className="w-full px-2 py-1 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
+                          rows={3}
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-medium mb-1 text-gray-700 dark:text-gray-300">
+                          Author
+                        </label>
+                        <input
+                          type="text"
+                          value={item.author || ""}
+                          onChange={(e) => {
+                            setData((prev) => ({
+                              ...prev,
+                              cards: {
+                                ...prev.cards!,
+                                items:
+                                  prev.cards?.items?.map((c, i) =>
+                                    i === index
+                                      ? { ...c, author: e.target.value }
+                                      : c
+                                  ) || [],
+                              },
+                            }));
+                          }}
+                          className="w-full px-2 py-1 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-medium mb-1 text-gray-700 dark:text-gray-300">
+                          Role (optional)
+                        </label>
+                        <input
+                          type="text"
+                          value={item.role || ""}
+                          onChange={(e) => {
+                            setData((prev) => ({
+                              ...prev,
+                              cards: {
+                                ...prev.cards!,
+                                items:
+                                  prev.cards?.items?.map((c, i) =>
+                                    i === index
+                                      ? { ...c, role: e.target.value }
+                                      : c
+                                  ) || [],
+                              },
+                            }));
+                          }}
+                          className="w-full px-2 py-1 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-medium mb-1 text-gray-700 dark:text-gray-300">
+                          Company (optional)
+                        </label>
+                        <input
+                          type="text"
+                          value={item.company || ""}
+                          onChange={(e) => {
+                            setData((prev) => ({
+                              ...prev,
+                              cards: {
+                                ...prev.cards!,
+                                items:
+                                  prev.cards?.items?.map((c, i) =>
+                                    i === index
+                                      ? { ...c, company: e.target.value }
+                                      : c
+                                  ) || [],
+                              },
+                            }));
+                          }}
+                          className="w-full px-2 py-1 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
+                        />
+                      </div>
+                    </div>
+                  ))}
+                </>
+              )}
+            </div>
+          )}
+
+          {activeTab === "sectionOrder" && (
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                Section Order
+              </h3>
+              <p className="text-sm text-gray-600 dark:text-gray-400">
+                Drag and drop sections to reorder them, or use the up/down
+                buttons.
+              </p>
+
+              <div className="space-y-2">
+                {(
+                  data.sectionOrder || [
+                    "hero",
+                    "overview",
+                    "stats",
+                    "subServices",
+                    "whyChooseUs",
+                    "technologies",
+                    "process",
+                    "portfolio",
+                    "partners",
+                    "cards",
+                    "faq",
+                    "cta",
+                  ]
+                ).map((sectionKey, index) => {
+                  const sectionLabels: Record<string, string> = {
+                    hero: "Hero",
+                    overview: "Overview",
+                    stats: "Stats",
+                    subServices: "Sub Services",
+                    whyChooseUs: "Why Choose Us",
+                    technologies: "Technologies",
+                    process: "Process",
+                    portfolio: "Portfolio",
+                    partners: "Partners",
+                    cards: "Cards",
+                    faq: "FAQ",
+                    cta: "CTA",
+                  };
+
+                  const currentOrder = data.sectionOrder || [
+                    "hero",
+                    "overview",
+                    "stats",
+                    "subServices",
+                    "whyChooseUs",
+                    "technologies",
+                    "process",
+                    "portfolio",
+                    "partners",
+                    "cards",
+                    "faq",
+                    "cta",
+                  ];
+
+                  const moveSection = (fromIndex: number, toIndex: number) => {
+                    const newOrder = [...currentOrder];
+                    const [removed] = newOrder.splice(fromIndex, 1);
+                    newOrder.splice(toIndex, 0, removed);
+                    setData((prev) => ({
+                      ...prev,
+                      sectionOrder: newOrder,
+                    }));
+                  };
+
+                  const handleDragStart = (
+                    e: React.DragEvent<HTMLDivElement>,
+                    index: number
+                  ) => {
+                    e.dataTransfer.effectAllowed = "move";
+                    e.dataTransfer.setData("text/html", String(index));
+                  };
+
+                  const handleDragOver = (
+                    e: React.DragEvent<HTMLDivElement>
+                  ) => {
+                    e.preventDefault();
+                    e.dataTransfer.dropEffect = "move";
+                  };
+
+                  const handleDrop = (
+                    e: React.DragEvent<HTMLDivElement>,
+                    dropIndex: number
+                  ) => {
+                    e.preventDefault();
+                    const dragIndex = parseInt(
+                      e.dataTransfer.getData("text/html")
+                    );
+                    if (dragIndex !== dropIndex) {
+                      moveSection(dragIndex, dropIndex);
+                    }
+                  };
+
+                  return (
+                    <div
+                      key={sectionKey}
+                      draggable
+                      onDragStart={(e) => handleDragStart(e, index)}
+                      onDragOver={handleDragOver}
+                      onDrop={(e) => handleDrop(e, index)}
+                      className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg cursor-move hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                    >
+                      {/* Drag Handle */}
+                      <div className="text-gray-400 dark:text-gray-500 cursor-grab active:cursor-grabbing">
+                        <svg
+                          className="w-5 h-5"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M4 8h16M4 16h16"
+                          />
+                        </svg>
+                      </div>
+
+                      {/* Section Label */}
+                      <div className="flex-1">
+                        <span className="font-medium text-gray-900 dark:text-white">
+                          {sectionLabels[sectionKey] || sectionKey}
+                        </span>
+                        <span className="text-xs text-gray-500 dark:text-gray-400 ml-2">
+                          ({sectionKey})
+                        </span>
+                      </div>
+
+                      {/* Up/Down Buttons */}
+                      <div className="flex flex-col gap-1">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            if (index > 0) {
+                              moveSection(index, index - 1);
+                            }
+                          }}
+                          disabled={index === 0}
+                          className="p-1 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                          aria-label="Move up"
+                        >
+                          <svg
+                            className="w-4 h-4"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M5 15l7-7 7 7"
+                            />
+                          </svg>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            if (index < currentOrder.length - 1) {
+                              moveSection(index, index + 1);
+                            }
+                          }}
+                          disabled={index === currentOrder.length - 1}
+                          className="p-1 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                          aria-label="Move down"
+                        >
+                          <svg
+                            className="w-4 h-4"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M19 9l-7 7-7-7"
+                            />
+                          </svg>
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+
+              <div className="mt-4 p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
+                <p className="text-sm text-blue-800 dark:text-blue-200">
+                  <strong>Tip:</strong> Drag sections to reorder, or use the
+                  up/down arrows. Sections will appear on the page in this
+                  order.
+                </p>
+              </div>
             </div>
           )}
 
@@ -1167,25 +2338,47 @@ export default function ServiceTemplateEditor({
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
                   FAQ Section
                 </h3>
-                <button
-                  onClick={() => {
-                    if (!data.faq) {
-                      setData((prev) => ({
-                        ...prev,
-                        faq: {
-                          title: "",
-                          description: "",
-                          items: [{ question: "", answer: "" }],
-                        },
-                      }));
-                    } else {
-                      addArrayItem("faq", { question: "", answer: "" });
-                    }
-                  }}
-                  className="px-3 py-1 bg-blue-600 text-white rounded text-sm hover:bg-blue-700"
-                >
-                  Add FAQ
-                </button>
+                <div className="flex items-center gap-4">
+                  <label className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+                    <input
+                      type="checkbox"
+                      checked={data.faq?.isActive !== false}
+                      onChange={(e) =>
+                        setData((prev) => ({
+                          ...prev,
+                          faq: {
+                            ...(prev.faq || {
+                              title: "",
+                              items: [],
+                            }),
+                            isActive: e.target.checked,
+                          },
+                        }))
+                      }
+                      className="rounded"
+                    />
+                    Active
+                  </label>
+                  <button
+                    onClick={() => {
+                      if (!data.faq) {
+                        setData((prev) => ({
+                          ...prev,
+                          faq: {
+                            title: "",
+                            description: "",
+                            items: [{ question: "", answer: "" }],
+                          },
+                        }));
+                      } else {
+                        addArrayItem("faq", { question: "", answer: "" });
+                      }
+                    }}
+                    className="px-3 py-1 bg-blue-600 text-white rounded text-sm hover:bg-blue-700"
+                  >
+                    Add FAQ
+                  </button>
+                </div>
               </div>
               {data.faq && (
                 <>
@@ -1276,16 +2469,40 @@ export default function ServiceTemplateEditor({
 
           {activeTab === "cta" && (
             <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                CTA Section
-              </h3>
+              <div className="flex justify-between items-center">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                  CTA Section
+                </h3>
+                <label className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+                  <input
+                    type="checkbox"
+                    checked={data.cta?.isActive !== false}
+                    onChange={(e) =>
+                      setData((prev) => ({
+                        ...prev,
+                        cta: {
+                          ...(prev.cta || {
+                            title: "",
+                            description: "",
+                            buttonText: "",
+                            buttonLink: "",
+                          }),
+                          isActive: e.target.checked,
+                        },
+                      }))
+                    }
+                    className="rounded"
+                  />
+                  Active
+                </label>
+              </div>
               <div>
                 <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
                   Title
                 </label>
                 <input
                   type="text"
-                  value={data.cta.title}
+                  value={data.cta?.title || ""}
                   onChange={(e) => updateField("cta", "title", e.target.value)}
                   className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                 />
@@ -1295,7 +2512,7 @@ export default function ServiceTemplateEditor({
                   Description
                 </label>
                 <textarea
-                  value={data.cta.description}
+                  value={data.cta?.description || ""}
                   onChange={(e) =>
                     updateField("cta", "description", e.target.value)
                   }
@@ -1310,7 +2527,7 @@ export default function ServiceTemplateEditor({
                   </label>
                   <input
                     type="text"
-                    value={data.cta.buttonText}
+                    value={data.cta?.buttonText || ""}
                     onChange={(e) =>
                       updateField("cta", "buttonText", e.target.value)
                     }
@@ -1323,7 +2540,7 @@ export default function ServiceTemplateEditor({
                   </label>
                   <input
                     type="text"
-                    value={data.cta.buttonLink}
+                    value={data.cta?.buttonLink || ""}
                     onChange={(e) =>
                       updateField("cta", "buttonLink", e.target.value)
                     }

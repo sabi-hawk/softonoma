@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { ISection } from "@/models/Section";
 import { useState } from "react";
 
@@ -90,54 +91,61 @@ export default function PartnershipsSection({
 
             {/* Carousel Container */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 px-8">
-              {getVisibleItems().map(({ item: partnership, originalIndex }) => (
-                <div
-                  key={originalIndex}
-                  className="group relative p-8 rounded-xl backdrop-blur-sm border transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 overflow-hidden theme-bg-white"
-                  style={{ borderColor: "rgba(0, 0, 0, 0.1)" }}
-                >
-                  {/* Light gradient overlay on hover */}
-                  <div className="absolute inset-0 opacity-0 group-hover:opacity-5 theme-gradient transition-all duration-300"></div>
+              {getVisibleItems().map(
+                ({ item: partnership, originalIndex }, visibleIndex) => (
+                  <div
+                    key={`partnership-${originalIndex}-${visibleIndex}-${
+                      partnership.title || visibleIndex
+                    }`}
+                    className="group relative p-8 rounded-xl backdrop-blur-sm border transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 overflow-hidden theme-bg-white"
+                    style={{ borderColor: "rgba(0, 0, 0, 0.1)" }}
+                  >
+                    {/* Light gradient overlay on hover */}
+                    <div className="absolute inset-0 opacity-0 group-hover:opacity-5 theme-gradient transition-all duration-300"></div>
 
-                  <div className="relative z-10">
-                    {/* Partnership Icon/Image */}
-                    {partnership.image && (
-                      <div
-                        className="w-20 h-20 mb-6 rounded-xl backdrop-blur-sm flex items-center justify-center transform group-hover:scale-110 transition-all duration-300 shadow-lg theme-gradient"
-                        style={{ borderColor: "rgba(0, 0, 0, 0.1)" }}
-                      >
-                        {isImageUrl(partnership.image) ? (
-                          <img
-                            src={partnership.image}
-                            alt={partnership.title || "Partnership"}
-                            className="w-14 h-14 object-contain p-2"
-                            onError={(e) => {
-                              e.currentTarget.style.display = "none";
-                            }}
-                          />
-                        ) : (
-                          <span className="theme-text-white text-4xl">
-                            {partnership.image}
-                          </span>
-                        )}
-                      </div>
-                    )}
-                    {partnership.title && (
-                      <h3 className="text-xl font-bold theme-text-black mb-3 theme-hover-primary transition-colors">
-                        {partnership.title}
-                      </h3>
-                    )}
-                    {partnership.description && (
-                      <p
-                        className="theme-text-black leading-relaxed text-sm"
-                        style={{ opacity: 0.8 }}
-                      >
-                        {partnership.description}
-                      </p>
-                    )}
+                    <div className="relative z-10">
+                      {/* Partnership Icon/Image */}
+                      {partnership.image && (
+                        <div
+                          className="w-20 h-20 mb-6 rounded-xl backdrop-blur-sm flex items-center justify-center transform group-hover:scale-110 transition-all duration-300 shadow-lg theme-gradient"
+                          style={{ borderColor: "rgba(0, 0, 0, 0.1)" }}
+                        >
+                          {isImageUrl(partnership.image) ? (
+                            <Image
+                              src={partnership.image}
+                              alt={partnership.title || "Partnership"}
+                              width={56}
+                              height={56}
+                              className="object-contain p-2"
+                              unoptimized
+                              onError={(e) => {
+                                e.currentTarget.style.display = "none";
+                              }}
+                            />
+                          ) : (
+                            <span className="theme-text-white text-4xl">
+                              {partnership.image}
+                            </span>
+                          )}
+                        </div>
+                      )}
+                      {partnership.title && (
+                        <h3 className="text-xl font-bold theme-text-black mb-3 theme-hover-primary transition-colors">
+                          {partnership.title}
+                        </h3>
+                      )}
+                      {partnership.description && (
+                        <p
+                          className="theme-text-black leading-relaxed text-sm"
+                          style={{ opacity: 0.8 }}
+                        >
+                          {partnership.description}
+                        </p>
+                      )}
+                    </div>
                   </div>
-                </div>
-              ))}
+                )
+              )}
             </div>
 
             {/* Right Arrow */}

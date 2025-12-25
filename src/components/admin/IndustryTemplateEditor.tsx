@@ -8,6 +8,8 @@ import {
   defaultIndustryTemplateData,
   parseIndustryTemplateData,
 } from "@/lib/industry-template";
+import FileUpload from "@/components/admin/FileUpload";
+import IconUpload from "@/components/admin/IconUpload";
 
 interface IndustryTemplateEditorProps {
   initialContent: string;
@@ -29,12 +31,13 @@ export default function IndustryTemplateEditor({
   const [activeTab, setActiveTab] = useState<
     | "hero"
     | "overview"
-    | "solutions"
-    | "challenges"
+    | "stats"
+    | "subServices"
+    | "partners"
+    | "cards"
+    | "portfolio"
     | "technologies"
-    | "benefits"
-    | "caseStudies"
-    | "cta"
+    | "sectionOrder"
   >("hero");
 
   // Update data when initialContent changes
@@ -82,12 +85,56 @@ export default function IndustryTemplateEditor({
     value: string
   ) => {
     setData((prev: IndustryTemplateData) => {
-      const sectionData = prev[section] as { items?: unknown[] };
-      const items = [...(sectionData.items || [])];
+      const sectionData = prev[section] as {
+        items?: unknown[];
+        projects?: unknown[];
+        partners?: unknown[];
+        paragraphs?: unknown[];
+      };
+      
+      // Handle different array field names
+      let items: unknown[] = [];
+      if (section === "portfolio" && sectionData.projects) {
+        items = [...sectionData.projects];
+      } else if (section === "partners" && sectionData.partners) {
+        items = [...sectionData.partners];
+      } else if (section === "overview" && sectionData.paragraphs) {
+        items = [...sectionData.paragraphs];
+      } else if (sectionData.items) {
+        items = [...sectionData.items];
+      }
+      
       items[index] = {
         ...(items[index] as Record<string, unknown>),
         [field]: value,
       };
+      
+      if (section === "portfolio") {
+        return {
+          ...prev,
+          [section]: {
+            ...prev[section],
+            projects: items,
+          } as IndustryTemplateData[keyof IndustryTemplateData],
+        };
+      } else if (section === "partners") {
+        return {
+          ...prev,
+          [section]: {
+            ...prev[section],
+            partners: items,
+          } as IndustryTemplateData[keyof IndustryTemplateData],
+        };
+      } else if (section === "overview") {
+        return {
+          ...prev,
+          [section]: {
+            ...prev[section],
+            paragraphs: items,
+          } as IndustryTemplateData[keyof IndustryTemplateData],
+        };
+      }
+      
       return {
         ...prev,
         [section]: {
@@ -146,12 +193,13 @@ export default function IndustryTemplateEditor({
   const tabs = [
     { id: "hero", label: "Hero" },
     { id: "overview", label: "Overview" },
-    { id: "solutions", label: "Solutions" },
-    { id: "challenges", label: "Challenges" },
+    { id: "stats", label: "Stats" },
+    { id: "subServices", label: "Sub Services" },
+    { id: "partners", label: "Partners" },
+    { id: "cards", label: "Cards" },
+    { id: "portfolio", label: "Portfolio" },
     { id: "technologies", label: "Technologies" },
-    { id: "benefits", label: "Benefits" },
-    { id: "caseStudies", label: "Case Studies" },
-    { id: "cta", label: "CTA" },
+    { id: "sectionOrder", label: "Section Order" },
   ];
 
   const updateNumberField = (
@@ -170,14 +218,33 @@ export default function IndustryTemplateEditor({
 
   return (
     <div className="space-y-6">
-      {/* Tabs */}
+      {/* Tabs - Scrollable */}
       <div className="border-b border-gray-200 dark:border-gray-700">
+        <style jsx>{`
+          nav {
+            overflow-x: auto;
+            scrollbar-width: thin;
+            scrollbar-color: #475569 #1e293b;
+          }
+          nav::-webkit-scrollbar {
+            height: 6px;
+          }
+          nav::-webkit-scrollbar-track {
+            background: #1e293b;
+          }
+          nav::-webkit-scrollbar-thumb {
+            background: #475569;
+          }
+          nav::-webkit-scrollbar-thumb:hover {
+            background: #64748b;
+          }
+        `}</style>
         <nav className="flex space-x-8 overflow-x-auto">
           {tabs.map((tab) => (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id as typeof activeTab)}
-              className={`whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm ${
+              className={`shrink-0 whitespace-nowrap py-4 px-3 border-b-2 font-medium text-sm transition-colors ${
                 activeTab === tab.id
                   ? "border-blue-500 text-blue-600 dark:text-blue-400"
                   : "border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300"
@@ -197,6 +264,9 @@ export default function IndustryTemplateEditor({
               <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
                 Hero Section
               </h3>
+              <p className="text-sm text-gray-500 dark:text-gray-400">
+                Note: Hero section is always active and cannot be disabled.
+              </p>
               <div>
                 <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
                   Title
@@ -210,11 +280,25 @@ export default function IndustryTemplateEditor({
               </div>
               <div>
                 <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
-                  Subtitle
+                  Breadcrumbs (optional)
                 </label>
                 <input
                   type="text"
-                  value={data.hero.subtitle}
+                  value={data.hero.breadcrumbs || ""}
+                  onChange={(e) =>
+                    updateField("hero", "breadcrumbs", e.target.value)
+                  }
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                  placeholder="Home / Industries / Industry Name"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
+                  Subtitle (optional)
+                </label>
+                <input
+                  type="text"
+                  value={data.hero.subtitle || ""}
                   onChange={(e) =>
                     updateField("hero", "subtitle", e.target.value)
                   }
@@ -262,66 +346,21 @@ export default function IndustryTemplateEditor({
                   />
                 </div>
               </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
-                    Secondary Button Text
-                  </label>
-                  <input
-                    type="text"
-                    value={data.hero.secondaryButtonText || ""}
-                    onChange={(e) =>
-                      updateField("hero", "secondaryButtonText", e.target.value)
-                    }
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
-                    Secondary Button Link
-                  </label>
-                  <input
-                    type="text"
-                    value={data.hero.secondaryButtonLink || ""}
-                    onChange={(e) =>
-                      updateField("hero", "secondaryButtonLink", e.target.value)
-                    }
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                  />
-                </div>
-              </div>
-              <div>
-                <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
-                  Background Image URL (optional)
-                </label>
-                <input
-                  type="text"
+              <FileUpload
+                label="Background Image (optional)"
                   value={data.hero.backgroundImage || ""}
-                  onChange={(e) =>
-                    updateField("hero", "backgroundImage", e.target.value)
-                  }
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                  placeholder="https://example.com/image.jpg"
+                onChange={(url) => updateField("hero", "backgroundImage", url)}
+                type="image"
+                folder="industry-hero-backgrounds"
                 />
-              </div>
-              <div>
-                <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
-                  Background Video URL (optional)
-                </label>
-                <input
-                  type="text"
+              <FileUpload
+                label="Background Video (optional)"
                   value={data.hero.backgroundVideo || ""}
-                  onChange={(e) =>
-                    updateField("hero", "backgroundVideo", e.target.value)
-                  }
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                  placeholder="https://example.com/video.mp4"
-                />
-                <p className="text-xs text-gray-500 mt-1">
-                  Video will auto-play, loop, and be muted. Supports .mp4 and
-                  .webm
-                </p>
-              </div>
+                onChange={(url) => updateField("hero", "backgroundVideo", url)}
+                type="video"
+                folder="industry-hero-backgrounds"
+                accept="video/mp4,video/webm"
+              />
               <div>
                 <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
                   Background Opacity (0-1)
@@ -351,9 +390,28 @@ export default function IndustryTemplateEditor({
 
           {activeTab === "overview" && (
             <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                Overview Section
-              </h3>
+              <div className="flex justify-between items-center">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                  Overview Section
+                </h3>
+                <label className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+                  <input
+                    type="checkbox"
+                    checked={data.overview.isActive !== false}
+                    onChange={(e) =>
+                      setData((prev) => ({
+                        ...prev,
+                        overview: {
+                          ...prev.overview,
+                          isActive: e.target.checked,
+                        },
+                      }))
+                    }
+                    className="rounded"
+                  />
+                  Active
+                </label>
+              </div>
               <div>
                 <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
                   Title
@@ -368,149 +426,221 @@ export default function IndustryTemplateEditor({
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
-                  Description
-                </label>
-                <textarea
-                  value={data.overview.description}
-                  onChange={(e) =>
-                    updateField("overview", "description", e.target.value)
-                  }
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                  rows={5}
-                />
+                <div className="flex justify-between items-center mb-2">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                    Paragraphs (with checkmarks)
+                  </label>
+                  <button
+                    onClick={() => {
+                      setData((prev) => ({
+                        ...prev,
+                        overview: {
+                          ...prev.overview,
+                          paragraphs: [
+                            ...prev.overview.paragraphs,
+                            { text: "" },
+                          ],
+                        },
+                      }));
+                    }}
+                    className="px-3 py-1 bg-blue-600 text-white rounded text-sm hover:bg-blue-700"
+                  >
+                    Add Paragraph
+                  </button>
+                </div>
+                {data.overview.paragraphs.map((para, index) => (
+                  <div
+                    key={index}
+                    className="mb-3 p-3 border border-gray-300 dark:border-gray-600 rounded"
+                  >
+                    <div className="flex justify-between items-center mb-2">
+                      <span className="text-xs text-gray-500 dark:text-gray-400">
+                        Paragraph {index + 1}
+                      </span>
+                      <button
+                        onClick={() => {
+                          setData((prev) => ({
+                            ...prev,
+                            overview: {
+                              ...prev.overview,
+                              paragraphs: prev.overview.paragraphs.filter(
+                                (_, i) => i !== index
+                              ),
+                            },
+                          }));
+                        }}
+                        className="text-red-600 hover:text-red-800 text-xs"
+                      >
+                        Remove
+                      </button>
+                    </div>
+                    <textarea
+                      value={para.text}
+                      onChange={(e) => {
+                        setData((prev) => ({
+                          ...prev,
+                          overview: {
+                            ...prev.overview,
+                            paragraphs: prev.overview.paragraphs.map((p, i) =>
+                              i === index ? { text: e.target.value } : p
+                            ),
+                          },
+                        }));
+                      }}
+                      className="w-full px-2 py-1 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
+                      rows={3}
+                    />
+                  </div>
+                ))}
               </div>
-              <div>
-                <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
-                  Image URL (optional)
-                </label>
-                <input
-                  type="text"
-                  value={data.overview.image || ""}
-                  onChange={(e) =>
-                    updateField("overview", "image", e.target.value)
-                  }
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                  placeholder="https://example.com/image.jpg"
-                />
-              </div>
+              <FileUpload
+                label="Overview Image (optional)"
+                value={data.overview.image || ""}
+                onChange={(url) => updateField("overview", "image", url)}
+                type="image"
+                folder="industry-overview"
+              />
             </div>
           )}
 
-          {activeTab === "solutions" && (
+          {activeTab === "stats" && (
             <div className="space-y-4">
               <div className="flex justify-between items-center">
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                  Solutions Section
+                  Stats Section
                 </h3>
-                <button
-                  onClick={() =>
-                    addArrayItem("solutions", {
-                      title: "",
-                      description: "",
-                      icon: "",
-                    })
-                  }
-                  className="px-3 py-1 bg-blue-600 text-white rounded text-sm hover:bg-blue-700"
-                >
-                  Add Solution
-                </button>
+                <div className="flex items-center gap-4">
+                  <label className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+                    <input
+                      type="checkbox"
+                      checked={data.stats?.isActive !== false}
+                      onChange={(e) =>
+                        setData((prev) => ({
+                          ...prev,
+                          stats: {
+                            ...(prev.stats || { items: [] }),
+                            isActive: e.target.checked,
+                          },
+                        }))
+                      }
+                      className="rounded"
+                    />
+                    Active
+                  </label>
+                  <button
+                    onClick={() => {
+                      if (!data.stats) {
+                        setData((prev) => ({
+                          ...prev,
+                          stats: { items: [] },
+                        }));
+                      }
+                      setData((prev) => ({
+                        ...prev,
+                        stats: {
+                          items: [
+                            ...(prev.stats?.items || []),
+                            { icon: "", value: "", label: "" },
+                          ],
+                        },
+                      }));
+                    }}
+                    className="px-3 py-1 bg-blue-600 text-white rounded text-sm hover:bg-blue-700"
+                  >
+                    Add Stat
+                  </button>
+                </div>
               </div>
-              <div>
-                <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
-                  Section Title
-                </label>
-                <input
-                  type="text"
-                  value={data.solutions.title}
-                  onChange={(e) =>
-                    updateField("solutions", "title", e.target.value)
-                  }
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
-                  Section Description
-                </label>
-                <textarea
-                  value={data.solutions.description}
-                  onChange={(e) =>
-                    updateField("solutions", "description", e.target.value)
-                  }
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                  rows={2}
-                />
-              </div>
-              {data.solutions.items.map((item, index) => (
+              {data.stats?.items.map((stat, index) => (
                 <div
                   key={index}
                   className="border border-gray-300 dark:border-gray-600 rounded p-4 space-y-2"
                 >
                   <div className="flex justify-between items-center">
                     <h4 className="font-medium text-gray-900 dark:text-white">
-                      Solution {index + 1}
+                      Stat {index + 1}
                     </h4>
                     <button
-                      onClick={() => removeArrayItem("solutions", index)}
+                      onClick={() => {
+                        setData((prev) => ({
+                          ...prev,
+                          stats: {
+                            items:
+                              prev.stats?.items?.filter((_, i) => i !== index) ||
+                              [],
+                          },
+                        }));
+                      }}
                       className="text-red-600 hover:text-red-800 text-sm"
                     >
                       Remove
                     </button>
                   </div>
                   <div>
-                    <label className="block text-xs font-medium mb-1 text-gray-700 dark:text-gray-300">
-                      Icon (emoji or URL)
-                    </label>
-                    <input
-                      type="text"
-                      value={item.icon || ""}
-                      onChange={(e) =>
-                        updateArrayItem(
-                          "solutions",
-                          index,
-                          "icon",
-                          e.target.value
-                        )
-                      }
-                      className="w-full px-2 py-1 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
-                      placeholder="🚀 or https://..."
+                    <IconUpload
+                      label="Icon (emoji, URL, or upload image)"
+                      value={stat.icon || ""}
+                      onChange={(url) => {
+                        setData((prev) => ({
+                          ...prev,
+                          stats: {
+                            items:
+                              prev.stats?.items?.map((s, i) =>
+                                i === index ? { ...s, icon: url } : s
+                              ) || [],
+                          },
+                        }));
+                      }}
+                      folder="industry-stats-icons"
+                      className="text-sm"
                     />
                   </div>
                   <div>
                     <label className="block text-xs font-medium mb-1 text-gray-700 dark:text-gray-300">
-                      Title
+                      Value
                     </label>
                     <input
                       type="text"
-                      value={item.title}
-                      onChange={(e) =>
-                        updateArrayItem(
-                          "solutions",
-                          index,
-                          "title",
-                          e.target.value
-                        )
-                      }
+                      value={stat.value}
+                      onChange={(e) => {
+                        setData((prev) => ({
+                          ...prev,
+                          stats: {
+                            items:
+                              prev.stats?.items?.map((s, i) =>
+                                i === index
+                                  ? { ...s, value: e.target.value }
+                                  : s
+                              ) || [],
+                          },
+                        }));
+                      }}
                       className="w-full px-2 py-1 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
+                      placeholder="400+"
                     />
                   </div>
                   <div>
                     <label className="block text-xs font-medium mb-1 text-gray-700 dark:text-gray-300">
-                      Description
+                      Label
                     </label>
-                    <textarea
-                      value={item.description}
-                      onChange={(e) =>
-                        updateArrayItem(
-                          "solutions",
-                          index,
-                          "description",
-                          e.target.value
-                        )
-                      }
+                    <input
+                      type="text"
+                      value={stat.label}
+                      onChange={(e) => {
+                        setData((prev) => ({
+                          ...prev,
+                          stats: {
+                            items:
+                              prev.stats?.items?.map((s, i) =>
+                                i === index
+                                  ? { ...s, label: e.target.value }
+                                  : s
+                              ) || [],
+                          },
+                        }));
+                      }}
                       className="w-full px-2 py-1 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
-                      rows={2}
+                      placeholder="Software Developers"
                     />
                   </div>
                 </div>
@@ -518,101 +648,959 @@ export default function IndustryTemplateEditor({
             </div>
           )}
 
-          {activeTab === "challenges" && (
+          {activeTab === "subServices" && (
             <div className="space-y-4">
               <div className="flex justify-between items-center">
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                  Challenges Section
+                  Sub Services Section
                 </h3>
-                <button
-                  onClick={() =>
-                    addArrayItem("challenges", { title: "", description: "" })
-                  }
-                  className="px-3 py-1 bg-blue-600 text-white rounded text-sm hover:bg-blue-700"
-                >
-                  Add Challenge
-                </button>
+                <div className="flex items-center gap-4">
+                  <label className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+                    <input
+                      type="checkbox"
+                      checked={data.subServices?.isActive !== false}
+                      onChange={(e) =>
+                        setData((prev) => ({
+                          ...prev,
+                          subServices: {
+                            ...(prev.subServices || { title: "", items: [] }),
+                            isActive: e.target.checked,
+                          },
+                        }))
+                      }
+                      className="rounded"
+                    />
+                    Active
+                  </label>
+                  <button
+                    onClick={() => {
+                      if (!data.subServices) {
+                        setData((prev) => ({
+                          ...prev,
+                          subServices: {
+                            title: "",
+                            items: [],
+                          },
+                        }));
+                      }
+                      setData((prev) => ({
+                        ...prev,
+                        subServices: {
+                          ...prev.subServices!,
+                          items: [
+                            ...(prev.subServices?.items || []),
+                            { icon: "", title: "", description: "" },
+                          ],
+                        },
+                      }));
+                    }}
+                    className="px-3 py-1 bg-blue-600 text-white rounded text-sm hover:bg-blue-700"
+                  >
+                    Add Service
+                  </button>
+                </div>
               </div>
-              <div>
-                <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
-                  Section Title
-                </label>
-                <input
-                  type="text"
-                  value={data.challenges.title}
-                  onChange={(e) =>
-                    updateField("challenges", "title", e.target.value)
-                  }
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
-                  Section Description
-                </label>
-                <textarea
-                  value={data.challenges.description}
-                  onChange={(e) =>
-                    updateField("challenges", "description", e.target.value)
-                  }
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                  rows={2}
-                />
-              </div>
-              {data.challenges.items.map((item, index) => (
-                <div
-                  key={index}
-                  className="border border-gray-300 dark:border-gray-600 rounded p-4 space-y-2"
-                >
-                  <div className="flex justify-between items-center">
-                    <h4 className="font-medium text-gray-900 dark:text-white">
-                      Challenge {index + 1}
-                    </h4>
-                    <button
-                      onClick={() => removeArrayItem("challenges", index)}
-                      className="text-red-600 hover:text-red-800 text-sm"
-                    >
-                      Remove
-                    </button>
-                  </div>
+              {data.subServices && (
+                <>
                   <div>
-                    <label className="block text-xs font-medium mb-1 text-gray-700 dark:text-gray-300">
-                      Title
+                    <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
+                      Section Title
                     </label>
                     <input
                       type="text"
-                      value={item.title}
+                      value={data.subServices.title}
                       onChange={(e) =>
-                        updateArrayItem(
-                          "challenges",
-                          index,
-                          "title",
-                          e.target.value
-                        )
+                        setData((prev) => ({
+                          ...prev,
+                          subServices: {
+                            ...prev.subServices!,
+                            title: e.target.value,
+                          },
+                        }))
                       }
-                      className="w-full px-2 py-1 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
+                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-medium mb-1 text-gray-700 dark:text-gray-300">
-                      Description
+                    <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
+                      Section Description (optional)
                     </label>
                     <textarea
-                      value={item.description}
+                      value={data.subServices.description || ""}
                       onChange={(e) =>
-                        updateArrayItem(
-                          "challenges",
-                          index,
-                          "description",
-                          e.target.value
-                        )
+                        setData((prev) => ({
+                          ...prev,
+                          subServices: {
+                            ...prev.subServices!,
+                            description: e.target.value,
+                          },
+                        }))
                       }
-                      className="w-full px-2 py-1 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
+                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                       rows={2}
                     />
                   </div>
+                  {data.subServices.items.map((item, index) => (
+                    <div
+                      key={index}
+                      className="border border-gray-300 dark:border-gray-600 rounded p-4 space-y-2"
+                    >
+                      <div className="flex justify-between items-center">
+                        <h4 className="font-medium text-gray-900 dark:text-white">
+                          Service {index + 1}
+                        </h4>
+                        <button
+                          onClick={() => {
+                            setData((prev) => ({
+                              ...prev,
+                              subServices: {
+                                ...prev.subServices!,
+                                items:
+                                  prev.subServices?.items?.filter(
+                                    (_, i) => i !== index
+                                  ) || [],
+                              },
+                            }));
+                          }}
+                          className="text-red-600 hover:text-red-800 text-sm"
+                        >
+                          Remove
+                        </button>
+                      </div>
+                      <div>
+                        <IconUpload
+                          label="Icon (emoji, URL, or upload image)"
+                          value={item.icon || ""}
+                          onChange={(url) => {
+                            setData((prev) => ({
+                              ...prev,
+                              subServices: {
+                                ...prev.subServices!,
+                                items:
+                                  prev.subServices?.items?.map((s, i) =>
+                                    i === index
+                                      ? { ...s, icon: url }
+                                      : s
+                                  ) || [],
+                              },
+                            }));
+                          }}
+                          folder="industry-subservices-icons"
+                          className="text-sm"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-medium mb-1 text-gray-700 dark:text-gray-300">
+                          Title
+                        </label>
+                        <input
+                          type="text"
+                          value={item.title}
+                          onChange={(e) => {
+                            setData((prev) => ({
+                              ...prev,
+                              subServices: {
+                                ...prev.subServices!,
+                                items:
+                                  prev.subServices?.items?.map((s, i) =>
+                                    i === index
+                                      ? { ...s, title: e.target.value }
+                                      : s
+                                  ) || [],
+                              },
+                            }));
+                          }}
+                          className="w-full px-2 py-1 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-medium mb-1 text-gray-700 dark:text-gray-300">
+                          Description
+                        </label>
+                        <textarea
+                          value={item.description}
+                          onChange={(e) => {
+                            setData((prev) => ({
+                              ...prev,
+                              subServices: {
+                                ...prev.subServices!,
+                                items:
+                                  prev.subServices?.items?.map((s, i) =>
+                                    i === index
+                                      ? { ...s, description: e.target.value }
+                                      : s
+                                  ) || [],
+                              },
+                            }));
+                          }}
+                          className="w-full px-2 py-1 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
+                          rows={2}
+                        />
+                      </div>
+                    </div>
+                  ))}
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
+                        CTA Button Text (optional)
+                      </label>
+                      <input
+                        type="text"
+                        value={data.subServices.ctaButtonText || ""}
+                        onChange={(e) =>
+                          setData((prev) => ({
+                            ...prev,
+                            subServices: {
+                              ...prev.subServices!,
+                              ctaButtonText: e.target.value,
+                            },
+                          }))
+                        }
+                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
+                        CTA Button Link (optional)
+                      </label>
+                      <input
+                        type="text"
+                        value={data.subServices.ctaButtonLink || ""}
+                        onChange={(e) =>
+                          setData((prev) => ({
+                            ...prev,
+                            subServices: {
+                              ...prev.subServices!,
+                              ctaButtonLink: e.target.value,
+                            },
+                          }))
+                        }
+                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                      />
+                    </div>
+                  </div>
+                </>
+              )}
+            </div>
+          )}
+
+          {activeTab === "partners" && (
+            <div className="space-y-4">
+              <div className="flex justify-between items-center">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                  Partners Section
+                </h3>
+                <div className="flex items-center gap-4">
+                  <label className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+                    <input
+                      type="checkbox"
+                      checked={data.partners?.isActive !== false}
+                      onChange={(e) =>
+                        setData((prev) => ({
+                          ...prev,
+                          partners: {
+                            ...(prev.partners || {
+                              title: "",
+                              partners: [],
+                            }),
+                            isActive: e.target.checked,
+                          },
+                        }))
+                      }
+                      className="rounded"
+                    />
+                    Active
+                  </label>
+                  <button
+                    onClick={() => {
+                      if (!data.partners) {
+                        setData((prev) => ({
+                          ...prev,
+                          partners: {
+                            title: "",
+                            partners: [],
+                          },
+                        }));
+                      }
+                      setData((prev) => ({
+                        ...prev,
+                        partners: {
+                          ...prev.partners!,
+                          partners: [
+                            ...(prev.partners?.partners || []),
+                            { name: "", logo: "" },
+                          ],
+                        },
+                      }));
+                    }}
+                    className="px-3 py-1 bg-blue-600 text-white rounded text-sm hover:bg-blue-700"
+                  >
+                    Add Partner
+                  </button>
                 </div>
-              ))}
+              </div>
+              {data.partners && (
+                <>
+                  <div>
+                    <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
+                      Section Title
+                    </label>
+                    <input
+                      type="text"
+                      value={data.partners.title}
+                      onChange={(e) =>
+                        setData((prev) => ({
+                          ...prev,
+                          partners: {
+                            ...prev.partners!,
+                            title: e.target.value,
+                          },
+                        }))
+                      }
+                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
+                      Section Description (optional)
+                    </label>
+                    <textarea
+                      value={data.partners.description || ""}
+                      onChange={(e) =>
+                        setData((prev) => ({
+                          ...prev,
+                          partners: {
+                            ...prev.partners!,
+                            description: e.target.value,
+                          },
+                        }))
+                      }
+                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                      rows={2}
+                    />
+                  </div>
+                  {data.partners.partners.map((partner, index) => (
+                    <div
+                      key={index}
+                      className="border border-gray-300 dark:border-gray-600 rounded p-4 space-y-2"
+                    >
+                      <div className="flex justify-between items-center">
+                        <h4 className="font-medium text-gray-900 dark:text-white">
+                          Partner {index + 1}
+                        </h4>
+                        <button
+                          onClick={() => {
+                            setData((prev) => ({
+                              ...prev,
+                              partners: {
+                                ...prev.partners!,
+                                partners:
+                                  prev.partners?.partners?.filter(
+                                    (_, i) => i !== index
+                                  ) || [],
+                              },
+                            }));
+                          }}
+                          className="text-red-600 hover:text-red-800 text-sm"
+                        >
+                          Remove
+                        </button>
+                      </div>
+                      <div>
+                        <label className="block text-xs font-medium mb-1 text-gray-700 dark:text-gray-300">
+                          Name (optional)
+                        </label>
+                        <input
+                          type="text"
+                          value={partner.name || ""}
+                          onChange={(e) => {
+                            setData((prev) => ({
+                              ...prev,
+                              partners: {
+                                ...prev.partners!,
+                                partners:
+                                  prev.partners?.partners?.map((p, i) =>
+                                    i === index
+                                      ? { ...p, name: e.target.value }
+                                      : p
+                                  ) || [],
+                              },
+                            }));
+                          }}
+                          className="w-full px-2 py-1 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
+                        />
+                      </div>
+                      <div>
+                        <IconUpload
+                          label="Logo (emoji, URL, or upload image)"
+                          value={partner.logo || ""}
+                          onChange={(url) => {
+                            setData((prev) => ({
+                              ...prev,
+                              partners: {
+                                ...prev.partners!,
+                                partners:
+                                  prev.partners?.partners?.map((p, i) =>
+                                    i === index
+                                      ? { ...p, logo: url }
+                                      : p
+                                  ) || [],
+                              },
+                            }));
+                          }}
+                          folder="industry-partners-logos"
+                          className="text-sm"
+                        />
+                      </div>
+                    </div>
+                  ))}
+                </>
+              )}
+            </div>
+          )}
+
+          {activeTab === "cards" && (
+            <div className="space-y-4">
+              <div className="flex justify-between items-center">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                  Cards Section
+                </h3>
+                <div className="flex items-center gap-4">
+                  <label className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+                    <input
+                      type="checkbox"
+                      checked={data.cards?.isActive !== false}
+                      onChange={(e) =>
+                        setData((prev) => ({
+                          ...prev,
+                          cards: {
+                            ...(prev.cards || {
+                              title: "",
+                              items: [],
+                            }),
+                            isActive: e.target.checked,
+                          },
+                        }))
+                      }
+                      className="rounded"
+                    />
+                    Active
+                  </label>
+                  <button
+                    onClick={() => {
+                      if (!data.cards) {
+                        setData((prev) => ({
+                          ...prev,
+                          cards: {
+                            title: "",
+                            items: [],
+                          },
+                        }));
+                      }
+                      setData((prev) => ({
+                        ...prev,
+                        cards: {
+                          ...prev.cards!,
+                          items: [
+                            ...(prev.cards?.items || []),
+                            {
+                              quote: "",
+                              author: "",
+                              role: "",
+                              company: "",
+                            },
+                          ],
+                        },
+                      }));
+                    }}
+                    className="px-3 py-1 bg-blue-600 text-white rounded text-sm hover:bg-blue-700"
+                  >
+                    Add Card
+                  </button>
+                </div>
+              </div>
+              {data.cards && (
+                <>
+                  <div>
+                    <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
+                      Section Title
+                    </label>
+                    <input
+                      type="text"
+                      value={data.cards.title}
+                      onChange={(e) =>
+                        setData((prev) => ({
+                          ...prev,
+                          cards: {
+                            ...prev.cards!,
+                            title: e.target.value,
+                          },
+                        }))
+                      }
+                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
+                      Section Description (optional)
+                    </label>
+                    <textarea
+                      value={data.cards.description || ""}
+                      onChange={(e) =>
+                        setData((prev) => ({
+                          ...prev,
+                          cards: {
+                            ...prev.cards!,
+                            description: e.target.value,
+                          },
+                        }))
+                      }
+                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                      rows={2}
+                    />
+                  </div>
+                  <div>
+                    <label className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+                      <input
+                        type="checkbox"
+                        checked={data.cards.showStars !== false}
+                        onChange={(e) =>
+                          setData((prev) => ({
+                            ...prev,
+                            cards: {
+                              ...prev.cards!,
+                              showStars: e.target.checked,
+                            },
+                          }))
+                        }
+                        className="rounded"
+                      />
+                      Show Star Ratings
+                    </label>
+                  </div>
+                  {data.cards.items.map((item, index) => (
+                    <div
+                      key={index}
+                      className="border border-gray-300 dark:border-gray-600 rounded p-4 space-y-2"
+                    >
+                      <div className="flex justify-between items-center">
+                        <h4 className="font-medium text-gray-900 dark:text-white">
+                          Card {index + 1}
+                        </h4>
+                        <button
+                          onClick={() => {
+                            setData((prev) => ({
+                              ...prev,
+                              cards: {
+                                ...prev.cards!,
+                                items:
+                                  prev.cards?.items?.filter(
+                                    (_, i) => i !== index
+                                  ) || [],
+                              },
+                            }));
+                          }}
+                          className="text-red-600 hover:text-red-800 text-sm"
+                        >
+                          Remove
+                        </button>
+                      </div>
+                      <div>
+                        <label className="block text-xs font-medium mb-1 text-gray-700 dark:text-gray-300">
+                          Quote
+                        </label>
+                        <textarea
+                          value={item.quote || ""}
+                          onChange={(e) => {
+                            setData((prev) => ({
+                              ...prev,
+                              cards: {
+                                ...prev.cards!,
+                                items:
+                                  prev.cards?.items?.map((c, i) =>
+                                    i === index
+                                      ? { ...c, quote: e.target.value }
+                                      : c
+                                  ) || [],
+                              },
+                            }));
+                          }}
+                          className="w-full px-2 py-1 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
+                          rows={3}
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-medium mb-1 text-gray-700 dark:text-gray-300">
+                          Author
+                        </label>
+                        <input
+                          type="text"
+                          value={item.author || ""}
+                          onChange={(e) => {
+                            setData((prev) => ({
+                              ...prev,
+                              cards: {
+                                ...prev.cards!,
+                                items:
+                                  prev.cards?.items?.map((c, i) =>
+                                    i === index
+                                      ? { ...c, author: e.target.value }
+                                      : c
+                                  ) || [],
+                              },
+                            }));
+                          }}
+                          className="w-full px-2 py-1 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-medium mb-1 text-gray-700 dark:text-gray-300">
+                          Role (optional)
+                        </label>
+                        <input
+                          type="text"
+                          value={item.role || ""}
+                          onChange={(e) => {
+                            setData((prev) => ({
+                              ...prev,
+                              cards: {
+                                ...prev.cards!,
+                                items:
+                                  prev.cards?.items?.map((c, i) =>
+                                    i === index
+                                      ? { ...c, role: e.target.value }
+                                      : c
+                                  ) || [],
+                              },
+                            }));
+                          }}
+                          className="w-full px-2 py-1 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-medium mb-1 text-gray-700 dark:text-gray-300">
+                          Company (optional)
+                        </label>
+                        <input
+                          type="text"
+                          value={item.company || ""}
+                          onChange={(e) => {
+                            setData((prev) => ({
+                              ...prev,
+                              cards: {
+                                ...prev.cards!,
+                                items:
+                                  prev.cards?.items?.map((c, i) =>
+                                    i === index
+                                      ? { ...c, company: e.target.value }
+                                      : c
+                                  ) || [],
+                              },
+                            }));
+                          }}
+                          className="w-full px-2 py-1 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
+                        />
+                      </div>
+                    </div>
+                  ))}
+                </>
+              )}
+            </div>
+          )}
+
+          {activeTab === "portfolio" && (
+            <div className="space-y-4">
+              <div className="flex justify-between items-center">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                  Portfolio Section
+                </h3>
+                <div className="flex items-center gap-4">
+                  <label className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+                    <input
+                      type="checkbox"
+                      checked={data.portfolio?.isActive !== false}
+                      onChange={(e) =>
+                        setData((prev) => ({
+                          ...prev,
+                          portfolio: {
+                            ...(prev.portfolio || {
+                              title: "",
+                              projects: [],
+                            }),
+                            isActive: e.target.checked,
+                          },
+                        }))
+                      }
+                      className="rounded"
+                    />
+                    Active
+                  </label>
+                  <button
+                    onClick={() => {
+                      if (!data.portfolio) {
+                        setData((prev) => ({
+                          ...prev,
+                          portfolio: {
+                            title: "",
+                            description: "",
+                            projects: [
+                              {
+                                title: "",
+                                description: "",
+                                image: "",
+                                category: "",
+                                link: "",
+                                technologies: [],
+                              },
+                            ],
+                          },
+                        }));
+                      } else {
+                        setData((prev) => ({
+                          ...prev,
+                          portfolio: {
+                            ...prev.portfolio!,
+                            projects: [
+                              ...(prev.portfolio?.projects || []),
+                              {
+                                title: "",
+                                description: "",
+                                image: "",
+                                category: "",
+                                link: "",
+                                technologies: [],
+                              },
+                            ],
+                          },
+                        }));
+                      }
+                    }}
+                    className="px-3 py-1 bg-blue-600 text-white rounded text-sm hover:bg-blue-700"
+                  >
+                    Add Project
+                  </button>
+                </div>
+              </div>
+              {data.portfolio && (
+                <>
+                  <div>
+                    <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
+                      Section Title
+                    </label>
+                    <input
+                      type="text"
+                      value={data.portfolio.title}
+                      onChange={(e) =>
+                        setData((prev) => ({
+                          ...prev,
+                          portfolio: {
+                            ...prev.portfolio!,
+                            title: e.target.value,
+                          },
+                        }))
+                      }
+                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
+                      Section Description (optional)
+                    </label>
+                    <textarea
+                      value={data.portfolio.description || ""}
+                      onChange={(e) =>
+                        setData((prev) => ({
+                          ...prev,
+                          portfolio: {
+                            ...prev.portfolio!,
+                            description: e.target.value,
+                          },
+                        }))
+                      }
+                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                      rows={2}
+                    />
+                  </div>
+                  {data.portfolio.projects.map((project, index) => (
+                    <div
+                      key={index}
+                      className="border border-gray-300 dark:border-gray-600 rounded p-4 space-y-2"
+                    >
+                      <div className="flex justify-between items-center">
+                        <h4 className="font-medium text-gray-900 dark:text-white">
+                          Project {index + 1}
+                        </h4>
+                        <button
+                          onClick={() => {
+                            setData((prev) => ({
+                              ...prev,
+                              portfolio: {
+                                ...prev.portfolio!,
+                                projects:
+                                  prev.portfolio?.projects?.filter(
+                                    (_, i) => i !== index
+                                  ) || [],
+                              },
+                            }));
+                          }}
+                          className="text-red-600 hover:text-red-800 text-sm"
+                        >
+                          Remove
+                        </button>
+                      </div>
+                      <FileUpload
+                        label="Project Image (optional)"
+                        value={project.image || ""}
+                        onChange={(url) => {
+                          setData((prev) => ({
+                            ...prev,
+                            portfolio: {
+                              ...prev.portfolio!,
+                              projects:
+                                prev.portfolio?.projects?.map((p, i) =>
+                                  i === index ? { ...p, image: url } : p
+                                ) || [],
+                            },
+                          }));
+                        }}
+                        type="image"
+                        folder="industry-portfolio"
+                      />
+                      <div>
+                        <label className="block text-xs font-medium mb-1 text-gray-700 dark:text-gray-300">
+                          Category (optional)
+                        </label>
+                        <input
+                          type="text"
+                          value={project.category || ""}
+                          onChange={(e) => {
+                            setData((prev) => ({
+                              ...prev,
+                              portfolio: {
+                                ...prev.portfolio!,
+                                projects:
+                                  prev.portfolio?.projects?.map((p, i) =>
+                                    i === index
+                                      ? { ...p, category: e.target.value }
+                                      : p
+                                  ) || [],
+                              },
+                            }));
+                          }}
+                          className="w-full px-2 py-1 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
+                          placeholder="Industry Solutions"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-medium mb-1 text-gray-700 dark:text-gray-300">
+                          Title
+                        </label>
+                        <input
+                          type="text"
+                          value={project.title}
+                          onChange={(e) => {
+                            setData((prev) => ({
+                              ...prev,
+                              portfolio: {
+                                ...prev.portfolio!,
+                                projects:
+                                  prev.portfolio?.projects?.map((p, i) =>
+                                    i === index
+                                      ? { ...p, title: e.target.value }
+                                      : p
+                                  ) || [],
+                              },
+                            }));
+                          }}
+                          className="w-full px-2 py-1 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-medium mb-1 text-gray-700 dark:text-gray-300">
+                          Description
+                        </label>
+                        <textarea
+                          value={project.description}
+                          onChange={(e) => {
+                            setData((prev) => ({
+                              ...prev,
+                              portfolio: {
+                                ...prev.portfolio!,
+                                projects:
+                                  prev.portfolio?.projects?.map((p, i) =>
+                                    i === index
+                                      ? { ...p, description: e.target.value }
+                                      : p
+                                  ) || [],
+                              },
+                            }));
+                          }}
+                          className="w-full px-2 py-1 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
+                          rows={3}
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-medium mb-1 text-gray-700 dark:text-gray-300">
+                          Link (optional)
+                        </label>
+                        <input
+                          type="text"
+                          value={project.link || ""}
+                          onChange={(e) => {
+                            setData((prev) => ({
+                              ...prev,
+                              portfolio: {
+                                ...prev.portfolio!,
+                                projects:
+                                  prev.portfolio?.projects?.map((p, i) =>
+                                    i === index
+                                      ? { ...p, link: e.target.value }
+                                      : p
+                                  ) || [],
+                              },
+                            }));
+                          }}
+                          className="w-full px-2 py-1 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
+                          placeholder="/project/1"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-medium mb-1 text-gray-700 dark:text-gray-300">
+                          Technologies (comma-separated, optional)
+                        </label>
+                        <input
+                          type="text"
+                          value={
+                            Array.isArray(project.technologies)
+                              ? project.technologies.join(", ")
+                              : ""
+                          }
+                          onChange={(e) => {
+                            const techs = e.target.value
+                              .split(",")
+                              .map((t) => t.trim())
+                              .filter((t) => t);
+                            setData((prev) => ({
+                              ...prev,
+                              portfolio: {
+                                ...prev.portfolio!,
+                                projects:
+                                  prev.portfolio?.projects?.map((p, i) =>
+                                    i === index
+                                      ? { ...p, technologies: techs }
+                                      : p
+                                  ) || [],
+                              },
+                            }));
+                          }}
+                          className="w-full px-2 py-1 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
+                          placeholder="React, Node.js, TypeScript"
+                        />
+                      </div>
+                    </div>
+                  ))}
+                </>
+              )}
             </div>
           )}
 
@@ -622,25 +1610,48 @@ export default function IndustryTemplateEditor({
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
                   Technologies Section
                 </h3>
-                <button
-                  onClick={() => {
-                    if (!data.technologies) {
-                      setData((prev) => ({
-                        ...prev,
-                        technologies: {
-                          title: "",
-                          description: "",
-                          items: [{ name: "", icon: "" }],
-                        },
-                      }));
-                    } else {
-                      addArrayItem("technologies", { name: "", icon: "" });
-                    }
-                  }}
-                  className="px-3 py-1 bg-blue-600 text-white rounded text-sm hover:bg-blue-700"
-                >
-                  Add Technology
-                </button>
+                <div className="flex items-center gap-4">
+                  <label className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+                    <input
+                      type="checkbox"
+                      checked={data.technologies?.isActive !== false}
+                      onChange={(e) =>
+                        setData((prev) => ({
+                          ...prev,
+                          technologies: {
+                            ...(prev.technologies || {
+                              title: "",
+                              description: "",
+                              items: [],
+                            }),
+                            isActive: e.target.checked,
+                          },
+                        }))
+                      }
+                      className="rounded"
+                    />
+                    Active
+                  </label>
+                  <button
+                    onClick={() => {
+                      if (!data.technologies) {
+                        setData((prev) => ({
+                          ...prev,
+                          technologies: {
+                            title: "",
+                            description: "",
+                            items: [{ name: "", icon: "" }],
+                          },
+                        }));
+                      } else {
+                        addArrayItem("technologies", { name: "", icon: "" });
+                      }
+                    }}
+                    className="px-3 py-1 bg-blue-600 text-white rounded text-sm hover:bg-blue-700"
+                  >
+                    Add Technology
+                  </button>
+                </div>
               </div>
               {data.technologies && (
                 <>
@@ -694,51 +1705,28 @@ export default function IndustryTemplateEditor({
                           </button>
                         </div>
                         <div>
-                          <label className="block text-xs font-medium mb-1 text-gray-700 dark:text-gray-300">
-                            Logo Image URL or Emoji
-                          </label>
-                          <input
-                            type="text"
+                          <IconUpload
+                            label="Logo Image (emoji, URL, or upload image)"
                             value={item.icon || ""}
-                            onChange={(e) =>
-                              updateArrayItem(
-                                "technologies",
-                                index,
-                                "icon",
-                                e.target.value
-                              )
-                            }
-                            className="w-full px-2 py-1 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
-                            placeholder="https://example.com/logo.png or 🚀"
+                            onChange={(url) => {
+                              setData((prev) => ({
+                                ...prev,
+                                technologies: {
+                                  ...prev.technologies!,
+                                  items:
+                                    prev.technologies?.items?.map((t, i) =>
+                                      i === index ? { ...t, icon: url } : t
+                                    ) || [],
+                                },
+                              }));
+                            }}
+                            folder="industry-technologies-icons"
+                            className="text-sm"
                           />
                           <p className="text-xs text-gray-500 mt-1">
-                            Use logo image URLs or emojis. Only the logo/emoji
+                            Use logo image URLs, emojis, or upload an image. Only the logo/emoji
                             will be displayed.
                           </p>
-                          {item.icon &&
-                            (item.icon.startsWith("http") ||
-                              item.icon.startsWith("/")) && (
-                              <div className="mt-2 relative h-12 border rounded p-2 bg-white">
-                                <Image
-                                  src={item.icon}
-                                  alt="Logo"
-                                  width={48}
-                                  height={48}
-                                  className="object-contain"
-                                  unoptimized
-                                  onError={(e) => {
-                                    e.currentTarget.style.display = "none";
-                                  }}
-                                />
-                              </div>
-                            )}
-                          {item.icon &&
-                            !item.icon.startsWith("http") &&
-                            !item.icon.startsWith("/") && (
-                              <div className="mt-2 p-2 border rounded bg-white text-center">
-                                <span className="text-3xl">{item.icon}</span>
-                              </div>
-                            )}
                         </div>
                       </div>
                     )
@@ -748,301 +1736,189 @@ export default function IndustryTemplateEditor({
             </div>
           )}
 
-          {activeTab === "benefits" && (
-            <div className="space-y-4">
-              <div className="flex justify-between items-center">
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                  Benefits Section
-                </h3>
-                <button
-                  onClick={() => {
-                    if (!data.benefits) {
-                      setData((prev) => ({
-                        ...prev,
-                        benefits: {
-                          title: "",
-                          description: "",
-                          items: [{ title: "", description: "" }],
-                        },
-                      }));
-                    } else {
-                      addArrayItem("benefits", { title: "", description: "" });
-                    }
-                  }}
-                  className="px-3 py-1 bg-blue-600 text-white rounded text-sm hover:bg-blue-700"
-                >
-                  Add Benefit
-                </button>
-              </div>
-              {data.benefits && (
-                <>
-                  <div>
-                    <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
-                      Section Title
-                    </label>
-                    <input
-                      type="text"
-                      value={data.benefits.title}
-                      onChange={(e) =>
-                        updateField("benefits", "title", e.target.value)
-                      }
-                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
-                      Section Description
-                    </label>
-                    <textarea
-                      value={data.benefits.description}
-                      onChange={(e) =>
-                        updateField("benefits", "description", e.target.value)
-                      }
-                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                      rows={2}
-                    />
-                  </div>
-                  {data.benefits.items.map(
-                    (
-                      item: { title: string; description: string },
-                      index: number
-                    ) => (
-                      <div
-                        key={index}
-                        className="border border-gray-300 dark:border-gray-600 rounded p-4 space-y-2"
-                      >
-                        <div className="flex justify-between items-center">
-                          <h4 className="font-medium text-gray-900 dark:text-white">
-                            Benefit {index + 1}
-                          </h4>
-                          <button
-                            onClick={() => removeArrayItem("benefits", index)}
-                            className="text-red-600 hover:text-red-800 text-sm"
-                          >
-                            Remove
-                          </button>
-                        </div>
-                        <div>
-                          <label className="block text-xs font-medium mb-1 text-gray-700 dark:text-gray-300">
-                            Title
-                          </label>
-                          <input
-                            type="text"
-                            value={item.title}
-                            onChange={(e) =>
-                              updateArrayItem(
-                                "benefits",
-                                index,
-                                "title",
-                                e.target.value
-                              )
-                            }
-                            className="w-full px-2 py-1 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
-                          />
-                        </div>
-                        <div>
-                          <label className="block text-xs font-medium mb-1 text-gray-700 dark:text-gray-300">
-                            Description
-                          </label>
-                          <textarea
-                            value={item.description}
-                            onChange={(e) =>
-                              updateArrayItem(
-                                "benefits",
-                                index,
-                                "description",
-                                e.target.value
-                              )
-                            }
-                            className="w-full px-2 py-1 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
-                            rows={2}
-                          />
-                        </div>
-                      </div>
-                    )
-                  )}
-                </>
-              )}
-            </div>
-          )}
-
-          {activeTab === "caseStudies" && (
-            <div className="space-y-4">
-              <div className="flex justify-between items-center">
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                  Case Studies Section
-                </h3>
-                <button
-                  onClick={() =>
-                    addArrayItem("caseStudies", {
-                      title: "",
-                      description: "",
-                      result: "",
-                    })
-                  }
-                  className="px-3 py-1 bg-blue-600 text-white rounded text-sm hover:bg-blue-700"
-                >
-                  Add Case Study
-                </button>
-              </div>
-              <div>
-                <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
-                  Section Title
-                </label>
-                <input
-                  type="text"
-                  value={data.caseStudies.title}
-                  onChange={(e) =>
-                    updateField("caseStudies", "title", e.target.value)
-                  }
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
-                  Section Description
-                </label>
-                <textarea
-                  value={data.caseStudies.description}
-                  onChange={(e) =>
-                    updateField("caseStudies", "description", e.target.value)
-                  }
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                  rows={2}
-                />
-              </div>
-              {data.caseStudies.items.map((item, index) => (
-                <div
-                  key={index}
-                  className="border border-gray-300 dark:border-gray-600 rounded p-4 space-y-2"
-                >
-                  <div className="flex justify-between items-center">
-                    <h4 className="font-medium text-gray-900 dark:text-white">
-                      Case Study {index + 1}
-                    </h4>
-                    <button
-                      onClick={() => removeArrayItem("caseStudies", index)}
-                      className="text-red-600 hover:text-red-800 text-sm"
-                    >
-                      Remove
-                    </button>
-                  </div>
-                  <div>
-                    <label className="block text-xs font-medium mb-1 text-gray-700 dark:text-gray-300">
-                      Title
-                    </label>
-                    <input
-                      type="text"
-                      value={item.title}
-                      onChange={(e) =>
-                        updateArrayItem(
-                          "caseStudies",
-                          index,
-                          "title",
-                          e.target.value
-                        )
-                      }
-                      className="w-full px-2 py-1 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-xs font-medium mb-1 text-gray-700 dark:text-gray-300">
-                      Description
-                    </label>
-                    <textarea
-                      value={item.description}
-                      onChange={(e) =>
-                        updateArrayItem(
-                          "caseStudies",
-                          index,
-                          "description",
-                          e.target.value
-                        )
-                      }
-                      className="w-full px-2 py-1 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
-                      rows={2}
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-xs font-medium mb-1 text-gray-700 dark:text-gray-300">
-                      Result (optional)
-                    </label>
-                    <input
-                      type="text"
-                      value={item.result || ""}
-                      onChange={(e) =>
-                        updateArrayItem(
-                          "caseStudies",
-                          index,
-                          "result",
-                          e.target.value
-                        )
-                      }
-                      className="w-full px-2 py-1 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
-                      placeholder="Result achieved"
-                    />
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-
-          {activeTab === "cta" && (
+          {activeTab === "sectionOrder" && (
             <div className="space-y-4">
               <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                CTA Section
+                Section Order
               </h3>
-              <div>
-                <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
-                  Title
-                </label>
-                <input
-                  type="text"
-                  value={data.cta.title}
-                  onChange={(e) => updateField("cta", "title", e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
-                  Description
-                </label>
-                <textarea
-                  value={data.cta.description}
-                  onChange={(e) =>
-                    updateField("cta", "description", e.target.value)
-                  }
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                  rows={3}
-                />
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
-                    Button Text
-                  </label>
-                  <input
-                    type="text"
-                    value={data.cta.buttonText}
-                    onChange={(e) =>
-                      updateField("cta", "buttonText", e.target.value)
+              <p className="text-sm text-gray-600 dark:text-gray-400">
+                Drag and drop sections to reorder them, or use the up/down
+                buttons.
+              </p>
+
+              <div className="space-y-2">
+                {(
+                  data.sectionOrder || [
+                    "hero",
+                    "overview",
+                    "stats",
+                    "subServices",
+                    "partners",
+                    "cards",
+                    "portfolio",
+                    "technologies",
+                  ]
+                ).map((sectionKey, index) => {
+                  const sectionLabels: Record<string, string> = {
+                    hero: "Hero",
+                    overview: "Overview",
+                    stats: "Stats",
+                    subServices: "Sub Services",
+                    partners: "Partners",
+                    cards: "Cards",
+                    portfolio: "Portfolio",
+                    technologies: "Technologies",
+                  };
+
+                  const currentOrder = data.sectionOrder || [
+                    "hero",
+                    "overview",
+                    "stats",
+                    "subServices",
+                    "partners",
+                    "cards",
+                    "portfolio",
+                    "technologies",
+                  ];
+
+                  const moveSection = (fromIndex: number, toIndex: number) => {
+                    const newOrder = [...currentOrder];
+                    const [removed] = newOrder.splice(fromIndex, 1);
+                    newOrder.splice(toIndex, 0, removed);
+                    setData((prev) => ({
+                      ...prev,
+                      sectionOrder: newOrder,
+                    }));
+                  };
+
+                  const handleDragStart = (
+                    e: React.DragEvent<HTMLDivElement>,
+                    index: number
+                  ) => {
+                    e.dataTransfer.effectAllowed = "move";
+                    e.dataTransfer.setData("text/html", String(index));
+                  };
+
+                  const handleDragOver = (
+                    e: React.DragEvent<HTMLDivElement>
+                  ) => {
+                    e.preventDefault();
+                    e.dataTransfer.dropEffect = "move";
+                  };
+
+                  const handleDrop = (
+                    e: React.DragEvent<HTMLDivElement>,
+                    dropIndex: number
+                  ) => {
+                    e.preventDefault();
+                    const dragIndex = parseInt(
+                      e.dataTransfer.getData("text/html")
+                    );
+                    if (dragIndex !== dropIndex) {
+                      moveSection(dragIndex, dropIndex);
                     }
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
-                    Button Link
-                  </label>
-                  <input
-                    type="text"
-                    value={data.cta.buttonLink}
-                    onChange={(e) =>
-                      updateField("cta", "buttonLink", e.target.value)
-                    }
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                  />
-                </div>
+                  };
+
+                  return (
+                    <div
+                      key={sectionKey}
+                      draggable
+                      onDragStart={(e) => handleDragStart(e, index)}
+                      onDragOver={handleDragOver}
+                      onDrop={(e) => handleDrop(e, index)}
+                      className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg cursor-move hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                    >
+                      {/* Drag Handle */}
+                      <div className="text-gray-400 dark:text-gray-500 cursor-grab active:cursor-grabbing">
+                        <svg
+                          className="w-5 h-5"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M4 8h16M4 16h16"
+                          />
+                        </svg>
+                      </div>
+
+                      {/* Section Label */}
+                      <div className="flex-1">
+                        <span className="font-medium text-gray-900 dark:text-white">
+                          {sectionLabels[sectionKey] || sectionKey}
+                        </span>
+                        <span className="text-xs text-gray-500 dark:text-gray-400 ml-2">
+                          ({sectionKey})
+                        </span>
+                      </div>
+
+                      {/* Up/Down Buttons */}
+                      <div className="flex flex-col gap-1">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            if (index > 0) {
+                              moveSection(index, index - 1);
+                            }
+                          }}
+                          disabled={index === 0}
+                          className="p-1 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                          aria-label="Move up"
+                        >
+                          <svg
+                            className="w-4 h-4"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M5 15l7-7 7 7"
+                            />
+                          </svg>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            if (index < currentOrder.length - 1) {
+                              moveSection(index, index + 1);
+                            }
+                          }}
+                          disabled={index === currentOrder.length - 1}
+                          className="p-1 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                          aria-label="Move down"
+                        >
+                          <svg
+                            className="w-4 h-4"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M19 9l-7 7-7-7"
+                            />
+                          </svg>
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+
+              <div className="mt-4 p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
+                <p className="text-sm text-blue-800 dark:text-blue-200">
+                  <strong>Tip:</strong> Drag sections to reorder, or use the
+                  up/down arrows. Sections will appear on the page in this
+                  order.
+                </p>
               </div>
             </div>
           )}

@@ -1,11 +1,12 @@
 "use client";
 
-import Image from "next/image";
 import { useState, useEffect, useCallback } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import SectionRenderer from "@/components/sections/SectionRenderer";
 import { ISection } from "@/models/Section";
+import FileUpload from "@/components/admin/FileUpload";
+import IconUpload from "@/components/admin/IconUpload";
 
 interface Section {
   _id: string;
@@ -1048,45 +1049,29 @@ export default function PageSectionsAdmin() {
                         className="w-full px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600"
                       />
                     </div>
-                    <div>
-                      <label className="block text-sm font-medium mb-1">
-                        Background Image URL
-                      </label>
-                      <input
-                        type="text"
-                        placeholder="https://example.com/image.jpg"
-                        value={
-                          (sectionForm.content.backgroundImage as string) || ""
-                        }
-                        onChange={(e) =>
-                          updateContentField("backgroundImage", e.target.value)
-                        }
-                        className="w-full px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600"
-                      />
-                      <p className="text-xs text-gray-500 mt-1">
-                        Image will appear as background with low opacity
-                      </p>
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium mb-1">
-                        Background Video URL
-                      </label>
-                      <input
-                        type="text"
-                        placeholder="https://example.com/video.mp4"
-                        value={
-                          (sectionForm.content.backgroundVideo as string) || ""
-                        }
-                        onChange={(e) =>
-                          updateContentField("backgroundVideo", e.target.value)
-                        }
-                        className="w-full px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600"
-                      />
-                      <p className="text-xs text-gray-500 mt-1">
-                        Video will auto-play, loop, and be muted. Supports .mp4
-                        and .webm
-                      </p>
-                    </div>
+                    <FileUpload
+                      label="Background Image"
+                      value={
+                        (sectionForm.content.backgroundImage as string) || ""
+                      }
+                      onChange={(url) =>
+                        updateContentField("backgroundImage", url)
+                      }
+                      type="image"
+                      folder="hero-backgrounds"
+                    />
+                    <FileUpload
+                      label="Background Video"
+                      value={
+                        (sectionForm.content.backgroundVideo as string) || ""
+                      }
+                      onChange={(url) =>
+                        updateContentField("backgroundVideo", url)
+                      }
+                      type="video"
+                      folder="hero-backgrounds"
+                      accept="video/mp4,video/webm"
+                    />
                     <div>
                       <label className="block text-sm font-medium mb-1">
                         Background Opacity (0-1)
@@ -1150,35 +1135,15 @@ export default function PageSectionsAdmin() {
                               Remove
                             </button>
                           </div>
-                          <div>
-                            <label className="block text-xs text-gray-500 mb-1">
-                              Icon (Emoji, URL, or Image URL)
-                            </label>
-                            <input
-                              type="text"
-                              placeholder="📱 or https://example.com/icon.png"
-                              value={service.icon || ""}
-                              onChange={(e) =>
-                                updateService(index, "icon", e.target.value)
-                              }
-                              className="w-full mb-2 px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600"
-                            />
-                            {service.icon &&
-                              (service.icon.startsWith("http") ||
-                                service.icon.startsWith("/")) && (
-                                <div className="mb-2">
-                                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                                  <img
-                                    src={service.icon}
-                                    alt="Icon preview"
-                                    className="w-12 h-12 object-contain border rounded"
-                                    onError={(e) => {
-                                      e.currentTarget.style.display = "none";
-                                    }}
-                                  />
-                                </div>
-                              )}
-                          </div>
+                          <IconUpload
+                            label="Icon (Emoji, URL, or Image)"
+                            value={service.icon || ""}
+                            onChange={(value) =>
+                              updateService(index, "icon", value)
+                            }
+                            folder="service-icons"
+                            placeholder="📱 or https://example.com/icon.png or upload image"
+                          />
                           <input
                             type="text"
                             placeholder="Title"
@@ -1343,35 +1308,15 @@ export default function PageSectionsAdmin() {
                               Remove
                             </button>
                           </div>
-                          <div>
-                            <label className="block text-xs text-gray-500 mb-1">
-                              Icon (Emoji, URL, or Image URL)
-                            </label>
-                            <input
-                              type="text"
-                              placeholder="🏠 or https://example.com/icon.png"
-                              value={industry.icon || ""}
-                              onChange={(e) =>
-                                updateIndustry(index, "icon", e.target.value)
-                              }
-                              className="w-full mb-2 px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600"
-                            />
-                            {industry.icon &&
-                              (industry.icon.startsWith("http") ||
-                                industry.icon.startsWith("/")) && (
-                                <div className="mb-2">
-                                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                                  <img
-                                    src={industry.icon}
-                                    alt="Icon preview"
-                                    className="w-12 h-12 object-contain border rounded"
-                                    onError={(e) => {
-                                      e.currentTarget.style.display = "none";
-                                    }}
-                                  />
-                                </div>
-                              )}
-                          </div>
+                          <IconUpload
+                            label="Icon (Emoji, URL, or Image)"
+                            value={industry.icon || ""}
+                            onChange={(value) =>
+                              updateIndustry(index, "icon", value)
+                            }
+                            folder="industry-icons"
+                            placeholder="🏠 or https://example.com/icon.png or upload image"
+                          />
                           <input
                             type="text"
                             placeholder="Industry Name"
@@ -1404,20 +1349,13 @@ export default function PageSectionsAdmin() {
                         placeholder="About us content (plain text only)"
                       />
                     </div>
-                    <div>
-                      <label className="block text-sm font-medium mb-1">
-                        About Image URL
-                      </label>
-                      <input
-                        type="text"
-                        value={sectionForm.content.aboutImage || ""}
-                        onChange={(e) =>
-                          updateContentField("aboutImage", e.target.value)
-                        }
-                        className="w-full px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600"
-                        placeholder="https://example.com/image.jpg"
-                      />
-                    </div>
+                    <FileUpload
+                      label="About Image"
+                      value={(sectionForm.content.aboutImage as string) || ""}
+                      onChange={(url) => updateContentField("aboutImage", url)}
+                      type="image"
+                      folder="about-images"
+                    />
                     <div>
                       <label className="block text-sm font-medium mb-1">
                         Link Text
@@ -1483,18 +1421,15 @@ export default function PageSectionsAdmin() {
                                 Remove
                               </button>
                             </div>
-                            <input
-                              type="text"
-                              placeholder="Image URL"
+                            <FileUpload
+                              label="Partnership Image"
                               value={partnership.image || ""}
-                              onChange={(e) =>
-                                updatePartnership(
-                                  index,
-                                  "image",
-                                  e.target.value
-                                )
+                              onChange={(url) =>
+                                updatePartnership(index, "image", url)
                               }
-                              className="w-full mb-2 px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600"
+                              type="image"
+                              folder="partnerships"
+                              className="mb-2"
                             />
                             <input
                               type="text"
@@ -1913,20 +1848,13 @@ export default function PageSectionsAdmin() {
                 {/* Features specific fields */}
                 {sectionForm.type === "features" && (
                   <>
-                    <div>
-                      <label className="block text-sm font-medium mb-1">
-                        Image URL
-                      </label>
-                      <input
-                        type="text"
-                        value={sectionForm.content.image || ""}
-                        onChange={(e) =>
-                          updateContentField("image", e.target.value)
-                        }
-                        className="w-full px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600"
-                        placeholder="https://example.com/image.jpg"
-                      />
-                    </div>
+                    <FileUpload
+                      label="Feature Image"
+                      value={(sectionForm.content.image as string) || ""}
+                      onChange={(url) => updateContentField("image", url)}
+                      type="image"
+                      folder="features"
+                    />
                     <div>
                       <div className="flex justify-between items-center mb-2">
                         <label className="block text-sm font-medium">
@@ -2221,14 +2149,15 @@ export default function PageSectionsAdmin() {
                                 Remove
                               </button>
                             </div>
-                            <input
-                              type="text"
-                              placeholder="Image URL"
+                            <FileUpload
+                              label="Project Image"
                               value={project.image || ""}
-                              onChange={(e) =>
-                                updateProject(index, "image", e.target.value)
+                              onChange={(url) =>
+                                updateProject(index, "image", url)
                               }
-                              className="w-full mb-2 px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600"
+                              type="image"
+                              folder="portfolio"
+                              className="mb-2"
                             />
                             <input
                               type="text"
@@ -2337,43 +2266,15 @@ export default function PageSectionsAdmin() {
                                 Remove
                               </button>
                             </div>
-                            <input
-                              type="text"
-                              placeholder="Logo Image URL or Emoji (e.g., https://example.com/logo.png or 🚀)"
+                            <IconUpload
+                              label="Logo (Image URL, Emoji, or Upload)"
                               value={tech.icon || ""}
-                              onChange={(e) =>
-                                updateTechnology(index, e.target.value)
+                              onChange={(value) =>
+                                updateTechnology(index, value)
                               }
-                              className="w-full mb-2 px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600"
+                              folder="technologies"
+                              placeholder="🚀 or https://example.com/logo.png or upload image"
                             />
-                            <p className="text-xs text-gray-500 mb-2">
-                              Use logo image URLs or emojis. Only the logo/emoji
-                              will be displayed.
-                            </p>
-                            {tech.icon &&
-                              (tech.icon.startsWith("http") ||
-                                tech.icon.startsWith("/")) && (
-                                <div className="mb-2 relative h-12 border rounded p-2 bg-white">
-                                  <Image
-                                    src={tech.icon}
-                                    alt="Logo"
-                                    width={48}
-                                    height={48}
-                                    className="object-contain"
-                                    unoptimized
-                                    onError={(e) => {
-                                      e.currentTarget.style.display = "none";
-                                    }}
-                                  />
-                                </div>
-                              )}
-                            {tech.icon &&
-                              !tech.icon.startsWith("http") &&
-                              !tech.icon.startsWith("/") && (
-                                <div className="mb-2 p-2 border rounded bg-white text-center">
-                                  <span className="text-3xl">{tech.icon}</span>
-                                </div>
-                              )}
                           </div>
                         )
                       )}
@@ -2420,45 +2321,15 @@ export default function PageSectionsAdmin() {
                                 Remove
                               </button>
                             </div>
-                            <input
-                              type="text"
-                              placeholder="Logo Image URL or Emoji"
+                            <IconUpload
+                              label="Logo (Image URL, Emoji, or Upload)"
                               value={partner.logo || ""}
-                              onChange={(e) =>
-                                updatePartner(index, "logo", e.target.value)
+                              onChange={(value) =>
+                                updatePartner(index, "logo", value)
                               }
-                              className="w-full mb-2 px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600"
+                              folder="partners"
+                              placeholder="🚀 or https://example.com/logo.png or upload image"
                             />
-                            <p className="text-xs text-gray-500 mb-2">
-                              Use logo image URLs or emojis. Logos will be
-                              displayed in an auto-scrolling carousel.
-                            </p>
-                            {partner.logo &&
-                              (partner.logo.startsWith("http") ||
-                                partner.logo.startsWith("/")) && (
-                                <div className="mb-2 relative h-12 border rounded p-2 bg-white overflow-hidden flex items-center justify-center">
-                                  <Image
-                                    src={partner.logo}
-                                    alt="Logo"
-                                    width={48}
-                                    height={48}
-                                    className="object-contain max-w-full max-h-full"
-                                    unoptimized
-                                    onError={(e) => {
-                                      e.currentTarget.style.display = "none";
-                                    }}
-                                  />
-                                </div>
-                              )}
-                            {partner.logo &&
-                              !partner.logo.startsWith("http") &&
-                              !partner.logo.startsWith("/") && (
-                                <div className="mb-2 p-2 border rounded bg-white text-center">
-                                  <span className="text-3xl">
-                                    {partner.logo}
-                                  </span>
-                                </div>
-                              )}
                             <input
                               type="text"
                               placeholder="Partner Name (optional)"
@@ -2519,14 +2390,15 @@ export default function PageSectionsAdmin() {
                                 Remove
                               </button>
                             </div>
-                            <input
-                              type="text"
-                              placeholder="Image URL"
+                            <FileUpload
+                              label="Post Image"
                               value={post.image || ""}
-                              onChange={(e) =>
-                                updatePost(index, "image", e.target.value)
+                              onChange={(url) =>
+                                updatePost(index, "image", url)
                               }
-                              className="w-full mb-2 px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600"
+                              type="image"
+                              folder="blog"
+                              className="mb-2"
                             />
                             <input
                               type="text"
@@ -2647,31 +2519,16 @@ export default function PageSectionsAdmin() {
                                 className="px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600"
                               />
                               <div>
-                                <input
-                                  type="text"
-                                  placeholder="Icon (Emoji or Image URL)"
+                                <IconUpload
+                                  label="Icon (Emoji, URL, or Upload)"
                                   value={step.icon || ""}
-                                  onChange={(e) =>
-                                    updateStep(index, "icon", e.target.value)
+                                  onChange={(value) =>
+                                    updateStep(index, "icon", value)
                                   }
-                                  className="w-full px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600"
+                                  folder="process-icons"
+                                  placeholder="📋 or https://example.com/icon.png or upload image"
+                                  className="w-full"
                                 />
-                                {step.icon &&
-                                  (step.icon.startsWith("http") ||
-                                    step.icon.startsWith("/")) && (
-                                    <div className="mt-2">
-                                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                                      <img
-                                        src={step.icon}
-                                        alt="Icon preview"
-                                        className="w-12 h-12 object-contain border rounded"
-                                        onError={(e) => {
-                                          e.currentTarget.style.display =
-                                            "none";
-                                        }}
-                                      />
-                                    </div>
-                                  )}
                               </div>
                             </div>
                             <input

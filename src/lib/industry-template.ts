@@ -1,37 +1,76 @@
 export interface IndustryTemplateData {
   hero: {
+    breadcrumbs?: string;
     title: string;
-    subtitle: string;
+    subtitle?: string;
     description: string;
     primaryButtonText: string;
     primaryButtonLink: string;
-    secondaryButtonText?: string;
-    secondaryButtonLink?: string;
     backgroundImage?: string;
     backgroundVideo?: string;
     backgroundOpacity?: number;
   };
   overview: {
     title: string;
-    description: string;
+    paragraphs: Array<{
+      text: string;
+    }>;
     image?: string;
+    isActive?: boolean;
   };
-  solutions: {
+  stats?: {
+    items: Array<{
+      icon?: string;
+      value: string;
+      label: string;
+    }>;
+    isActive?: boolean;
+  };
+  subServices?: {
     title: string;
-    description: string;
+    description?: string;
     items: Array<{
       icon?: string;
       title: string;
       description: string;
     }>;
+    ctaButtonText?: string;
+    ctaButtonLink?: string;
+    isActive?: boolean;
   };
-  challenges: {
+  partners?: {
     title: string;
-    description: string;
+    description?: string;
+    partners: Array<{
+      name?: string;
+      logo?: string;
+    }>;
+    isActive?: boolean;
+  };
+  cards?: {
+    title: string;
+    description?: string;
+    showStars?: boolean;
     items: Array<{
+      quote?: string;
+      author?: string;
+      role?: string;
+      company?: string;
+    }>;
+    isActive?: boolean;
+  };
+  portfolio?: {
+    title: string;
+    description?: string;
+    projects: Array<{
+      image?: string;
+      category?: string;
       title: string;
       description: string;
+      link?: string;
+      technologies?: string[];
     }>;
+    isActive?: boolean;
   };
   technologies?: {
     title: string;
@@ -40,135 +79,135 @@ export interface IndustryTemplateData {
       name: string;
       icon?: string;
     }>;
+    isActive?: boolean;
   };
-  benefits?: {
-    title: string;
-    description: string;
-    items: Array<{
-      title: string;
-      description: string;
-    }>;
-  };
-  caseStudies: {
-    title: string;
-    description: string;
-    items: Array<{
-      title: string;
-      description: string;
-      result?: string;
-    }>;
-  };
-  cta: {
-    title: string;
-    description: string;
-    buttonText: string;
-    buttonLink: string;
-  };
+  sectionOrder?: string[]; // Array of section keys to control order
 }
 
 export const defaultIndustryTemplateData: IndustryTemplateData = {
   hero: {
     title: "",
-    subtitle: "",
     description: "",
     primaryButtonText: "Get Started",
     primaryButtonLink: "/contact",
-    secondaryButtonText: "Learn More",
-    secondaryButtonLink: "#overview",
     backgroundImage: "",
     backgroundVideo: "",
     backgroundOpacity: 0.3,
   },
   overview: {
     title: "Industry Overview",
-    description:
-      "Learn more about our expertise in this industry and how we help businesses succeed.",
+    paragraphs: [
+      {
+        text: "Learn more about our expertise in this industry and how we help businesses succeed.",
+      },
+    ],
     image: "",
+    isActive: true,
   },
-  solutions: {
+  stats: {
+    items: [
+      {
+        icon: "👥",
+        value: "400+",
+        label: "Software Developers",
+      },
+      {
+        icon: "📅",
+        value: "13+",
+        label: "Years in Business",
+      },
+      {
+        icon: "✅",
+        value: "800+",
+        label: "Projects Successfully Delivered",
+      },
+      {
+        icon: "⭐",
+        value: "4.8",
+        label: "Star Rating on Clutch",
+      },
+    ],
+    isActive: true,
+  },
+  subServices: {
     title: "Our Solutions",
     description: "Tailored solutions for your industry",
     items: [
       {
+        icon: "⚡",
         title: "Solution 1",
         description: "Description of solution 1",
       },
       {
+        icon: "🖥️",
         title: "Solution 2",
         description: "Description of solution 2",
       },
       {
+        icon: "💬",
         title: "Solution 3",
         description: "Description of solution 3",
       },
     ],
+    ctaButtonText: "Reach Out to Our Specialists",
+    ctaButtonLink: "/contact",
+    isActive: true,
   },
-  challenges: {
-    title: "Industry Challenges",
-    description: "Common challenges we help solve",
+  partners: {
+    title: "Our Partners",
+    description: "Trusted by leading companies worldwide",
+    partners: [
+      { name: "Partner 1", logo: "🚀" },
+      { name: "Partner 2", logo: "⚡" },
+    ],
+    isActive: true,
+  },
+  cards: {
+    title: "What Our Clients Say",
+    description: "Testimonials from satisfied customers",
+    showStars: true,
     items: [
       {
-        title: "Challenge 1",
-        description: "Description of challenge 1",
-      },
-      {
-        title: "Challenge 2",
-        description: "Description of challenge 2",
+        quote: "Great service and excellent results!",
+        author: "John Doe",
+        role: "CEO",
+        company: "Company Inc.",
       },
     ],
+    isActive: true,
+  },
+  portfolio: {
+    title: "Our Portfolio",
+    projects: [
+      {
+        title: "Project 1",
+        description: "Description of project 1",
+        category: "Industry Solutions",
+        link: "#",
+        technologies: ["React", "Node.js"],
+      },
+    ],
+    isActive: true,
   },
   technologies: {
     title: "Technologies & Tools",
     description: "Technologies we use for this industry",
     items: [
-      {
-        name: "Technology 1",
-        icon: "🚀",
-      },
-      {
-        name: "Technology 2",
-        icon: "⚡",
-      },
+      { name: "Technology 1", icon: "🚀" },
+      { name: "Technology 2", icon: "⚡" },
     ],
+    isActive: true,
   },
-  benefits: {
-    title: "Benefits",
-    description: "Why work with us for this industry",
-    items: [
-      {
-        title: "Industry Expertise",
-        description:
-          "Deep understanding of industry-specific challenges and opportunities.",
-      },
-      {
-        title: "Proven Results",
-        description:
-          "Track record of successful implementations in this industry.",
-      },
-    ],
-  },
-  caseStudies: {
-    title: "Success Stories",
-    description: "Real results from our clients",
-    items: [
-      {
-        title: "Case Study 1",
-        description: "Description of case study 1",
-        result: "Result achieved",
-      },
-      {
-        title: "Case Study 2",
-        description: "Description of case study 2",
-        result: "Result achieved",
-      },
-    ],
-  },
-  cta: {
-    title: "Ready to Transform Your Industry?",
-    description: "Let's discuss how we can help your business succeed.",
-    buttonText: "Contact Us",
-    buttonLink: "/contact",
-  },
+  sectionOrder: [
+    "hero",
+    "overview",
+    "stats",
+    "subServices",
+    "partners",
+    "cards",
+    "portfolio",
+    "technologies",
+  ],
 };
 
 export function parseIndustryTemplateData(
@@ -185,65 +224,78 @@ export function parseIndustryTemplateData(
       overview: {
         ...defaultIndustryTemplateData.overview,
         ...(parsed.overview || {}),
+        paragraphs:
+          parsed.overview?.paragraphs ||
+          defaultIndustryTemplateData.overview.paragraphs,
       },
-      solutions: {
-        ...defaultIndustryTemplateData.solutions,
-        ...(parsed.solutions || {}),
-        items:
-          parsed.solutions?.items ||
-          defaultIndustryTemplateData.solutions.items,
-      },
-      challenges: {
-        ...defaultIndustryTemplateData.challenges,
-        ...(parsed.challenges || {}),
-        items:
-          parsed.challenges?.items ||
-          defaultIndustryTemplateData.challenges.items,
-      },
+      stats: parsed.stats
+        ? {
+            ...defaultIndustryTemplateData.stats,
+            ...parsed.stats,
+            items: parsed.stats.items || defaultIndustryTemplateData.stats?.items || [],
+          }
+        : defaultIndustryTemplateData.stats,
+      subServices: parsed.subServices
+        ? {
+            ...defaultIndustryTemplateData.subServices,
+            ...parsed.subServices,
+            items:
+              parsed.subServices.items ||
+              defaultIndustryTemplateData.subServices?.items ||
+              [],
+          }
+        : defaultIndustryTemplateData.subServices,
+      partners: parsed.partners
+        ? {
+            ...defaultIndustryTemplateData.partners,
+            ...parsed.partners,
+            partners:
+              parsed.partners.partners ||
+              defaultIndustryTemplateData.partners?.partners ||
+              [],
+          }
+        : defaultIndustryTemplateData.partners,
+      cards: parsed.cards
+        ? {
+            ...defaultIndustryTemplateData.cards,
+            ...parsed.cards,
+            items:
+              parsed.cards.items || defaultIndustryTemplateData.cards?.items || [],
+          }
+        : defaultIndustryTemplateData.cards,
+      portfolio: parsed.portfolio
+        ? {
+            ...defaultIndustryTemplateData.portfolio,
+            ...parsed.portfolio,
+            projects:
+              parsed.portfolio.projects ||
+              defaultIndustryTemplateData.portfolio?.projects ||
+              [],
+          }
+        : defaultIndustryTemplateData.portfolio,
       technologies: parsed.technologies
         ? {
-            ...(defaultIndustryTemplateData.technologies || {
-              title: "",
-              description: "",
-              items: [],
-            }),
+            ...defaultIndustryTemplateData.technologies,
             ...parsed.technologies,
             items:
               parsed.technologies.items ||
               defaultIndustryTemplateData.technologies?.items ||
               [],
           }
-        : defaultIndustryTemplateData.technologies || {
-            title: "",
-            description: "",
-            items: [],
-          },
-      benefits: parsed.benefits
-        ? {
-            ...(defaultIndustryTemplateData.benefits || {
-              title: "",
-              description: "",
-              items: [],
-            }),
-            ...parsed.benefits,
-            items:
-              parsed.benefits.items ||
-              defaultIndustryTemplateData.benefits?.items ||
-              [],
-          }
-        : defaultIndustryTemplateData.benefits || {
-            title: "",
-            description: "",
-            items: [],
-          },
-      caseStudies: {
-        ...defaultIndustryTemplateData.caseStudies,
-        ...(parsed.caseStudies || {}),
-        items:
-          parsed.caseStudies?.items ||
-          defaultIndustryTemplateData.caseStudies.items,
-      },
-      cta: { ...defaultIndustryTemplateData.cta, ...(parsed.cta || {}) },
+        : defaultIndustryTemplateData.technologies,
+      sectionOrder:
+        parsed.sectionOrder && Array.isArray(parsed.sectionOrder)
+          ? parsed.sectionOrder
+          : defaultIndustryTemplateData.sectionOrder || [
+              "hero",
+              "overview",
+              "stats",
+              "subServices",
+              "partners",
+              "cards",
+              "portfolio",
+              "technologies",
+            ],
     };
     return merged;
   } catch (error) {
@@ -259,56 +311,109 @@ export function getDefaultIndustryTemplateForTitle(
   return {
     hero: {
       title: title,
-      subtitle: `Expert Solutions for ${title}`,
       description: `We provide specialized solutions tailored to the unique needs of the ${title.toLowerCase()} industry.`,
       primaryButtonText: "Get Started",
       primaryButtonLink: "/contact",
-      secondaryButtonText: "Learn More",
-      secondaryButtonLink: "#overview",
       backgroundImage: "",
       backgroundVideo: "",
       backgroundOpacity: 0.3,
     },
     overview: {
       title: `About ${title} Industry`,
-      description: `The ${title.toLowerCase()} industry faces unique challenges and opportunities. Our team brings deep expertise and innovative solutions to help businesses in this sector thrive and grow.`,
+      paragraphs: [
+        {
+          text: `The ${title.toLowerCase()} industry faces unique challenges and opportunities. Our team brings deep expertise and innovative solutions to help businesses in this sector thrive and grow.`,
+        },
+      ],
       image: "",
+      isActive: true,
     },
-    solutions: {
+    stats: {
+      items: [
+        {
+          icon: "👥",
+          value: "400+",
+          label: "Software Developers",
+        },
+        {
+          icon: "📅",
+          value: "13+",
+          label: "Years in Business",
+        },
+        {
+          icon: "✅",
+          value: "800+",
+          label: "Projects Successfully Delivered",
+        },
+        {
+          icon: "⭐",
+          value: "4.8",
+          label: "Star Rating on Clutch",
+        },
+      ],
+      isActive: true,
+    },
+    subServices: {
       title: "Our Solutions",
       description: "Tailored solutions for your industry",
       items: [
         {
+          icon: "⚡",
           title: "Custom Solutions",
           description: `Specialized solutions designed specifically for the ${title.toLowerCase()} industry.`,
         },
         {
+          icon: "🖥️",
           title: "Industry Expertise",
           description:
             "Deep understanding of industry-specific challenges and opportunities.",
         },
         {
+          icon: "💬",
           title: "Proven Results",
           description:
             "Track record of successful implementations and satisfied clients.",
         },
       ],
+      ctaButtonText: "Reach Out to Our Specialists",
+      ctaButtonLink: "/contact",
+      isActive: true,
     },
-    challenges: {
-      title: "Industry Challenges",
-      description: "Common challenges we help solve",
+    partners: {
+      title: "Our Partners",
+      description: "Trusted by leading companies worldwide",
+      partners: [
+        { name: "Partner 1", logo: "🚀" },
+        { name: "Partner 2", logo: "⚡" },
+      ],
+      isActive: true,
+    },
+    cards: {
+      title: "What Our Clients Say",
+      description: "Testimonials from satisfied customers",
+      showStars: true,
       items: [
         {
-          title: "Digital Transformation",
-          description:
-            "Navigating the complexities of digital transformation in your industry.",
-        },
-        {
-          title: "Efficiency & Optimization",
-          description:
-            "Streamlining operations and improving efficiency across your organization.",
+          quote: `Great service and excellent results in the ${title.toLowerCase()} industry!`,
+          author: "John Doe",
+          role: "CEO",
+          company: "Company Inc.",
         },
       ],
+      isActive: true,
+    },
+    portfolio: {
+      title: "Our Portfolio",
+      projects: [
+        {
+          title: `${title} Success Story`,
+          description: `How we helped a ${title.toLowerCase()} company achieve their goals.`,
+          category: "Industry Solutions",
+          link: "#",
+          technologies: ["React", "Node.js"],
+        },
+      ],
+      isActive: true,
     },
     technologies: {
       title: "Technologies & Tools",
@@ -319,43 +424,17 @@ export function getDefaultIndustryTemplateForTitle(
         { name: "Automation", icon: "⚙️" },
         { name: "Security", icon: "🔒" },
       ],
+      isActive: true,
     },
-    benefits: {
-      title: "Benefits",
-      description: "Why work with us for this industry",
-      items: [
-        {
-          title: "Industry Expertise",
-          description: `Deep understanding of ${title.toLowerCase()} industry challenges and opportunities.`,
-        },
-        {
-          title: "Customized Solutions",
-          description:
-            "Tailored solutions designed specifically for your industry needs.",
-        },
-        {
-          title: "Proven Track Record",
-          description:
-            "Successful implementations and satisfied clients in this industry.",
-        },
-      ],
-    },
-    caseStudies: {
-      title: "Success Stories",
-      description: "Real results from our clients",
-      items: [
-        {
-          title: "Client Success Story",
-          description: `How we helped a ${title.toLowerCase()} company achieve their goals.`,
-          result: "Significant improvement in key metrics",
-        },
-      ],
-    },
-    cta: {
-      title: "Ready to Transform Your Industry?",
-      description: `Let's discuss how we can help your ${title.toLowerCase()} business succeed.`,
-      buttonText: "Contact Us",
-      buttonLink: "/contact",
-    },
+    sectionOrder: [
+      "hero",
+      "overview",
+      "stats",
+      "subServices",
+      "partners",
+      "cards",
+      "portfolio",
+      "technologies",
+    ],
   };
 }

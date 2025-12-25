@@ -46,6 +46,9 @@ type NavItem =
   | { type: "industries"; title: string; navOrder: number; hasItems: boolean };
 
 export default function AdminPanel() {
+  const [activeTab, setActiveTab] = useState<
+    "pages" | "services" | "industries"
+  >("pages");
   const [pages, setPages] = useState<Page[]>([]);
   const [services, setServices] = useState<Service[]>([]);
   const [industries, setIndustries] = useState<Industry[]>([]);
@@ -77,7 +80,7 @@ export default function AdminPanel() {
       if (!data.authenticated) {
         window.location.href = "/admin/login";
       }
-    } catch (error) {
+    } catch {
       window.location.href = "/admin/login";
     }
   };
@@ -309,8 +312,7 @@ export default function AdminPanel() {
                 Admin Panel
               </h1>
               <p className="text-gray-600 dark:text-gray-400 mt-2">
-                Manage your pages. Published pages automatically appear in the
-                navigation bar.
+                Manage your website content, pages, services, and industries.
               </p>
             </div>
             <button
@@ -322,446 +324,659 @@ export default function AdminPanel() {
           </div>
         </div>
 
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-2xl font-semibold text-gray-900 dark:text-white">
-            Pages
-          </h2>
-          <button
-            onClick={() => {
-              setEditingPage(null);
-              setPageForm({
-                title: "",
-                slug: "",
-                isPublished: true,
-                seoTitle: "",
-                seoDescription: "",
-                seoKeywords: "",
-                ogImage: "",
-                ogTitle: "",
-                ogDescription: "",
-              });
-              setShowPageForm(true);
-            }}
-            className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
-          >
-            Add Page
-          </button>
+        {/* Tab Navigation */}
+        <div className="border-b border-gray-200 dark:border-gray-700 mb-6">
+          <nav className="-mb-px flex space-x-8">
+            <button
+              onClick={() => setActiveTab("pages")}
+              className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
+                activeTab === "pages"
+                  ? "border-blue-500 text-blue-600 dark:text-blue-400"
+                  : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300"
+              }`}
+            >
+              Pages & Navigation
+            </button>
+            <button
+              onClick={() => setActiveTab("services")}
+              className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
+                activeTab === "services"
+                  ? "border-blue-500 text-blue-600 dark:text-blue-400"
+                  : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300"
+              }`}
+            >
+              Services
+            </button>
+            <button
+              onClick={() => setActiveTab("industries")}
+              className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
+                activeTab === "industries"
+                  ? "border-blue-500 text-blue-600 dark:text-blue-400"
+                  : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300"
+              }`}
+            >
+              Industries
+            </button>
+          </nav>
         </div>
 
-        {showPageForm && (
-          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow mb-6">
-            <h3 className="text-lg font-semibold mb-4">
-              {editingPage ? "Edit" : "Add"} Page
-            </h3>
-            <form onSubmit={handlePageSubmit} className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium mb-1">Title</label>
-                <input
-                  type="text"
-                  value={pageForm.title}
-                  onChange={(e) =>
-                    setPageForm({ ...pageForm, title: e.target.value })
-                  }
-                  className="w-full px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600"
-                  required
-                />
-                <p className="text-xs text-gray-500 mt-1">
-                  This will be used as the navigation label
+        {/* Tab Content */}
+        {activeTab === "pages" && (
+          <>
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-2xl font-semibold text-gray-900 dark:text-white">
+                Pages
+              </h2>
+              <button
+                onClick={() => {
+                  setEditingPage(null);
+                  setPageForm({
+                    title: "",
+                    slug: "",
+                    isPublished: true,
+                    seoTitle: "",
+                    seoDescription: "",
+                    seoKeywords: "",
+                    ogImage: "",
+                    ogTitle: "",
+                    ogDescription: "",
+                  });
+                  setShowPageForm(true);
+                }}
+                className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
+              >
+                Add Page
+              </button>
+            </div>
+
+            {showPageForm && (
+              <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow mb-6">
+                <h3 className="text-lg font-semibold mb-4">
+                  {editingPage ? "Edit" : "Add"} Page
+                </h3>
+                <form onSubmit={handlePageSubmit} className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium mb-1">
+                      Title
+                    </label>
+                    <input
+                      type="text"
+                      value={pageForm.title}
+                      onChange={(e) =>
+                        setPageForm({ ...pageForm, title: e.target.value })
+                      }
+                      className="w-full px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600"
+                      required
+                    />
+                    <p className="text-xs text-gray-500 mt-1">
+                      This will be used as the navigation label
+                    </p>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium mb-1">
+                      Slug
+                    </label>
+                    <input
+                      type="text"
+                      value={pageForm.slug}
+                      onChange={(e) =>
+                        setPageForm({
+                          ...pageForm,
+                          slug: e.target.value
+                            .toLowerCase()
+                            .replace(/\s+/g, "-"),
+                        })
+                      }
+                      className="w-full px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600"
+                      required
+                    />
+                    <p className="text-xs text-gray-500 mt-1">
+                      URL-friendly identifier (e.g., &quot;about&quot; for
+                      /about)
+                    </p>
+                  </div>
+                  <div className="border-t pt-4 mt-4">
+                    <h4 className="text-md font-semibold mb-4 text-gray-900 dark:text-white">
+                      SEO Settings
+                    </h4>
+                    <div className="space-y-4">
+                      <div>
+                        <label className="block text-sm font-medium mb-1">
+                          Meta Title
+                        </label>
+                        <input
+                          type="text"
+                          value={pageForm.seoTitle}
+                          onChange={(e) =>
+                            setPageForm({
+                              ...pageForm,
+                              seoTitle: e.target.value,
+                            })
+                          }
+                          className="w-full px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600"
+                          placeholder="SEO title for search engines"
+                        />
+                        <p className="text-xs text-gray-500 mt-1">
+                          Recommended: 50-60 characters
+                        </p>
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium mb-1">
+                          Meta Description
+                        </label>
+                        <textarea
+                          value={pageForm.seoDescription}
+                          onChange={(e) =>
+                            setPageForm({
+                              ...pageForm,
+                              seoDescription: e.target.value,
+                            })
+                          }
+                          rows={3}
+                          className="w-full px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600"
+                          placeholder="SEO description for search engines"
+                        />
+                        <p className="text-xs text-gray-500 mt-1">
+                          Recommended: 150-160 characters
+                        </p>
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium mb-1">
+                          Meta Keywords
+                        </label>
+                        <input
+                          type="text"
+                          value={pageForm.seoKeywords}
+                          onChange={(e) =>
+                            setPageForm({
+                              ...pageForm,
+                              seoKeywords: e.target.value,
+                            })
+                          }
+                          className="w-full px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600"
+                          placeholder="Comma-separated keywords"
+                        />
+                        <p className="text-xs text-gray-500 mt-1">
+                          Separate keywords with commas
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="border-t pt-4 mt-4">
+                    <h4 className="text-md font-semibold mb-4 text-gray-900 dark:text-white">
+                      Open Graph (Social Media) Settings
+                    </h4>
+                    <div className="space-y-4">
+                      <div>
+                        <label className="block text-sm font-medium mb-1">
+                          OG Image URL
+                        </label>
+                        <input
+                          type="text"
+                          value={pageForm.ogImage}
+                          onChange={(e) =>
+                            setPageForm({
+                              ...pageForm,
+                              ogImage: e.target.value,
+                            })
+                          }
+                          className="w-full px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600"
+                          placeholder="https://example.com/image.jpg"
+                        />
+                        <p className="text-xs text-gray-500 mt-1">
+                          Image shown when sharing on social media (1200x630px
+                          recommended)
+                        </p>
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium mb-1">
+                          OG Title
+                        </label>
+                        <input
+                          type="text"
+                          value={pageForm.ogTitle}
+                          onChange={(e) =>
+                            setPageForm({
+                              ...pageForm,
+                              ogTitle: e.target.value,
+                            })
+                          }
+                          className="w-full px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600"
+                          placeholder="Title for social media shares"
+                        />
+                        <p className="text-xs text-gray-500 mt-1">
+                          Leave empty to use Meta Title
+                        </p>
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium mb-1">
+                          OG Description
+                        </label>
+                        <textarea
+                          value={pageForm.ogDescription}
+                          onChange={(e) =>
+                            setPageForm({
+                              ...pageForm,
+                              ogDescription: e.target.value,
+                            })
+                          }
+                          rows={2}
+                          className="w-full px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600"
+                          placeholder="Description for social media shares"
+                        />
+                        <p className="text-xs text-gray-500 mt-1">
+                          Leave empty to use Meta Description
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="flex items-center">
+                      <input
+                        type="checkbox"
+                        checked={pageForm.isPublished}
+                        onChange={(e) =>
+                          setPageForm({
+                            ...pageForm,
+                            isPublished: e.target.checked,
+                          })
+                        }
+                        className="mr-2"
+                      />
+                      <span className="text-sm">
+                        Published (appears in navigation when published)
+                      </span>
+                    </label>
+                  </div>
+                  <div className="flex space-x-2">
+                    <button
+                      type="submit"
+                      className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
+                    >
+                      Save
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setShowPageForm(false);
+                        setEditingPage(null);
+                        setPageForm({
+                          title: "",
+                          slug: "",
+                          isPublished: true,
+                          seoTitle: "",
+                          seoDescription: "",
+                          seoKeywords: "",
+                          ogImage: "",
+                          ogTitle: "",
+                          ogDescription: "",
+                        });
+                      }}
+                      className="bg-gray-300 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-400"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </form>
+              </div>
+            )}
+
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden">
+              <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                <thead className="bg-gray-50 dark:bg-gray-700">
+                  <tr>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                      Title
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                      Slug
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                      Status
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                      Actions
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                  {pages.length === 0 ? (
+                    <tr>
+                      <td
+                        colSpan={4}
+                        className="px-6 py-4 text-center text-gray-500"
+                      >
+                        No pages yet. Add one to get started.
+                      </td>
+                    </tr>
+                  ) : (
+                    pages.map((page) => (
+                      <tr key={page._id}>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
+                          {page.title}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
+                          {page.slug}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm">
+                          <span
+                            className={`px-2 py-1 rounded-full text-xs ${
+                              page.isPublished
+                                ? "bg-green-100 text-green-800"
+                                : "bg-gray-100 text-gray-800"
+                            }`}
+                          >
+                            {page.isPublished ? "Published" : "Draft"}
+                          </span>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
+                          <Link
+                            href={`/${page.slug}`}
+                            target="_blank"
+                            className="text-blue-600 hover:text-blue-900"
+                          >
+                            View
+                          </Link>
+                          <Link
+                            href={`/admin/pages/${page._id}`}
+                            className="text-green-600 hover:text-green-900"
+                          >
+                            Sections
+                          </Link>
+                          <button
+                            onClick={() => editPage(page)}
+                            className="text-blue-600 hover:text-blue-900"
+                          >
+                            Edit
+                          </button>
+                          <button
+                            onClick={() => handleDeletePage(page._id)}
+                            className="text-red-600 hover:text-red-900"
+                          >
+                            Delete
+                          </button>
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Navigation Ordering Section */}
+            <div className="mt-12">
+              <div className="mb-4">
+                <h2 className="text-2xl font-semibold text-gray-900 dark:text-white">
+                  Navigation Order
+                </h2>
+                <p className="text-gray-600 dark:text-gray-400 text-sm mt-1">
+                  Reorder items in the navigation bar. Pages, Services dropdown,
+                  and Industries dropdown can be rearranged together.
                 </p>
               </div>
-              <div>
-                <label className="block text-sm font-medium mb-1">Slug</label>
-                <input
-                  type="text"
-                  value={pageForm.slug}
-                  onChange={(e) =>
-                    setPageForm({
-                      ...pageForm,
-                      slug: e.target.value.toLowerCase().replace(/\s+/g, "-"),
-                    })
-                  }
-                  className="w-full px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600"
-                  required
-                />
-                <p className="text-xs text-gray-500 mt-1">
-                  URL-friendly identifier (e.g., &quot;about&quot; for /about)
-                </p>
+
+              <div className="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden">
+                <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                  <thead className="bg-gray-50 dark:bg-gray-700">
+                    <tr>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                        Order
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                        Type
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                        Title
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                        Actions
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                    {navItems.length === 0 ? (
+                      <tr>
+                        <td
+                          colSpan={4}
+                          className="px-6 py-4 text-center text-gray-500"
+                        >
+                          No navigation items yet. Add pages or publish
+                          services/industries to see them here.
+                        </td>
+                      </tr>
+                    ) : (
+                      navItems.map((item, index) => (
+                        <tr
+                          key={`${item.type}-${
+                            item.type === "page" ? item.id : item.title
+                          }`}
+                        >
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <div className="flex items-center space-x-2">
+                              <button
+                                onClick={() => moveNavItem(index, "up")}
+                                disabled={index === 0}
+                                className="text-gray-400 hover:text-gray-600 disabled:opacity-30"
+                                title="Move up in navigation"
+                              >
+                                ↑
+                              </button>
+                              <span className="text-sm text-gray-900 dark:text-white">
+                                {index + 1}
+                              </span>
+                              <button
+                                onClick={() => moveNavItem(index, "down")}
+                                disabled={index === navItems.length - 1}
+                                className="text-gray-400 hover:text-gray-600 disabled:opacity-30"
+                                title="Move down in navigation"
+                              >
+                                ↓
+                              </button>
+                            </div>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm">
+                            <span className="px-2 py-1 rounded-full text-xs bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
+                              {item.type === "page"
+                                ? "Page"
+                                : item.type === "services"
+                                ? "Services Dropdown"
+                                : "Industries Dropdown"}
+                            </span>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
+                            {item.title}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                            {item.type === "page" ? (
+                              <Link
+                                href={`/admin/pages/${item.id}`}
+                                className="text-green-600 hover:text-green-900"
+                              >
+                                Manage
+                              </Link>
+                            ) : item.type === "services" ? (
+                              <Link
+                                href="/admin/services"
+                                className="text-green-600 hover:text-green-900"
+                              >
+                                Manage Services
+                              </Link>
+                            ) : (
+                              <Link
+                                href="/admin/industries"
+                                className="text-green-600 hover:text-green-900"
+                              >
+                                Manage Industries
+                              </Link>
+                            )}
+                          </td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
               </div>
-              <div className="border-t pt-4 mt-4">
-                <h4 className="text-md font-semibold mb-4 text-gray-900 dark:text-white">
-                  SEO Settings
-                </h4>
-                <div className="space-y-4">
-                  <div>
-                    <label className="block text-sm font-medium mb-1">
-                      Meta Title
-                    </label>
-                    <input
-                      type="text"
-                      value={pageForm.seoTitle}
-                      onChange={(e) =>
-                        setPageForm({ ...pageForm, seoTitle: e.target.value })
-                      }
-                      className="w-full px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600"
-                      placeholder="SEO title for search engines"
-                    />
-                    <p className="text-xs text-gray-500 mt-1">
-                      Recommended: 50-60 characters
-                    </p>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium mb-1">
-                      Meta Description
-                    </label>
-                    <textarea
-                      value={pageForm.seoDescription}
-                      onChange={(e) =>
-                        setPageForm({
-                          ...pageForm,
-                          seoDescription: e.target.value,
-                        })
-                      }
-                      rows={3}
-                      className="w-full px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600"
-                      placeholder="SEO description for search engines"
-                    />
-                    <p className="text-xs text-gray-500 mt-1">
-                      Recommended: 150-160 characters
-                    </p>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium mb-1">
-                      Meta Keywords
-                    </label>
-                    <input
-                      type="text"
-                      value={pageForm.seoKeywords}
-                      onChange={(e) =>
-                        setPageForm({
-                          ...pageForm,
-                          seoKeywords: e.target.value,
-                        })
-                      }
-                      className="w-full px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600"
-                      placeholder="Comma-separated keywords"
-                    />
-                    <p className="text-xs text-gray-500 mt-1">
-                      Separate keywords with commas
-                    </p>
-                  </div>
+            </div>
+          </>
+        )}
+
+        {activeTab === "services" && (
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+            <div className="mb-6">
+              <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mb-2">
+                Services Management
+              </h2>
+              <p className="text-gray-600 dark:text-gray-400">
+                Manage your services. Published services appear in the Services
+                dropdown menu.
+              </p>
+            </div>
+            <div className="mb-4">
+              <Link
+                href="/admin/services"
+                className="inline-block bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors"
+              >
+                Manage Services →
+              </Link>
+            </div>
+            <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
+              <h3 className="font-semibold text-gray-900 dark:text-white mb-2">
+                Quick Stats
+              </h3>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    Total Services
+                  </p>
+                  <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                    {services.length}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    Published
+                  </p>
+                  <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                    {services.filter((s) => s.isPublished).length}
+                  </p>
                 </div>
               </div>
-
-              <div className="border-t pt-4 mt-4">
-                <h4 className="text-md font-semibold mb-4 text-gray-900 dark:text-white">
-                  Open Graph (Social Media) Settings
-                </h4>
-                <div className="space-y-4">
-                  <div>
-                    <label className="block text-sm font-medium mb-1">
-                      OG Image URL
-                    </label>
-                    <input
-                      type="text"
-                      value={pageForm.ogImage}
-                      onChange={(e) =>
-                        setPageForm({ ...pageForm, ogImage: e.target.value })
-                      }
-                      className="w-full px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600"
-                      placeholder="https://example.com/image.jpg"
-                    />
-                    <p className="text-xs text-gray-500 mt-1">
-                      Image shown when sharing on social media (1200x630px
-                      recommended)
-                    </p>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium mb-1">
-                      OG Title
-                    </label>
-                    <input
-                      type="text"
-                      value={pageForm.ogTitle}
-                      onChange={(e) =>
-                        setPageForm({ ...pageForm, ogTitle: e.target.value })
-                      }
-                      className="w-full px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600"
-                      placeholder="Title for social media shares"
-                    />
-                    <p className="text-xs text-gray-500 mt-1">
-                      Leave empty to use Meta Title
-                    </p>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium mb-1">
-                      OG Description
-                    </label>
-                    <textarea
-                      value={pageForm.ogDescription}
-                      onChange={(e) =>
-                        setPageForm({
-                          ...pageForm,
-                          ogDescription: e.target.value,
-                        })
-                      }
-                      rows={2}
-                      className="w-full px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600"
-                      placeholder="Description for social media shares"
-                    />
-                    <p className="text-xs text-gray-500 mt-1">
-                      Leave empty to use Meta Description
-                    </p>
-                  </div>
+            </div>
+            {services.length > 0 && (
+              <div className="mt-6">
+                <h3 className="font-semibold text-gray-900 dark:text-white mb-3">
+                  Recent Services
+                </h3>
+                <div className="space-y-2">
+                  {services.slice(0, 5).map((service) => (
+                    <div
+                      key={service._id}
+                      className="flex justify-between items-center p-3 bg-gray-50 dark:bg-gray-700 rounded-lg"
+                    >
+                      <div>
+                        <p className="font-medium text-gray-900 dark:text-white">
+                          {service.title}
+                        </p>
+                        <p className="text-sm text-gray-500 dark:text-gray-400">
+                          /{service.slug}
+                        </p>
+                      </div>
+                      <span
+                        className={`px-2 py-1 rounded-full text-xs ${
+                          service.isPublished
+                            ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
+                            : "bg-gray-100 text-gray-800 dark:bg-gray-600 dark:text-gray-200"
+                        }`}
+                      >
+                        {service.isPublished ? "Published" : "Draft"}
+                      </span>
+                    </div>
+                  ))}
                 </div>
               </div>
-
-              <div>
-                <label className="flex items-center">
-                  <input
-                    type="checkbox"
-                    checked={pageForm.isPublished}
-                    onChange={(e) =>
-                      setPageForm({
-                        ...pageForm,
-                        isPublished: e.target.checked,
-                      })
-                    }
-                    className="mr-2"
-                  />
-                  <span className="text-sm">
-                    Published (appears in navigation when published)
-                  </span>
-                </label>
-              </div>
-              <div className="flex space-x-2">
-                <button
-                  type="submit"
-                  className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
-                >
-                  Save
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setShowPageForm(false);
-                    setEditingPage(null);
-                    setPageForm({
-                      title: "",
-                      slug: "",
-                      isPublished: true,
-                      seoTitle: "",
-                      seoDescription: "",
-                      seoKeywords: "",
-                      ogImage: "",
-                      ogTitle: "",
-                      ogDescription: "",
-                    });
-                  }}
-                  className="bg-gray-300 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-400"
-                >
-                  Cancel
-                </button>
-              </div>
-            </form>
+            )}
           </div>
         )}
 
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden">
-          <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-            <thead className="bg-gray-50 dark:bg-gray-700">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                  Title
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                  Slug
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                  Status
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-              {pages.length === 0 ? (
-                <tr>
-                  <td
-                    colSpan={4}
-                    className="px-6 py-4 text-center text-gray-500"
-                  >
-                    No pages yet. Add one to get started.
-                  </td>
-                </tr>
-              ) : (
-                pages.map((page) => (
-                  <tr key={page._id}>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
-                      {page.title}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
-                      {page.slug}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm">
+        {activeTab === "industries" && (
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+            <div className="mb-6">
+              <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mb-2">
+                Industries Management
+              </h2>
+              <p className="text-gray-600 dark:text-gray-400">
+                Manage your industries. Published industries appear in the
+                Industries dropdown menu.
+              </p>
+            </div>
+            <div className="mb-4">
+              <Link
+                href="/admin/industries"
+                className="inline-block bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors"
+              >
+                Manage Industries →
+              </Link>
+            </div>
+            <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
+              <h3 className="font-semibold text-gray-900 dark:text-white mb-2">
+                Quick Stats
+              </h3>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    Total Industries
+                  </p>
+                  <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                    {industries.length}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    Published
+                  </p>
+                  <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                    {industries.filter((i) => i.isPublished).length}
+                  </p>
+                </div>
+              </div>
+            </div>
+            {industries.length > 0 && (
+              <div className="mt-6">
+                <h3 className="font-semibold text-gray-900 dark:text-white mb-3">
+                  Recent Industries
+                </h3>
+                <div className="space-y-2">
+                  {industries.slice(0, 5).map((industry) => (
+                    <div
+                      key={industry._id}
+                      className="flex justify-between items-center p-3 bg-gray-50 dark:bg-gray-700 rounded-lg"
+                    >
+                      <div>
+                        <p className="font-medium text-gray-900 dark:text-white">
+                          {industry.title}
+                        </p>
+                        <p className="text-sm text-gray-500 dark:text-gray-400">
+                          /{industry.slug}
+                        </p>
+                      </div>
                       <span
                         className={`px-2 py-1 rounded-full text-xs ${
-                          page.isPublished
-                            ? "bg-green-100 text-green-800"
-                            : "bg-gray-100 text-gray-800"
+                          industry.isPublished
+                            ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
+                            : "bg-gray-100 text-gray-800 dark:bg-gray-600 dark:text-gray-200"
                         }`}
                       >
-                        {page.isPublished ? "Published" : "Draft"}
+                        {industry.isPublished ? "Published" : "Draft"}
                       </span>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
-                      <Link
-                        href={`/${page.slug}`}
-                        target="_blank"
-                        className="text-blue-600 hover:text-blue-900"
-                      >
-                        View
-                      </Link>
-                      <Link
-                        href={`/admin/pages/${page._id}`}
-                        className="text-green-600 hover:text-green-900"
-                      >
-                        Sections
-                      </Link>
-                      <button
-                        onClick={() => editPage(page)}
-                        className="text-blue-600 hover:text-blue-900"
-                      >
-                        Edit
-                      </button>
-                      <button
-                        onClick={() => handleDeletePage(page._id)}
-                        className="text-red-600 hover:text-red-900"
-                      >
-                        Delete
-                      </button>
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        </div>
-
-        {/* Navigation Ordering Section */}
-        <div className="mt-12">
-          <div className="mb-4">
-            <h2 className="text-2xl font-semibold text-gray-900 dark:text-white">
-              Navigation Order
-            </h2>
-            <p className="text-gray-600 dark:text-gray-400 text-sm mt-1">
-              Reorder items in the navigation bar. Pages, Services dropdown, and
-              Industries dropdown can be rearranged together.
-            </p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
-
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden">
-            <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-              <thead className="bg-gray-50 dark:bg-gray-700">
-                <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                    Order
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                    Type
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                    Title
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                    Actions
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-                {navItems.length === 0 ? (
-                  <tr>
-                    <td
-                      colSpan={4}
-                      className="px-6 py-4 text-center text-gray-500"
-                    >
-                      No navigation items yet. Add pages or publish
-                      services/industries to see them here.
-                    </td>
-                  </tr>
-                ) : (
-                  navItems.map((item, index) => (
-                    <tr
-                      key={`${item.type}-${
-                        item.type === "page" ? item.id : item.title
-                      }`}
-                    >
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="flex items-center space-x-2">
-                          <button
-                            onClick={() => moveNavItem(index, "up")}
-                            disabled={index === 0}
-                            className="text-gray-400 hover:text-gray-600 disabled:opacity-30"
-                            title="Move up in navigation"
-                          >
-                            ↑
-                          </button>
-                          <span className="text-sm text-gray-900 dark:text-white">
-                            {index + 1}
-                          </span>
-                          <button
-                            onClick={() => moveNavItem(index, "down")}
-                            disabled={index === navItems.length - 1}
-                            className="text-gray-400 hover:text-gray-600 disabled:opacity-30"
-                            title="Move down in navigation"
-                          >
-                            ↓
-                          </button>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm">
-                        <span className="px-2 py-1 rounded-full text-xs bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
-                          {item.type === "page"
-                            ? "Page"
-                            : item.type === "services"
-                            ? "Services Dropdown"
-                            : "Industries Dropdown"}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
-                        {item.title}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                        {item.type === "page" ? (
-                          <Link
-                            href={`/admin/pages/${item.id}`}
-                            className="text-green-600 hover:text-green-900"
-                          >
-                            Manage
-                          </Link>
-                        ) : item.type === "services" ? (
-                          <Link
-                            href="/admin/services"
-                            className="text-green-600 hover:text-green-900"
-                          >
-                            Manage Services
-                          </Link>
-                        ) : (
-                          <Link
-                            href="/admin/industries"
-                            className="text-green-600 hover:text-green-900"
-                          >
-                            Manage Industries
-                          </Link>
-                        )}
-                      </td>
-                    </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
-          </div>
-        </div>
+        )}
       </div>
     </div>
   );

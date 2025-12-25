@@ -102,11 +102,11 @@ export default function TechnologiesSection({
                 ) => (
                   <div
                     key={index}
-                    className="group theme-bg-white rounded-md flex flex-col items-center justify-center transition-all duration-300 hover:shadow-xl hover:-translate-y-1 overflow-hidden"
+                    className="group theme-bg-white rounded-md flex flex-col items-center justify-center transition-all duration-300 hover:shadow-xl hover:-translate-y-1 overflow-hidden p-3 md:p-4"
                     style={{ aspectRatio: "5/3", minHeight: "40px" }}
                   >
                     {/* Tech Logo/Icon - Only Logo, No Text */}
-                    <div className="w-full h-full flex items-center justify-center relative">
+                    <div className="w-full h-full flex items-center justify-center relative p-2">
                       {isIconUrl(tech.icon) && tech.icon ? (
                         <Image
                           src={tech.icon}

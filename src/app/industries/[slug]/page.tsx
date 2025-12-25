@@ -101,3 +101,4 @@ export async function generateMetadata({ params }: IndustryPageProps) {
 }
 
 
+

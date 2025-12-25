@@ -2,40 +2,117 @@ import { ServiceTemplateData } from "@/components/ServiceTemplate";
 
 export const defaultServiceTemplateData: ServiceTemplateData = {
   hero: {
+    breadcrumbs: "Home > Services",
     title: "",
-    subtitle: "",
     description: "",
-    primaryButtonText: "Get Started",
+    primaryButtonText: "Let's discuss your needs",
     primaryButtonLink: "/contact",
-    secondaryButtonText: "Learn More",
-    secondaryButtonLink: "#overview",
     backgroundImage: "",
     backgroundVideo: "",
     backgroundOpacity: 0.3,
   },
   overview: {
-    title: "Service Overview",
-    description:
-      "Learn more about our comprehensive service offerings and how we can help your business achieve its goals.",
-    image: "",
-  },
-  features: {
-    title: "Key Features",
-    description: "Discover what makes our service stand out",
-    items: [
+    title: "Machine Learning & AI Development Services",
+    paragraphs: [
       {
-        title: "Feature 1",
-        description: "Description of feature 1",
+        text: "Saigon Technology, headquartered in Ho Chi Minh City, Vietnam, and with representative offices in Singapore and the United States, provides a broad range of qualified technical expertise in machine learning, deep learning, computer vision, classification tools, data analytics, natural language processing, and other areas.",
       },
       {
-        title: "Feature 2",
-        description: "Description of feature 2",
-      },
-      {
-        title: "Feature 3",
-        description: "Description of feature 3",
+        text: "If you're looking for an AI development firm, we've got a team of data scientists, machine learning engineers, and software developers that are well versed in cutting-edge AI (Artificial Intelligence), ML (Machine Learning), and Big Data tool-sets to help you solve your business challenges.",
       },
     ],
+    image: "",
+    isActive: true,
+  },
+  stats: {
+    items: [
+      {
+        icon: "👥",
+        value: "400+",
+        label: "Software Developers",
+      },
+      {
+        icon: "📅",
+        value: "13+",
+        label: "Years in Business",
+      },
+      {
+        icon: "✅",
+        value: "800+",
+        label: "Projects Successfully Delivered",
+      },
+      {
+        icon: "⭐",
+        value: "4.8",
+        label: "Star Rating on Clutch",
+      },
+    ],
+    isActive: true,
+  },
+  subServices: {
+    title: "Our AI Development Services",
+    items: [
+      {
+        icon: "⚡",
+        title: "Machine Learning",
+        description: "Use Machine Learning to build cognitive technology frameworks that will help you",
+      },
+      {
+        icon: "🖥️",
+        title: "Computer Vision",
+        description: "With computer vision development services, we assist companies in improving the",
+      },
+      {
+        icon: "💬",
+        title: "Natural Language Processing (NLP)",
+        description: "With our NLP software solutions, you may teach computers to grasp and interpret data",
+      },
+      {
+        icon: "📱",
+        title: "Image Recognition",
+        description: "With computer vision capabilities for picture recognition and object identification, custom",
+      },
+      {
+        icon: "🤖",
+        title: "AI Assisted Chatbot Development",
+        description: "Our AI chatbot creation services may help you improve your customer service by",
+      },
+      {
+        icon: "📊",
+        title: "AI and Business Intelligence",
+        description: "Deep knowledge in the creation of Artificial Intelligence software employing advanced",
+      },
+    ],
+    ctaButtonText: "Reach Out to Our Specialists",
+    ctaButtonLink: "/contact",
+    isActive: true,
+  },
+  whyChooseUs: {
+    title: "Why Choose Saigon Technology?",
+    subtitle: "Choose us for your AI development needs. Here's why we stand out.",
+    items: [
+      {
+        text: "Pioneering AI Solutions",
+      },
+      {
+        text: "Driving Innovation and Talent Development",
+      },
+      {
+        text: "Global Expertise and ISO-Certified Excellence",
+      },
+    ],
+    image: "",
+    certifications: [],
+    isActive: true,
+  },
+  technologies: {
+    title: "Technologies & Tools",
+    description: "Technologies we use to deliver results",
+    items: [
+      { name: "Technology 1", icon: "🚀" },
+      { name: "Technology 2", icon: "⚡" },
+    ],
+    isActive: true,
   },
   process: {
     title: "Our Process",
@@ -62,63 +139,46 @@ export const defaultServiceTemplateData: ServiceTemplateData = {
         description: "Description of step 4",
       },
     ],
+    isActive: true,
   },
-  benefits: {
-    title: "Benefits",
-    description: "Why choose our service",
-    items: [
+  portfolio: {
+    title: "Our Portfolio",
+    projects: [
       {
-        title: "Benefit 1",
-        description: "Description of benefit 1",
-      },
-      {
-        title: "Benefit 2",
-        description: "Description of benefit 2",
+        title: "Project 1",
+        description: "Description of project 1",
+        category: "AI and ML",
+        link: "#",
+        technologies: ["React", "Node.js"],
       },
     ],
+    isActive: true,
   },
-  useCases: {
-    title: "Use Cases",
-    description: "When and where to use our service",
+  partners: {
+    title: "Our Partners",
+    description: "Trusted by leading companies worldwide",
+    partners: [
+      { name: "Partner 1", logo: "🚀" },
+      { name: "Partner 2", logo: "⚡" },
+    ],
+    isActive: true,
+  },
+  cards: {
+    title: "What Our Clients Say",
+    description: "Testimonials from satisfied customers",
+    showStars: true,
     items: [
       {
-        title: "Use Case 1",
-        description: "Description of use case 1",
-      },
-      {
-        title: "Use Case 2",
-        description: "Description of use case 2",
+        quote: "Great service and excellent results!",
+        author: "John Doe",
+        role: "CEO",
+        company: "Company Inc.",
       },
     ],
-  },
-  technologies: {
-    title: "Technologies & Tools",
-    description: "Technologies we use to deliver results",
-    items: [
-      {
-        name: "Technology 1",
-        icon: "🚀",
-      },
-      {
-        name: "Technology 2",
-        icon: "⚡",
-      },
-    ],
-  },
-  caseStudies: {
-    title: "Case Studies",
-    description: "Real examples of our work",
-    items: [
-      {
-        title: "Case Study 1",
-        description: "Description of case study 1",
-        result: "Result achieved",
-      },
-    ],
+    isActive: true,
   },
   faq: {
-    title: "Frequently Asked Questions",
-    description: "Common questions about our service",
+    title: "FAQs",
     items: [
       {
         question: "Question 1?",
@@ -129,13 +189,29 @@ export const defaultServiceTemplateData: ServiceTemplateData = {
         answer: "Answer to question 2",
       },
     ],
+    isActive: true,
   },
   cta: {
     title: "Ready to Get Started?",
     description: "Let's discuss how we can help your business grow.",
     buttonText: "Contact Us",
     buttonLink: "/contact",
+    isActive: true,
   },
+  sectionOrder: [
+    "hero",
+    "overview",
+    "stats",
+    "subServices",
+    "whyChooseUs",
+    "technologies",
+    "process",
+    "portfolio",
+    "partners",
+    "cards",
+    "faq",
+    "cta",
+  ],
 };
 
 export function parseServiceTemplateData(
@@ -145,103 +221,122 @@ export function parseServiceTemplateData(
   try {
     const parsed = JSON.parse(content);
     // Merge with defaults to ensure all fields exist
-    const merged = {
-      ...defaultServiceTemplateData,
-      ...parsed,
-      hero: { ...defaultServiceTemplateData.hero, ...(parsed.hero || {}) },
+    const merged: ServiceTemplateData = {
+      hero: {
+        ...defaultServiceTemplateData.hero,
+        ...(parsed.hero || {}),
+      },
       overview: {
         ...defaultServiceTemplateData.overview,
         ...(parsed.overview || {}),
+        paragraphs:
+          parsed.overview?.paragraphs ||
+          defaultServiceTemplateData.overview.paragraphs,
       },
-      features: {
-        ...defaultServiceTemplateData.features,
-        ...(parsed.features || {}),
-        items:
-          parsed.features?.items || defaultServiceTemplateData.features.items,
-      },
-      process: {
-        ...defaultServiceTemplateData.process,
-        ...(parsed.process || {}),
-        steps:
-          parsed.process?.steps || defaultServiceTemplateData.process.steps,
-      },
-      benefits: {
-        ...defaultServiceTemplateData.benefits,
-        ...(parsed.benefits || {}),
-        items:
-          parsed.benefits?.items || defaultServiceTemplateData.benefits.items,
-      },
-      useCases: parsed.useCases
+      stats: parsed.stats
         ? {
-            ...(defaultServiceTemplateData.useCases || {
-              title: "",
-              description: "",
-              items: [],
-            }),
-            ...parsed.useCases,
+            ...defaultServiceTemplateData.stats,
+            ...parsed.stats,
+            items: parsed.stats.items || defaultServiceTemplateData.stats?.items || [],
+          }
+        : defaultServiceTemplateData.stats,
+      subServices: parsed.subServices
+        ? {
+            ...defaultServiceTemplateData.subServices,
+            ...parsed.subServices,
             items:
-              parsed.useCases.items ||
-              defaultServiceTemplateData.useCases?.items ||
+              parsed.subServices.items ||
+              defaultServiceTemplateData.subServices?.items ||
               [],
           }
-        : defaultServiceTemplateData.useCases || {
-            title: "",
-            description: "",
-            items: [],
-          },
+        : defaultServiceTemplateData.subServices,
+      whyChooseUs: parsed.whyChooseUs
+        ? {
+            ...defaultServiceTemplateData.whyChooseUs,
+            ...parsed.whyChooseUs,
+            items:
+              parsed.whyChooseUs.items ||
+              defaultServiceTemplateData.whyChooseUs?.items ||
+              [],
+            certifications:
+              parsed.whyChooseUs.certifications ||
+              defaultServiceTemplateData.whyChooseUs?.certifications ||
+              [],
+          }
+        : defaultServiceTemplateData.whyChooseUs,
       technologies: parsed.technologies
         ? {
-            ...(defaultServiceTemplateData.technologies || {
-              title: "",
-              description: "",
-              items: [],
-            }),
+            ...defaultServiceTemplateData.technologies,
             ...parsed.technologies,
             items:
               parsed.technologies.items ||
               defaultServiceTemplateData.technologies?.items ||
               [],
           }
-        : defaultServiceTemplateData.technologies || {
-            title: "",
-            description: "",
-            items: [],
-          },
-      caseStudies: parsed.caseStudies
+        : defaultServiceTemplateData.technologies,
+      process: parsed.process
         ? {
-            ...(defaultServiceTemplateData.caseStudies || {
-              title: "",
-              description: "",
-              items: [],
-            }),
-            ...parsed.caseStudies,
-            items:
-              parsed.caseStudies.items ||
-              defaultServiceTemplateData.caseStudies?.items ||
+            ...defaultServiceTemplateData.process,
+            ...parsed.process,
+            steps:
+              parsed.process.steps || defaultServiceTemplateData.process?.steps || [],
+          }
+        : defaultServiceTemplateData.process,
+      portfolio: parsed.portfolio
+        ? {
+            ...defaultServiceTemplateData.portfolio,
+            ...parsed.portfolio,
+            projects:
+              parsed.portfolio.projects ||
+              defaultServiceTemplateData.portfolio?.projects ||
               [],
           }
-        : defaultServiceTemplateData.caseStudies || {
-            title: "",
-            description: "",
-            items: [],
-          },
+        : defaultServiceTemplateData.portfolio,
+      partners: parsed.partners
+        ? {
+            ...defaultServiceTemplateData.partners,
+            ...parsed.partners,
+            partners:
+              parsed.partners.partners ||
+              defaultServiceTemplateData.partners?.partners ||
+              [],
+          }
+        : defaultServiceTemplateData.partners,
+      cards: parsed.cards
+        ? {
+            ...defaultServiceTemplateData.cards,
+            ...parsed.cards,
+            items:
+              parsed.cards.items || defaultServiceTemplateData.cards?.items || [],
+          }
+        : defaultServiceTemplateData.cards,
       faq: parsed.faq
         ? {
-            ...(defaultServiceTemplateData.faq || {
-              title: "",
-              description: "",
-              items: [],
-            }),
+            ...defaultServiceTemplateData.faq,
             ...parsed.faq,
-            items:
-              parsed.faq.items || defaultServiceTemplateData.faq?.items || [],
+            items: parsed.faq.items || defaultServiceTemplateData.faq?.items || [],
           }
-        : defaultServiceTemplateData.faq || {
-            title: "",
-            description: "",
-            items: [],
-          },
-      cta: { ...defaultServiceTemplateData.cta, ...(parsed.cta || {}) },
+        : defaultServiceTemplateData.faq,
+      cta: parsed.cta
+        ? { ...defaultServiceTemplateData.cta, ...parsed.cta }
+        : defaultServiceTemplateData.cta,
+      sectionOrder:
+        parsed.sectionOrder && Array.isArray(parsed.sectionOrder)
+          ? parsed.sectionOrder
+          : defaultServiceTemplateData.sectionOrder || [
+              "hero",
+              "overview",
+              "stats",
+              "subServices",
+              "whyChooseUs",
+              "technologies",
+              "process",
+              "portfolio",
+              "partners",
+              "cards",
+              "faq",
+              "cta",
+            ],
     };
     return merged;
   } catch (error) {
@@ -256,40 +351,98 @@ export function getDefaultServiceTemplateForTitle(
 ): ServiceTemplateData {
   return {
     hero: {
+      breadcrumbs: `Home > Services > ${title}`,
       title: title,
-      subtitle: `Professional ${title} Services`,
       description: `We provide comprehensive ${title.toLowerCase()} solutions tailored to your business needs.`,
-      primaryButtonText: "Get Started",
+      primaryButtonText: "Let's discuss your needs",
       primaryButtonLink: "/contact",
-      secondaryButtonText: "Learn More",
-      secondaryButtonLink: "#overview",
       backgroundImage: "",
       backgroundVideo: "",
       backgroundOpacity: 0.3,
     },
     overview: {
-      title: `About Our ${title} Services`,
-      description: `Our ${title.toLowerCase()} services are designed to help businesses achieve their goals through innovative solutions and expert guidance. We combine industry best practices with cutting-edge technology to deliver results that matter.`,
+      title: `${title} Services`,
+      paragraphs: [
+        {
+          text: `Our ${title.toLowerCase()} services are designed to help businesses achieve their goals through innovative solutions and expert guidance. We combine industry best practices with cutting-edge technology to deliver results that matter.`,
+        },
+        {
+          text: `If you're looking for a ${title.toLowerCase()} development firm, we've got a team of experienced professionals that are well versed in cutting-edge technologies and methodologies to help you solve your business challenges.`,
+        },
+      ],
       image: "",
     },
-    features: {
-      title: "Key Features",
-      description: "Discover what makes our services stand out",
+    stats: {
       items: [
         {
-          title: "Expert Team",
-          description: `Our experienced professionals specialize in ${title.toLowerCase()} and bring years of industry expertise.`,
+          icon: "👥",
+          value: "400+",
+          label: "Software Developers",
         },
         {
-          title: "Custom Solutions",
-          description:
-            "We tailor our services to meet your specific business requirements and objectives.",
+          icon: "📅",
+          value: "13+",
+          label: "Years in Business",
         },
         {
-          title: "Proven Results",
-          description:
-            "Track record of successful projects and satisfied clients across various industries.",
+          icon: "✅",
+          value: "800+",
+          label: "Projects Successfully Delivered",
         },
+        {
+          icon: "⭐",
+          value: "4.8",
+          label: "Star Rating on Clutch",
+        },
+      ],
+    },
+    subServices: {
+      title: `Our ${title} Services`,
+      items: [
+        {
+          icon: "🚀",
+          title: "Service 1",
+          description: `Description of ${title.toLowerCase()} service 1`,
+        },
+        {
+          icon: "⚡",
+          title: "Service 2",
+          description: `Description of ${title.toLowerCase()} service 2`,
+        },
+        {
+          icon: "💡",
+          title: "Service 3",
+          description: `Description of ${title.toLowerCase()} service 3`,
+        },
+      ],
+      ctaButtonText: "Reach Out to Our Specialists",
+      ctaButtonLink: "/contact",
+    },
+    whyChooseUs: {
+      title: "Why Choose Us?",
+      subtitle: `Choose us for your ${title.toLowerCase()} needs. Here's why we stand out.`,
+      items: [
+        {
+          text: "Expert Team",
+        },
+        {
+          text: "Proven Track Record",
+        },
+        {
+          text: "Custom Solutions",
+        },
+      ],
+      image: "",
+      certifications: [],
+    },
+    technologies: {
+      title: "Technologies & Tools",
+      description: "Technologies we use to deliver results",
+      items: [
+        { name: "Cloud Computing", icon: "☁️" },
+        { name: "AI/ML", icon: "🤖" },
+        { name: "DevOps", icon: "⚙️" },
+        { name: "Security", icon: "🔒" },
       ],
     },
     process: {
@@ -319,59 +472,55 @@ export function getDefaultServiceTemplateForTitle(
         },
       ],
     },
-    benefits: {
-      title: "Benefits",
-      description: "Why choose our service",
-      items: [
-        {
-          title: "Increased Efficiency",
-          description: "Streamline your operations and improve productivity.",
-        },
-        {
-          title: "Cost Savings",
-          description: "Reduce costs while improving quality and performance.",
-        },
-      ],
-    },
-    useCases: {
-      title: "Use Cases",
-      description: "When and where to use our service",
-      items: [
-        {
-          title: "Business Growth",
-          description: `Perfect for businesses looking to scale and grow with ${title.toLowerCase()} solutions.`,
-        },
-        {
-          title: "Digital Transformation",
-          description:
-            "Ideal for companies undergoing digital transformation initiatives.",
-        },
-      ],
-    },
-    technologies: {
-      title: "Technologies & Tools",
-      description: "Technologies we use to deliver results",
-      items: [
-        { name: "Cloud Computing", icon: "☁️" },
-        { name: "AI/ML", icon: "🤖" },
-        { name: "DevOps", icon: "⚙️" },
-        { name: "Security", icon: "🔒" },
-      ],
-    },
-    caseStudies: {
-      title: "Case Studies",
-      description: "Real examples of our work",
-      items: [
+    portfolio: {
+      title: "Our Portfolio",
+      projects: [
         {
           title: "Client Success Story",
           description: `How we helped a client achieve their goals with ${title.toLowerCase()} services.`,
-          result: "Significant improvement in key metrics",
+          category: "Success",
+          link: "#",
+          technologies: ["React", "Node.js"],
+        },
+      ],
+    },
+    partners: {
+      title: "Our Partners",
+      description: "Trusted by leading companies worldwide",
+      partners: [
+        { name: "Partner 1", logo: "🚀" },
+        { name: "Partner 2", logo: "⚡" },
+        { name: "Partner 3", logo: "💼" },
+        { name: "Partner 4", logo: "🌟" },
+      ],
+    },
+    cards: {
+      title: "What Our Clients Say",
+      description: "Testimonials from satisfied customers",
+      showStars: true,
+      items: [
+        {
+          quote: `"Working with this team on our ${title.toLowerCase()} project was an excellent experience. They delivered exactly what we needed."`,
+          author: "John Doe",
+          role: "CEO",
+          company: "Company Inc.",
+        },
+        {
+          quote: `"The ${title.toLowerCase()} services exceeded our expectations. Highly recommended!"`,
+          author: "Jane Smith",
+          role: "CTO",
+          company: "Tech Corp",
+        },
+        {
+          quote: `"Professional, reliable, and results-driven. Our ${title.toLowerCase()} project was a success."`,
+          author: "Mike Johnson",
+          role: "Director",
+          company: "Business Solutions",
         },
       ],
     },
     faq: {
-      title: "Frequently Asked Questions",
-      description: "Common questions about our service",
+      title: "FAQs",
       items: [
         {
           question: `What is ${title}?`,
@@ -390,5 +539,19 @@ export function getDefaultServiceTemplateForTitle(
       buttonText: "Contact Us",
       buttonLink: "/contact",
     },
+    sectionOrder: [
+      "hero",
+      "overview",
+      "stats",
+      "subServices",
+      "whyChooseUs",
+      "technologies",
+      "process",
+      "portfolio",
+      "partners",
+      "cards",
+      "faq",
+      "cta",
+    ],
   };
 }
