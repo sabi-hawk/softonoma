@@ -93,7 +93,12 @@ export default function IndustryTemplate({
 
   useEffect(() => {
     const container = partnersRef.current;
-    if (!container || !data.partners?.partners || data.partners.partners.length === 0) return;
+    if (
+      !container ||
+      !data.partners?.partners ||
+      data.partners.partners.length === 0
+    )
+      return;
 
     let scrollPosition = 0;
     const scrollSpeed = 0.5; // pixels per frame
@@ -239,7 +244,7 @@ export default function IndustryTemplate({
             {data.hero.title || industryTitle}
           </h1>
           {data.hero.subtitle && (
-            <p className="text-xl md:text-2xl theme-primary-end mb-4">
+            <p className="text-xl md:text-2xl theme-primary-mid mb-4">
               {data.hero.subtitle}
             </p>
           )}
@@ -254,7 +259,7 @@ export default function IndustryTemplate({
           {data.hero.primaryButtonText && (
             <Link
               href={data.hero.primaryButtonLink || "#contact"}
-              className="inline-block px-6 py-3 theme-gradient theme-text-white rounded-lg font-semibold transition-all hover:shadow-lg"
+              className="inline-block px-6 py-3 theme-bg-primary-mid text-white rounded-lg font-semibold transition-all hover:opacity-90 hover:shadow-lg"
             >
               {data.hero.primaryButtonText}
             </Link>
@@ -271,7 +276,7 @@ export default function IndustryTemplate({
         <section
           key="overview"
           id="overview"
-          className="py-16 lg:py-24 bg-gray-50"
+          className="py-16 md:py-24 bg-gray-50"
         >
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="grid md:grid-cols-2 gap-12 items-center">
@@ -282,7 +287,7 @@ export default function IndustryTemplate({
                 <div className="space-y-4">
                   {data.overview.paragraphs.map((para, index) => (
                     <div key={index} className="flex items-start gap-3">
-                      <div className="shrink-0 w-6 h-6 rounded-full theme-gradient flex items-center justify-center mt-1">
+                      <div className="shrink-0 w-6 h-6 rounded-full theme-bg-primary-mid flex items-center justify-center mt-1">
                         <svg
                           className="w-4 h-4 theme-text-white"
                           fill="none"
@@ -319,25 +324,48 @@ export default function IndustryTemplate({
       ) : null,
     stats: () =>
       data.stats && data.stats.items && data.stats.items.length > 0 ? (
-        <section className="py-16 lg:py-24 bg-white" key="stats">
+        <section className="py-16 md:py-24 bg-white" key="stats">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="bg-gray-900 rounded-xl p-8 md:p-12">
               <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
                 {data.stats.items.map((stat, index) => (
-                  <div
-                    key={index}
-                    className="text-center"
-                  >
+                  <div key={index} className="text-center">
                     {stat.icon && (
-                      <div className="text-4xl mb-4">{stat.icon}</div>
+                      <div className="w-10 h-10 rounded-lg flex items-center justify-center text-white text-2xl mb-4 relative overflow-hidden mx-auto">
+                        {isIconUrl(stat.icon) && stat.icon ? (
+                          <Image
+                            src={stat.icon}
+                            alt={stat.label || "Stat"}
+                            fill
+                            className="object-contain transition-all duration-300"
+                            unoptimized
+                            onError={(e) => {
+                              const target = e.currentTarget;
+                              target.style.display = "none";
+                              const parent = target.parentElement;
+                              if (parent) {
+                                const fallback = document.createElement("div");
+                                if (stat.icon && !isIconUrl(stat.icon)) {
+                                  fallback.className = "text-2xl";
+                                  fallback.textContent = stat.icon;
+                                } else if (stat.label) {
+                                  fallback.className =
+                                    "text-xs font-bold text-white text-center";
+                                  fallback.textContent = stat.label;
+                                }
+                                parent.appendChild(fallback);
+                              }
+                            }}
+                          />
+                        ) : stat.icon ? (
+                          <div className="text-2xl">{stat.icon}</div>
+                        ) : null}
+                      </div>
                     )}
-                    <div
-                      className="text-3xl md:text-4xl font-bold theme-text-white mb-2"
-                      style={{ color: "var(--color-primary-end)" }}
-                    >
+                    <div className="text-3xl md:text-4xl font-bold text-white mb-2">
                       {stat.value}
                     </div>
-                    <div className="text-sm theme-text-white opacity-80">
+                    <div className="text-lg text-white opacity-90">
                       {stat.label}
                     </div>
                   </div>
@@ -351,7 +379,7 @@ export default function IndustryTemplate({
       data.subServices &&
       data.subServices.items &&
       data.subServices.items.length > 0 ? (
-        <section className="py-16 lg:py-24 bg-gray-50" key="subServices">
+        <section className="py-16 md:py-24 bg-gray-50" key="subServices">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-12">
               <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
@@ -371,7 +399,7 @@ export default function IndustryTemplate({
                 >
                   <div className="flex items-start gap-4">
                     {item.icon && (
-                      <div className="shrink-0 w-12 h-12 theme-gradient rounded-lg flex items-center justify-center text-2xl">
+                      <div className="shrink-0 w-12 h-12 theme-bg-primary-mid rounded-lg flex items-center justify-center text-2xl">
                         {isIconUrl(item.icon) ? (
                           <Image
                             src={item.icon}
@@ -417,7 +445,7 @@ export default function IndustryTemplate({
               <div className="text-center mt-12">
                 <Link
                   href={data.subServices.ctaButtonLink || "#contact"}
-                  className="inline-block px-8 py-3 theme-gradient theme-text-white rounded-lg font-semibold transition-all hover:shadow-lg"
+                  className="inline-block px-8 py-3 theme-bg-primary-mid text-white rounded-lg font-semibold transition-all hover:opacity-90 hover:shadow-lg"
                 >
                   {data.subServices.ctaButtonText}
                 </Link>
@@ -430,7 +458,10 @@ export default function IndustryTemplate({
       data.partners &&
       data.partners.partners &&
       data.partners.partners.length > 0 ? (
-        <section className="py-20 md:py-28 px-4 sm:px-6 lg:px-8 theme-bg-white-green-gradient relative overflow-hidden" key="partners">
+        <section
+          className="py-16 md:py-24 px-4 sm:px-6 lg:px-8 theme-bg-white-green-gradient relative overflow-hidden"
+          key="partners"
+        >
           <div className="relative z-10 max-w-7xl mx-auto">
             {data.partners.title && (
               <div className="text-center mb-12">
@@ -465,7 +496,7 @@ export default function IndustryTemplate({
                         {titleParts.firstPart}
                       </span>
                       {titleParts.rest && (
-                        <span className="theme-primary-end">
+                        <span className="theme-primary-mid">
                           {" "}
                           {titleParts.rest}
                         </span>
@@ -529,7 +560,10 @@ export default function IndustryTemplate({
       ) : null,
     cards: () =>
       data.cards && data.cards.items && data.cards.items.length > 0 ? (
-        <section className="py-20 md:py-28 px-4 sm:px-6 lg:px-8 theme-bg-white" key="cards">
+        <section
+          className="py-16 md:py-24 px-4 sm:px-6 lg:px-8 theme-bg-white"
+          key="cards"
+        >
           <div className="max-w-7xl mx-auto">
             {data.cards.title && (
               <div className="text-center mb-12">
@@ -611,7 +645,7 @@ export default function IndustryTemplate({
                         )}
                         {item.quote && (
                           <p className="text-gray-700 mb-6 leading-relaxed italic">
-                            "{item.quote}"
+                            &ldquo;{item.quote}&rdquo;
                           </p>
                         )}
                         <div className="border-t border-gray-200 pt-4">
@@ -641,7 +675,10 @@ export default function IndustryTemplate({
       data.portfolio &&
       data.portfolio.projects &&
       data.portfolio.projects.length > 0 ? (
-        <section className="py-20 md:py-28 px-4 sm:px-6 lg:px-8 theme-bg-white" key="portfolio">
+        <section
+          className="py-16 md:py-24 px-4 sm:px-6 lg:px-8 theme-bg-white"
+          key="portfolio"
+        >
           <div className="max-w-7xl mx-auto">
             {data.portfolio.title && (
               <div className="text-center mb-12">
@@ -723,7 +760,7 @@ export default function IndustryTemplate({
                         )}
                         <div className="p-6">
                           {project.category && (
-                            <span className="inline-block px-3 py-1 text-xs font-semibold theme-gradient theme-text-white rounded-full mb-3">
+                            <span className="inline-block px-3 py-1 text-xs font-semibold theme-bg-primary-mid theme-text-white rounded-full mb-3">
                               {project.category}
                             </span>
                           )}
@@ -768,7 +805,10 @@ export default function IndustryTemplate({
       data.technologies &&
       data.technologies.items &&
       data.technologies.items.length > 0 ? (
-        <section className="py-20 md:py-28 px-4 sm:px-6 lg:px-8 theme-bg-white-green-gradient relative overflow-hidden" key="technologies">
+        <section
+          className="py-16 md:py-24 px-4 sm:px-6 lg:px-8 theme-bg-white-green-gradient relative overflow-hidden"
+          key="technologies"
+        >
           <div className="relative z-10 max-w-7xl mx-auto">
             {data.technologies.title && (
               <div className="text-center mb-16">
@@ -780,11 +820,16 @@ export default function IndustryTemplate({
                     if (lowerTitle.includes("technologies")) {
                       const techIndex = lowerTitle.indexOf("technologies");
                       const beforeTech = title.substring(0, techIndex).trim();
-                      const techPart = title.substring(techIndex, techIndex + 12); // "Technologies"
+                      const techPart = title.substring(
+                        techIndex,
+                        techIndex + 12
+                      ); // "Technologies"
                       const afterTech = title.substring(techIndex + 12).trim();
 
                       return {
-                        firstPart: beforeTech ? `${beforeTech} ${techPart}` : techPart,
+                        firstPart: beforeTech
+                          ? `${beforeTech} ${techPart}`
+                          : techPart,
                         rest: afterTech,
                       };
                     }
@@ -792,12 +837,15 @@ export default function IndustryTemplate({
                     // Default: split on "and" or "&"
                     const andIndex = lowerTitle.indexOf(" and ");
                     const ampIndex = lowerTitle.indexOf(" & ");
-                    const splitIndex = andIndex > 0 ? andIndex : ampIndex > 0 ? ampIndex : -1;
+                    const splitIndex =
+                      andIndex > 0 ? andIndex : ampIndex > 0 ? ampIndex : -1;
 
                     if (splitIndex > 0) {
                       return {
                         firstPart: title.substring(0, splitIndex).trim(),
-                        rest: title.substring(splitIndex + (andIndex > 0 ? 5 : 3)).trim(),
+                        rest: title
+                          .substring(splitIndex + (andIndex > 0 ? 5 : 3))
+                          .trim(),
                       };
                     }
 
@@ -812,7 +860,7 @@ export default function IndustryTemplate({
                           {titleParts.firstPart}
                         </span>
                         {titleParts.rest && (
-                          <span className="theme-primary-end">
+                          <span className="theme-primary-mid">
                             {" "}
                             {titleParts.rest}
                           </span>

@@ -56,7 +56,7 @@ export default function TechnologiesSection({
   const titleParts = content.title ? getTitleParts(content.title) : null;
 
   return (
-    <section className="py-20 md:py-28 px-4 sm:px-6 lg:px-8 theme-bg-white-green-gradient relative overflow-hidden">
+    <section className="py-16 md:py-24 px-4 sm:px-6 lg:px-8 theme-bg-white-green-gradient relative overflow-hidden">
       <div className="relative z-10 max-w-7xl mx-auto">
         {content.title && (
           <div className="text-center mb-16">

@@ -15,7 +15,7 @@ export default function HeroSection({ section }: HeroSectionProps) {
     (content.backgroundOpacity as number | undefined) ?? 0.3; // Default 30% opacity
 
   return (
-    <section className="relative py-32 md:py-37 lg:py-45 overflow-hidden theme-bg-black">
+    <section className="relative py-28 md:py-32 lg:py-36 overflow-hidden theme-bg-black">
       {/* Background Image/Video */}
       {(backgroundImage || backgroundVideo) && (
         <div className="absolute inset-0">

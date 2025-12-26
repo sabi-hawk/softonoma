@@ -10,7 +10,7 @@ export default function AboutSection({ section }: AboutSectionProps) {
   const { content } = section;
 
   return (
-    <section className="py-20 md:py-28 px-4 sm:px-6 lg:px-8 theme-bg-white">
+    <section className="py-16 md:py-24 px-4 sm:px-6 lg:px-8 theme-bg-white">
       <div className="max-w-7xl mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
           {/* Left Column - Text Content */}

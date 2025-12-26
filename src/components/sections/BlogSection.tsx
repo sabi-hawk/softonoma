@@ -41,7 +41,7 @@ export default function BlogSection({ section }: BlogSectionProps) {
   };
 
   return (
-    <section className="py-20 md:py-28 px-4 sm:px-6 lg:px-8 theme-bg-white">
+    <section className="py-16 md:py-24 px-4 sm:px-6 lg:px-8 theme-bg-white">
       <div className="max-w-7xl mx-auto">
         {content.title && (
           <div className="text-center mb-16">

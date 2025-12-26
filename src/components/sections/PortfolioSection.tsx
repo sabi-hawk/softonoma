@@ -42,7 +42,7 @@ export default function PortfolioSection({ section }: PortfolioSectionProps) {
   };
 
   return (
-    <section className="py-20 md:py-28 px-4 sm:px-6 lg:px-8 theme-bg-white">
+    <section className="py-16 md:py-24 px-4 sm:px-6 lg:px-8 theme-bg-white">
       <div className="max-w-7xl mx-auto">
         {content.title && (
           <div className="text-center mb-16">
@@ -94,7 +94,7 @@ export default function PortfolioSection({ section }: PortfolioSectionProps) {
                   className="group relative theme-bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2"
                 >
                   {/* Project Image */}
-                  <div className="relative h-64 overflow-hidden theme-gradient">
+                  <div className="relative h-64 overflow-hidden theme-bg-primary-mid">
                     {isImageUrl(project.image) && project.image ? (
                       <Image
                         src={project.image}
@@ -127,14 +127,14 @@ export default function PortfolioSection({ section }: PortfolioSectionProps) {
                   <div className="p-6">
                     {project.category && (
                       <span
-                        className="inline-block px-3 py-1 text-xs font-semibold theme-primary-end rounded-full mb-3"
-                        style={{ backgroundColor: "rgba(206, 212, 48, 0.1)" }}
+                        className="inline-block px-3 py-1 text-xs font-semibold theme-primary-mid rounded-full mb-3"
+                        style={{ backgroundColor: "rgba(121, 178, 70, 0.1)" }}
                       >
                         {project.category}
                       </span>
                     )}
                     {project.title && (
-                      <h3 className="text-xl font-bold theme-text-black mb-3 theme-hover-primary transition-colors">
+                      <h3 className="text-xl font-bold theme-text-black mb-3 theme-hover-primary-mid transition-colors">
                         {project.title}
                       </h3>
                     )}

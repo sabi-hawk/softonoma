@@ -150,7 +150,7 @@ export default function Navbar({ pages, services, industries }: NavbarProps) {
               {navItems.map((item) => {
                 if (item.type === "page") {
                   return (
-                    <Link
+              <Link
                       key={item.id}
                       href={`/${item.slug}`}
                       className={`px-4 py-2 text-sm font-medium transition-colors cursor-pointer uppercase tracking-wide ${
@@ -158,9 +158,9 @@ export default function Navbar({ pages, services, industries }: NavbarProps) {
                           ? "theme-text-black theme-hover-primary"
                           : "theme-text-white theme-hover-primary"
                       }`}
-                    >
+              >
                       {item.title}
-                    </Link>
+              </Link>
                   );
                 } else if (item.type === "services") {
                   return (
@@ -169,14 +169,14 @@ export default function Navbar({ pages, services, industries }: NavbarProps) {
                       className="relative"
                       data-dropdown="services"
                       onMouseLeave={() => setServicesDropdownOpen(false)}
+                      onMouseEnter={() => {
+                        setServicesDropdownOpen(true);
+                        setIndustriesDropdownOpen(false);
+                      }}
                     >
-                      <button
+                <button
                         onClick={() => {
                           setServicesDropdownOpen(!servicesDropdownOpen);
-                          setIndustriesDropdownOpen(false);
-                        }}
-                        onMouseEnter={() => {
-                          setServicesDropdownOpen(true);
                           setIndustriesDropdownOpen(false);
                         }}
                         className={`px-4 py-2 text-sm font-medium transition-colors cursor-pointer flex items-center gap-1 uppercase tracking-wide ${
@@ -184,56 +184,58 @@ export default function Navbar({ pages, services, industries }: NavbarProps) {
                             ? "theme-text-black theme-hover-primary"
                             : "theme-text-white theme-hover-primary"
                         }`}
-                      >
-                        Services
-                        <svg
-                          className={`w-4 h-4 transition-transform ${
-                            servicesDropdownOpen ? "rotate-180" : ""
-                          }`}
-                          fill="none"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth="2"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                        >
-                          <path d="M19 9l-7 7-7-7"></path>
-                        </svg>
-                      </button>
-                      {servicesDropdownOpen && (
-                        <div
-                          className={`absolute top-full left-0 mt-1 w-48 backdrop-blur-md rounded-md shadow-lg border py-1 z-50 ${
-                            isScrolled ? "theme-bg-white" : "theme-bg-black/95"
-                          }`}
+                >
+                  Services
+                  <svg
+                          className={`w-4 h-4 transition-transform duration-200 ${
+                      servicesDropdownOpen ? "rotate-180" : ""
+                    }`}
+                    fill="none"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path d="M19 9l-7 7-7-7"></path>
+                  </svg>
+                </button>
+                {servicesDropdownOpen && (
+                  <div
+                          className="absolute top-full left-0 mt-0 w-56 backdrop-blur-md rounded-lg shadow-2xl border py-2 z-50 animate-in fade-in slide-in-from-top-2 duration-200"
+                          onMouseEnter={() => setServicesDropdownOpen(true)}
+                    onMouseLeave={() => setServicesDropdownOpen(false)}
                           style={
                             isScrolled
                               ? {
-                                  backgroundColor: "rgba(255, 255, 255, 0.95)",
-                                  borderColor: "rgba(0, 0, 0, 0.1)",
+                                  backgroundColor: "rgba(255, 255, 255, 0.98)",
+                                  borderColor: "rgba(0, 0, 0, 0.08)",
+                                  boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)",
                                 }
                               : {
-                                  backgroundColor: "rgba(0, 0, 0, 0.95)",
-                                  borderColor: "rgba(255, 255, 255, 0.1)",
+                                  backgroundColor: "rgba(0, 0, 0, 0.98)",
+                                  borderColor: "rgba(255, 255, 255, 0.15)",
+                                  boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(0, 0, 0, 0.2)",
                                 }
                           }
-                        >
+                  >
                           {item.services.map((service) => (
-                            <Link
-                              key={service._id}
-                              href={`/services/${service.slug}`}
+                      <Link
+                        key={service._id}
+                        href={`/services/${service.slug}`}
                               onClick={handleLinkClick}
-                              className={`block px-4 py-2 text-sm transition-colors theme-hover-primary ${
+                              className={`block px-4 py-2.5 text-sm transition-all duration-150 theme-hover-primary ${
                                 isScrolled
-                                  ? "theme-text-black hover:bg-gray-100"
-                                  : "theme-text-white hover:bg-gray-800"
+                                  ? "theme-text-black hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 hover:pl-5"
+                                  : "theme-text-white hover:bg-gradient-to-r hover:from-gray-800 hover:to-gray-700 hover:pl-5"
                               }`}
-                            >
-                              {service.title}
-                            </Link>
-                          ))}
-                        </div>
-                      )}
-                    </div>
+                      >
+                        {service.title}
+                      </Link>
+                    ))}
+                  </div>
+                )}
+              </div>
                   );
                 } else {
                   return (
@@ -242,14 +244,14 @@ export default function Navbar({ pages, services, industries }: NavbarProps) {
                       className="relative"
                       data-dropdown="industries"
                       onMouseLeave={() => setIndustriesDropdownOpen(false)}
+                      onMouseEnter={() => {
+                        setIndustriesDropdownOpen(true);
+                        setServicesDropdownOpen(false);
+                      }}
                     >
-                      <button
+                <button
                         onClick={() => {
                           setIndustriesDropdownOpen(!industriesDropdownOpen);
-                          setServicesDropdownOpen(false);
-                        }}
-                        onMouseEnter={() => {
-                          setIndustriesDropdownOpen(true);
                           setServicesDropdownOpen(false);
                         }}
                         className={`px-4 py-2 text-sm font-medium transition-colors cursor-pointer flex items-center gap-1 uppercase tracking-wide ${
@@ -257,56 +259,58 @@ export default function Navbar({ pages, services, industries }: NavbarProps) {
                             ? "theme-text-black theme-hover-primary"
                             : "theme-text-white theme-hover-primary"
                         }`}
-                      >
-                        Industries
-                        <svg
-                          className={`w-4 h-4 transition-transform ${
-                            industriesDropdownOpen ? "rotate-180" : ""
-                          }`}
-                          fill="none"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth="2"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                        >
-                          <path d="M19 9l-7 7-7-7"></path>
-                        </svg>
-                      </button>
-                      {industriesDropdownOpen && (
-                        <div
-                          className={`absolute top-full left-0 mt-1 w-48 backdrop-blur-md rounded-md shadow-lg border py-1 z-50 ${
-                            isScrolled ? "theme-bg-white" : "theme-bg-black/95"
-                          }`}
+                >
+                  Industries
+                  <svg
+                          className={`w-4 h-4 transition-transform duration-200 ${
+                      industriesDropdownOpen ? "rotate-180" : ""
+                    }`}
+                    fill="none"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path d="M19 9l-7 7-7-7"></path>
+                  </svg>
+                </button>
+                {industriesDropdownOpen && (
+                  <div
+                          className="absolute top-full left-0 mt-0 w-56 backdrop-blur-md rounded-lg shadow-2xl border py-2 z-50 animate-in fade-in slide-in-from-top-2 duration-200"
+                          onMouseEnter={() => setIndustriesDropdownOpen(true)}
+                    onMouseLeave={() => setIndustriesDropdownOpen(false)}
                           style={
                             isScrolled
                               ? {
-                                  backgroundColor: "rgba(255, 255, 255, 0.95)",
-                                  borderColor: "rgba(0, 0, 0, 0.1)",
+                                  backgroundColor: "rgba(255, 255, 255, 0.98)",
+                                  borderColor: "rgba(0, 0, 0, 0.08)",
+                                  boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)",
                                 }
                               : {
-                                  backgroundColor: "rgba(0, 0, 0, 0.95)",
-                                  borderColor: "rgba(255, 255, 255, 0.1)",
+                                  backgroundColor: "rgba(0, 0, 0, 0.98)",
+                                  borderColor: "rgba(255, 255, 255, 0.15)",
+                                  boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(0, 0, 0, 0.2)",
                                 }
                           }
-                        >
+                  >
                           {item.industries.map((industry) => (
-                            <Link
-                              key={industry._id}
-                              href={`/industries/${industry.slug}`}
+                      <Link
+                        key={industry._id}
+                        href={`/industries/${industry.slug}`}
                               onClick={handleLinkClick}
-                              className={`block px-4 py-2 text-sm transition-colors theme-hover-primary ${
+                              className={`block px-4 py-2.5 text-sm transition-all duration-150 theme-hover-primary ${
                                 isScrolled
-                                  ? "theme-text-black hover:bg-gray-100"
-                                  : "theme-text-white hover:bg-gray-800"
+                                  ? "theme-text-black hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 hover:pl-5"
+                                  : "theme-text-white hover:bg-gradient-to-r hover:from-gray-800 hover:to-gray-700 hover:pl-5"
                               }`}
-                            >
-                              {industry.title}
-                            </Link>
-                          ))}
-                        </div>
-                      )}
-                    </div>
+                      >
+                        {industry.title}
+                      </Link>
+                    ))}
+                  </div>
+                )}
+              </div>
                   );
                 }
               })}

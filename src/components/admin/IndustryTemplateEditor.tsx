@@ -391,9 +391,9 @@ export default function IndustryTemplateEditor({
           {activeTab === "overview" && (
             <div className="space-y-4">
               <div className="flex justify-between items-center">
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                  Overview Section
-                </h3>
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                Overview Section
+              </h3>
                 <label className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300">
                   <input
                     type="checkbox"
@@ -429,7 +429,7 @@ export default function IndustryTemplateEditor({
                 <div className="flex justify-between items-center mb-2">
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                     Paragraphs (with checkmarks)
-                  </label>
+                </label>
                   <button
                     onClick={() => {
                       setData((prev) => ({
@@ -474,7 +474,7 @@ export default function IndustryTemplateEditor({
                         Remove
                       </button>
                     </div>
-                    <textarea
+                <textarea
                       value={para.text}
                       onChange={(e) => {
                         setData((prev) => ({
@@ -489,17 +489,17 @@ export default function IndustryTemplateEditor({
                       }}
                       className="w-full px-2 py-1 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
                       rows={3}
-                    />
-                  </div>
+                />
+              </div>
                 ))}
               </div>
               <FileUpload
                 label="Overview Image (optional)"
-                value={data.overview.image || ""}
+                  value={data.overview.image || ""}
                 onChange={(url) => updateField("overview", "image", url)}
                 type="image"
                 folder="industry-overview"
-              />
+                />
             </div>
           )}
 
@@ -511,10 +511,10 @@ export default function IndustryTemplateEditor({
                 </h3>
                 <div className="flex items-center gap-4">
                   <label className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300">
-                    <input
+                <input
                       type="checkbox"
                       checked={data.stats?.isActive !== false}
-                      onChange={(e) =>
+                  onChange={(e) =>
                         setData((prev) => ({
                           ...prev,
                           stats: {
@@ -522,11 +522,11 @@ export default function IndustryTemplateEditor({
                             isActive: e.target.checked,
                           },
                         }))
-                      }
+                  }
                       className="rounded"
-                    />
+                />
                     Active
-                  </label>
+                </label>
                   <button
                     onClick={() => {
                       if (!data.stats) {
@@ -549,7 +549,7 @@ export default function IndustryTemplateEditor({
                   >
                     Add Stat
                   </button>
-                </div>
+              </div>
               </div>
               {data.stats?.items.map((stat, index) => (
                 <div
@@ -672,7 +672,7 @@ export default function IndustryTemplateEditor({
                     />
                     Active
                   </label>
-                  <button
+                <button
                     onClick={() => {
                       if (!data.subServices) {
                         setData((prev) => ({
@@ -694,22 +694,22 @@ export default function IndustryTemplateEditor({
                         },
                       }));
                     }}
-                    className="px-3 py-1 bg-blue-600 text-white rounded text-sm hover:bg-blue-700"
-                  >
+                  className="px-3 py-1 bg-blue-600 text-white rounded text-sm hover:bg-blue-700"
+                >
                     Add Service
-                  </button>
-                </div>
+                </button>
+              </div>
               </div>
               {data.subServices && (
                 <>
-                  <div>
-                    <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
-                      Section Title
-                    </label>
-                    <input
-                      type="text"
+              <div>
+                <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
+                  Section Title
+                </label>
+                <input
+                  type="text"
                       value={data.subServices.title}
-                      onChange={(e) =>
+                  onChange={(e) =>
                         setData((prev) => ({
                           ...prev,
                           subServices: {
@@ -717,17 +717,17 @@ export default function IndustryTemplateEditor({
                             title: e.target.value,
                           },
                         }))
-                      }
-                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
+                  }
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
                       Section Description (optional)
-                    </label>
-                    <textarea
+                </label>
+                <textarea
                       value={data.subServices.description || ""}
-                      onChange={(e) =>
+                  onChange={(e) =>
                         setData((prev) => ({
                           ...prev,
                           subServices: {
@@ -735,21 +735,21 @@ export default function IndustryTemplateEditor({
                             description: e.target.value,
                           },
                         }))
-                      }
-                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                      rows={2}
-                    />
-                  </div>
+                  }
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                  rows={2}
+                />
+              </div>
                   {data.subServices.items.map((item, index) => (
-                    <div
-                      key={index}
-                      className="border border-gray-300 dark:border-gray-600 rounded p-4 space-y-2"
-                    >
-                      <div className="flex justify-between items-center">
-                        <h4 className="font-medium text-gray-900 dark:text-white">
+                <div
+                  key={index}
+                  className="border border-gray-300 dark:border-gray-600 rounded p-4 space-y-2"
+                >
+                  <div className="flex justify-between items-center">
+                    <h4 className="font-medium text-gray-900 dark:text-white">
                           Service {index + 1}
-                        </h4>
-                        <button
+                    </h4>
+                    <button
                           onClick={() => {
                             setData((prev) => ({
                               ...prev,
@@ -762,11 +762,11 @@ export default function IndustryTemplateEditor({
                               },
                             }));
                           }}
-                          className="text-red-600 hover:text-red-800 text-sm"
-                        >
-                          Remove
-                        </button>
-                      </div>
+                      className="text-red-600 hover:text-red-800 text-sm"
+                    >
+                      Remove
+                    </button>
+                  </div>
                       <div>
                         <IconUpload
                           label="Icon (emoji, URL, or upload image)"
@@ -789,13 +789,13 @@ export default function IndustryTemplateEditor({
                           className="text-sm"
                         />
                       </div>
-                      <div>
-                        <label className="block text-xs font-medium mb-1 text-gray-700 dark:text-gray-300">
-                          Title
-                        </label>
-                        <input
-                          type="text"
-                          value={item.title}
+                  <div>
+                    <label className="block text-xs font-medium mb-1 text-gray-700 dark:text-gray-300">
+                      Title
+                    </label>
+                    <input
+                      type="text"
+                      value={item.title}
                           onChange={(e) => {
                             setData((prev) => ({
                               ...prev,
@@ -810,15 +810,15 @@ export default function IndustryTemplateEditor({
                               },
                             }));
                           }}
-                          className="w-full px-2 py-1 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-xs font-medium mb-1 text-gray-700 dark:text-gray-300">
-                          Description
-                        </label>
-                        <textarea
-                          value={item.description}
+                      className="w-full px-2 py-1 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-medium mb-1 text-gray-700 dark:text-gray-300">
+                      Description
+                    </label>
+                    <textarea
+                      value={item.description}
                           onChange={(e) => {
                             setData((prev) => ({
                               ...prev,
@@ -833,12 +833,12 @@ export default function IndustryTemplateEditor({
                               },
                             }));
                           }}
-                          className="w-full px-2 py-1 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
-                          rows={2}
-                        />
-                      </div>
-                    </div>
-                  ))}
+                      className="w-full px-2 py-1 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
+                      rows={2}
+                    />
+                  </div>
+                </div>
+              ))}
                   <div className="grid grid-cols-2 gap-4">
                     <div>
                       <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
@@ -911,16 +911,16 @@ export default function IndustryTemplateEditor({
                     />
                     Active
                   </label>
-                  <button
-                    onClick={() => {
+                <button
+                  onClick={() => {
                       if (!data.partners) {
-                        setData((prev) => ({
-                          ...prev,
+                      setData((prev) => ({
+                        ...prev,
                           partners: {
-                            title: "",
+                          title: "",
                             partners: [],
-                          },
-                        }));
+                        },
+                      }));
                       }
                       setData((prev) => ({
                         ...prev,
@@ -932,12 +932,12 @@ export default function IndustryTemplateEditor({
                           ],
                         },
                       }));
-                    }}
-                    className="px-3 py-1 bg-blue-600 text-white rounded text-sm hover:bg-blue-700"
-                  >
+                  }}
+                  className="px-3 py-1 bg-blue-600 text-white rounded text-sm hover:bg-blue-700"
+                >
                     Add Partner
-                  </button>
-                </div>
+                </button>
+              </div>
               </div>
               {data.partners && (
                 <>
@@ -980,15 +980,15 @@ export default function IndustryTemplateEditor({
                     />
                   </div>
                   {data.partners.partners.map((partner, index) => (
-                    <div
-                      key={index}
-                      className="border border-gray-300 dark:border-gray-600 rounded p-4 space-y-2"
-                    >
-                      <div className="flex justify-between items-center">
-                        <h4 className="font-medium text-gray-900 dark:text-white">
+                      <div
+                        key={index}
+                        className="border border-gray-300 dark:border-gray-600 rounded p-4 space-y-2"
+                      >
+                        <div className="flex justify-between items-center">
+                          <h4 className="font-medium text-gray-900 dark:text-white">
                           Partner {index + 1}
-                        </h4>
-                        <button
+                          </h4>
+                          <button
                           onClick={() => {
                             setData((prev) => ({
                               ...prev,
@@ -1001,17 +1001,17 @@ export default function IndustryTemplateEditor({
                               },
                             }));
                           }}
-                          className="text-red-600 hover:text-red-800 text-sm"
-                        >
-                          Remove
-                        </button>
-                      </div>
-                      <div>
-                        <label className="block text-xs font-medium mb-1 text-gray-700 dark:text-gray-300">
+                            className="text-red-600 hover:text-red-800 text-sm"
+                          >
+                            Remove
+                          </button>
+                        </div>
+                        <div>
+                          <label className="block text-xs font-medium mb-1 text-gray-700 dark:text-gray-300">
                           Name (optional)
-                        </label>
-                        <input
-                          type="text"
+                          </label>
+                          <input
+                            type="text"
                           value={partner.name || ""}
                           onChange={(e) => {
                             setData((prev) => ({
@@ -1027,10 +1027,10 @@ export default function IndustryTemplateEditor({
                               },
                             }));
                           }}
-                          className="w-full px-2 py-1 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
-                        />
-                      </div>
-                      <div>
+                            className="w-full px-2 py-1 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
+                          />
+                        </div>
+                        <div>
                         <IconUpload
                           label="Logo (emoji, URL, or upload image)"
                           value={partner.logo || ""}
@@ -1050,9 +1050,9 @@ export default function IndustryTemplateEditor({
                           }}
                           folder="industry-partners-logos"
                           className="text-sm"
-                        />
+                          />
+                        </div>
                       </div>
-                    </div>
                   ))}
                 </>
               )}
@@ -1086,16 +1086,16 @@ export default function IndustryTemplateEditor({
                     />
                     Active
                   </label>
-                  <button
-                    onClick={() => {
+                <button
+                  onClick={() => {
                       if (!data.cards) {
-                        setData((prev) => ({
-                          ...prev,
+                      setData((prev) => ({
+                        ...prev,
                           cards: {
-                            title: "",
+                          title: "",
                             items: [],
-                          },
-                        }));
+                        },
+                      }));
                       }
                       setData((prev) => ({
                         ...prev,
@@ -1112,12 +1112,12 @@ export default function IndustryTemplateEditor({
                           ],
                         },
                       }));
-                    }}
-                    className="px-3 py-1 bg-blue-600 text-white rounded text-sm hover:bg-blue-700"
-                  >
+                  }}
+                  className="px-3 py-1 bg-blue-600 text-white rounded text-sm hover:bg-blue-700"
+                >
                     Add Card
-                  </button>
-                </div>
+                </button>
+              </div>
               </div>
               {data.cards && (
                 <>
@@ -1179,15 +1179,15 @@ export default function IndustryTemplateEditor({
                     </label>
                   </div>
                   {data.cards.items.map((item, index) => (
-                    <div
-                      key={index}
-                      className="border border-gray-300 dark:border-gray-600 rounded p-4 space-y-2"
-                    >
-                      <div className="flex justify-between items-center">
-                        <h4 className="font-medium text-gray-900 dark:text-white">
+                      <div
+                        key={index}
+                        className="border border-gray-300 dark:border-gray-600 rounded p-4 space-y-2"
+                      >
+                        <div className="flex justify-between items-center">
+                          <h4 className="font-medium text-gray-900 dark:text-white">
                           Card {index + 1}
-                        </h4>
-                        <button
+                          </h4>
+                          <button
                           onClick={() => {
                             setData((prev) => ({
                               ...prev,
@@ -1200,13 +1200,13 @@ export default function IndustryTemplateEditor({
                               },
                             }));
                           }}
-                          className="text-red-600 hover:text-red-800 text-sm"
-                        >
-                          Remove
-                        </button>
-                      </div>
-                      <div>
-                        <label className="block text-xs font-medium mb-1 text-gray-700 dark:text-gray-300">
+                            className="text-red-600 hover:text-red-800 text-sm"
+                          >
+                            Remove
+                          </button>
+                        </div>
+                        <div>
+                          <label className="block text-xs font-medium mb-1 text-gray-700 dark:text-gray-300">
                           Quote
                         </label>
                         <textarea
@@ -1232,9 +1232,9 @@ export default function IndustryTemplateEditor({
                       <div>
                         <label className="block text-xs font-medium mb-1 text-gray-700 dark:text-gray-300">
                           Author
-                        </label>
-                        <input
-                          type="text"
+                          </label>
+                          <input
+                            type="text"
                           value={item.author || ""}
                           onChange={(e) => {
                             setData((prev) => ({
@@ -1250,13 +1250,13 @@ export default function IndustryTemplateEditor({
                               },
                             }));
                           }}
-                          className="w-full px-2 py-1 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-xs font-medium mb-1 text-gray-700 dark:text-gray-300">
+                            className="w-full px-2 py-1 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-xs font-medium mb-1 text-gray-700 dark:text-gray-300">
                           Role (optional)
-                        </label>
+                          </label>
                         <input
                           type="text"
                           value={item.role || ""}
@@ -1274,9 +1274,9 @@ export default function IndustryTemplateEditor({
                               },
                             }));
                           }}
-                          className="w-full px-2 py-1 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
-                        />
-                      </div>
+                            className="w-full px-2 py-1 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
+                          />
+                        </div>
                       <div>
                         <label className="block text-xs font-medium mb-1 text-gray-700 dark:text-gray-300">
                           Company (optional)
@@ -1335,14 +1335,14 @@ export default function IndustryTemplateEditor({
                     />
                     Active
                   </label>
-                  <button
+                <button
                     onClick={() => {
                       if (!data.portfolio) {
                         setData((prev) => ({
                           ...prev,
                           portfolio: {
-                            title: "",
-                            description: "",
+                      title: "",
+                      description: "",
                             projects: [
                               {
                                 title: "",
@@ -1375,22 +1375,22 @@ export default function IndustryTemplateEditor({
                         }));
                       }
                     }}
-                    className="px-3 py-1 bg-blue-600 text-white rounded text-sm hover:bg-blue-700"
-                  >
+                  className="px-3 py-1 bg-blue-600 text-white rounded text-sm hover:bg-blue-700"
+                >
                     Add Project
-                  </button>
-                </div>
+                </button>
+              </div>
               </div>
               {data.portfolio && (
                 <>
-                  <div>
-                    <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
-                      Section Title
-                    </label>
-                    <input
-                      type="text"
+              <div>
+                <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
+                  Section Title
+                </label>
+                <input
+                  type="text"
                       value={data.portfolio.title}
-                      onChange={(e) =>
+                  onChange={(e) =>
                         setData((prev) => ({
                           ...prev,
                           portfolio: {
@@ -1398,17 +1398,17 @@ export default function IndustryTemplateEditor({
                             title: e.target.value,
                           },
                         }))
-                      }
-                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
+                  }
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
                       Section Description (optional)
-                    </label>
-                    <textarea
+                </label>
+                <textarea
                       value={data.portfolio.description || ""}
-                      onChange={(e) =>
+                  onChange={(e) =>
                         setData((prev) => ({
                           ...prev,
                           portfolio: {
@@ -1416,21 +1416,21 @@ export default function IndustryTemplateEditor({
                             description: e.target.value,
                           },
                         }))
-                      }
-                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                      rows={2}
-                    />
-                  </div>
+                  }
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                  rows={2}
+                />
+              </div>
                   {data.portfolio.projects.map((project, index) => (
-                    <div
-                      key={index}
-                      className="border border-gray-300 dark:border-gray-600 rounded p-4 space-y-2"
-                    >
-                      <div className="flex justify-between items-center">
-                        <h4 className="font-medium text-gray-900 dark:text-white">
+                <div
+                  key={index}
+                  className="border border-gray-300 dark:border-gray-600 rounded p-4 space-y-2"
+                >
+                  <div className="flex justify-between items-center">
+                    <h4 className="font-medium text-gray-900 dark:text-white">
                           Project {index + 1}
-                        </h4>
-                        <button
+                    </h4>
+                    <button
                           onClick={() => {
                             setData((prev) => ({
                               ...prev,
@@ -1443,11 +1443,11 @@ export default function IndustryTemplateEditor({
                               },
                             }));
                           }}
-                          className="text-red-600 hover:text-red-800 text-sm"
-                        >
-                          Remove
-                        </button>
-                      </div>
+                      className="text-red-600 hover:text-red-800 text-sm"
+                    >
+                      Remove
+                    </button>
+                  </div>
                       <FileUpload
                         label="Project Image (optional)"
                         value={project.image || ""}
@@ -1491,12 +1491,12 @@ export default function IndustryTemplateEditor({
                           placeholder="Industry Solutions"
                         />
                       </div>
-                      <div>
-                        <label className="block text-xs font-medium mb-1 text-gray-700 dark:text-gray-300">
-                          Title
-                        </label>
-                        <input
-                          type="text"
+                  <div>
+                    <label className="block text-xs font-medium mb-1 text-gray-700 dark:text-gray-300">
+                      Title
+                    </label>
+                    <input
+                      type="text"
                           value={project.title}
                           onChange={(e) => {
                             setData((prev) => ({
@@ -1512,14 +1512,14 @@ export default function IndustryTemplateEditor({
                               },
                             }));
                           }}
-                          className="w-full px-2 py-1 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-xs font-medium mb-1 text-gray-700 dark:text-gray-300">
-                          Description
-                        </label>
-                        <textarea
+                      className="w-full px-2 py-1 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-medium mb-1 text-gray-700 dark:text-gray-300">
+                      Description
+                    </label>
+                    <textarea
                           value={project.description}
                           onChange={(e) => {
                             setData((prev) => ({
@@ -1535,16 +1535,16 @@ export default function IndustryTemplateEditor({
                               },
                             }));
                           }}
-                          className="w-full px-2 py-1 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
+                      className="w-full px-2 py-1 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
                           rows={3}
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-xs font-medium mb-1 text-gray-700 dark:text-gray-300">
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-medium mb-1 text-gray-700 dark:text-gray-300">
                           Link (optional)
-                        </label>
-                        <input
-                          type="text"
+                    </label>
+                    <input
+                      type="text"
                           value={project.link || ""}
                           onChange={(e) => {
                             setData((prev) => ({
@@ -1593,12 +1593,12 @@ export default function IndustryTemplateEditor({
                               },
                             }));
                           }}
-                          className="w-full px-2 py-1 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
+                      className="w-full px-2 py-1 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
                           placeholder="React, Node.js, TypeScript"
-                        />
-                      </div>
-                    </div>
-                  ))}
+                    />
+                  </div>
+                </div>
+              ))}
                 </>
               )}
             </div>
@@ -1607,9 +1607,9 @@ export default function IndustryTemplateEditor({
           {activeTab === "technologies" && (
             <div className="space-y-4">
               <div className="flex justify-between items-center">
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
                   Technologies Section
-                </h3>
+              </h3>
                 <div className="flex items-center gap-4">
                   <label className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300">
                     <input
@@ -1655,36 +1655,36 @@ export default function IndustryTemplateEditor({
               </div>
               {data.technologies && (
                 <>
-                  <div>
-                    <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
+              <div>
+                <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
                       Section Title
-                    </label>
-                    <input
-                      type="text"
+                </label>
+                <input
+                  type="text"
                       value={data.technologies.title}
                       onChange={(e) =>
                         updateField("technologies", "title", e.target.value)
                       }
-                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
                       Section Description
-                    </label>
-                    <textarea
+                </label>
+                <textarea
                       value={data.technologies.description}
-                      onChange={(e) =>
+                  onChange={(e) =>
                         updateField(
                           "technologies",
                           "description",
                           e.target.value
                         )
-                      }
-                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                  }
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                       rows={2}
-                    />
-                  </div>
+                />
+              </div>
                   {data.technologies.items.map(
                     (item: { name: string; icon?: string }, index: number) => (
                       <div
@@ -1704,7 +1704,7 @@ export default function IndustryTemplateEditor({
                             Remove
                           </button>
                         </div>
-                        <div>
+                <div>
                           <IconUpload
                             label="Logo Image (emoji, URL, or upload image)"
                             value={item.icon || ""}
@@ -1841,9 +1841,9 @@ export default function IndustryTemplateEditor({
                             strokeLinejoin="round"
                             strokeWidth={2}
                             d="M4 8h16M4 16h16"
-                          />
+                  />
                         </svg>
-                      </div>
+                </div>
 
                       {/* Section Label */}
                       <div className="flex-1">
@@ -1904,10 +1904,10 @@ export default function IndustryTemplateEditor({
                               strokeLinejoin="round"
                               strokeWidth={2}
                               d="M19 9l-7 7-7-7"
-                            />
+                  />
                           </svg>
                         </button>
-                      </div>
+                </div>
                     </div>
                   );
                 })}

@@ -9,7 +9,7 @@ export default function CTASection({ section }: CTASectionProps) {
   const { content } = section;
 
   return (
-    <section className="py-20 md:py-28 px-4 sm:px-6 lg:px-8 relative overflow-hidden theme-bg-white-green-gradient">
+    <section className="py-16 md:py-24 px-4 sm:px-6 lg:px-8 relative overflow-hidden theme-bg-white-green-gradient">
       {/* Background pattern */}
       <div className="absolute inset-0 opacity-10">
         <div

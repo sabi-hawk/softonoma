@@ -460,7 +460,7 @@ export default function ServiceTemplate({
             {data.hero.primaryButtonText && (
               <Link
                 href={data.hero.primaryButtonLink || "#contact"}
-                className="inline-block px-8 py-4 bg-[#5c8c24] text-white rounded-lg font-semibold transition-all hover:bg-[#4a7320] hover:shadow-lg"
+                className="inline-block px-8 py-4 theme-bg-primary-mid text-white rounded-lg font-semibold transition-all hover:opacity-90 hover:shadow-lg"
               >
                 {data.hero.primaryButtonText}
               </Link>
@@ -479,7 +479,7 @@ export default function ServiceTemplate({
         <section
           key="overview"
           id="overview"
-          className="py-16 lg:py-24 bg-gray-50"
+          className="py-16 md:py-24 bg-gray-50"
         >
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="grid md:grid-cols-2 gap-12 items-center">
@@ -491,7 +491,7 @@ export default function ServiceTemplate({
                 {data.overview.paragraphs &&
                   data.overview.paragraphs.map((para, index) => (
                     <div key={index} className="mb-6 flex items-start gap-4">
-                      <div className="shrink-0 w-6 h-6 rounded-full bg-[#5c8c24] flex items-center justify-center mt-1">
+                      <div className="shrink-0 w-6 h-6 rounded-full theme-bg-primary-mid flex items-center justify-center mt-1">
                         <svg
                           className="w-4 h-4 text-white"
                           fill="none"
@@ -519,7 +519,7 @@ export default function ServiceTemplate({
                       src={data.overview.image}
                       alt={data.overview.title}
                       fill
-                      className="object-cover"
+                      className="object-contain"
                       unoptimized
                     />
                   </div>
@@ -531,18 +531,45 @@ export default function ServiceTemplate({
       ) : null,
     stats: () =>
       data.stats && data.stats.items && data.stats.items.length > 0 ? (
-        <section className="py-16 lg:py-24 bg-white" key="stats">
+        <section className="py-16 md:py-24 bg-white" key="stats">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="bg-gray-900 rounded-xl p-8 md:p-12">
               <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
                 {data.stats.items.map((stat, index) => (
                   <div key={index} className="text-center">
                     {stat.icon && (
-                      <div className="text-4xl mb-4 text-[#5c8c24] flex justify-center">
-                        {stat.icon}
+                      <div className="w-10 h-10 rounded-lg flex items-center justify-center text-white text-2xl mb-4 relative overflow-hidden mx-auto">
+                        {isIconUrl(stat.icon) && stat.icon ? (
+                          <Image
+                            src={stat.icon}
+                            alt={stat.label || "Stat"}
+                            fill
+                            className="object-contain transition-all duration-300"
+                            unoptimized
+                            onError={(e) => {
+                              const target = e.currentTarget;
+                              target.style.display = "none";
+                              const parent = target.parentElement;
+                              if (parent) {
+                                const fallback = document.createElement("div");
+                                if (stat.icon && !isIconUrl(stat.icon)) {
+                                  fallback.className = "text-2xl";
+                                  fallback.textContent = stat.icon;
+                                } else if (stat.label) {
+                                  fallback.className =
+                                    "text-xs font-bold text-white text-center";
+                                  fallback.textContent = stat.label;
+                                }
+                                parent.appendChild(fallback);
+                              }
+                            }}
+                          />
+                        ) : stat.icon ? (
+                          <div className="text-2xl">{stat.icon}</div>
+                        ) : null}
                       </div>
                     )}
-                    <div className="text-4xl md:text-5xl font-bold text-white mb-2">
+                    <div className="text-3xl md:text-4xl font-bold text-white mb-2">
                       {stat.value}
                     </div>
                     <div className="text-lg text-white opacity-90">
@@ -559,7 +586,7 @@ export default function ServiceTemplate({
       data.subServices &&
       data.subServices.items &&
       data.subServices.items.length > 0 ? (
-        <section className="py-16 lg:py-24 bg-gray-50" key="subServices">
+        <section className="py-16 md:py-24 bg-gray-50" key="subServices">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-12">
               <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
@@ -578,8 +605,35 @@ export default function ServiceTemplate({
                   className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow border border-gray-200"
                 >
                   {service.icon && (
-                    <div className="w-16 h-16 bg-[#5c8c24] rounded-lg flex items-center justify-center text-white text-2xl mb-4">
-                      {service.icon}
+                    <div className="w-10 h-10 rounded-lg flex items-center justify-center text-white text-2xl mb-4 relative overflow-hidden">
+                      {isIconUrl(service.icon) && service.icon ? (
+                        <Image
+                          src={service.icon}
+                          alt={service.title || "Sub Service"}
+                          fill
+                          className="object-contain transition-all duration-300"
+                          unoptimized
+                          onError={(e) => {
+                            const target = e.currentTarget;
+                            target.style.display = "none";
+                            const parent = target.parentElement;
+                            if (parent) {
+                              const fallback = document.createElement("div");
+                              if (service.icon && !isIconUrl(service.icon)) {
+                                fallback.className = "text-2xl";
+                                fallback.textContent = service.icon;
+                              } else if (service.title) {
+                                fallback.className =
+                                  "text-xs font-bold text-white text-center";
+                                fallback.textContent = service.title;
+                              }
+                              parent.appendChild(fallback);
+                            }
+                          }}
+                        />
+                      ) : service.icon ? (
+                        <div className="text-2xl">{service.icon}</div>
+                      ) : null}
                     </div>
                   )}
                   <h3 className="text-xl font-bold text-gray-900 mb-3">
@@ -608,7 +662,7 @@ export default function ServiceTemplate({
               <div className="text-center">
                 <Link
                   href={data.subServices.ctaButtonLink || "#contact"}
-                  className="inline-block px-8 py-4 bg-[#5c8c24] text-white rounded-lg font-semibold transition-all hover:bg-[#4a7320] hover:shadow-lg"
+                  className="inline-block px-8 py-4 theme-bg-primary-mid text-white rounded-lg font-semibold transition-all hover:opacity-90 hover:shadow-lg"
                 >
                   {data.subServices.ctaButtonText}
                 </Link>
@@ -619,7 +673,7 @@ export default function ServiceTemplate({
       ) : null,
     whyChooseUs: () =>
       data.whyChooseUs ? (
-        <section className="py-16 lg:py-24 bg-white" key="whyChooseUs">
+        <section className="py-16 md:py-24 bg-white" key="whyChooseUs">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="grid md:grid-cols-2 gap-12 mb-12">
               {/* Left Side - Text */}
@@ -636,7 +690,7 @@ export default function ServiceTemplate({
                   data.whyChooseUs.items.map((item, index) => (
                     <div key={index} className="mb-6">
                       <div className="flex items-start gap-4 pb-4 border-b border-gray-200">
-                        <div className="shrink-0 w-6 h-6 rounded-full bg-[#5c8c24] flex items-center justify-center mt-1">
+                        <div className="shrink-0 w-6 h-6 rounded-full theme-bg-primary-mid flex items-center justify-center mt-1">
                           <svg
                             className="w-4 h-4 text-white"
                             fill="none"
@@ -663,7 +717,7 @@ export default function ServiceTemplate({
                       src={data.whyChooseUs.image}
                       alt={data.whyChooseUs.title}
                       fill
-                      className="object-cover"
+                      className="object-contain"
                       unoptimized
                     />
                   </div>
@@ -707,7 +761,7 @@ export default function ServiceTemplate({
       data.technologies.items &&
       data.technologies.items.length > 0 ? (
         <section
-          className="py-20 md:py-28 px-4 sm:px-6 lg:px-8 theme-bg-white-green-gradient relative overflow-hidden"
+          className="py-16 md:py-24 px-4 sm:px-6 lg:px-8 theme-bg-white-green-gradient relative overflow-hidden"
           key="technologies"
         >
           <div className="relative z-10 max-w-7xl mx-auto">
@@ -745,7 +799,7 @@ export default function ServiceTemplate({
                       className="group theme-bg-white rounded-md flex flex-col items-center justify-center transition-all duration-300 hover:shadow-xl hover:-translate-y-1 overflow-hidden p-3 md:p-4"
                       style={{ aspectRatio: "5/3", minHeight: "40px" }}
                     >
-                      <div className="w-full h-full flex items-center justify-center relative p-2">
+                      <div className="w-[70%] h-[70%] flex items-center justify-center relative p-2">
                         {isIconUrl(tech.icon) && tech.icon ? (
                           <Image
                             src={tech.icon}
@@ -790,10 +844,10 @@ export default function ServiceTemplate({
     process: () =>
       data.process && data.process.steps && data.process.steps.length > 0 ? (
         <section
-          className="py-20 md:py-28 px-4 sm:px-6 lg:px-8 theme-bg-white"
+          className="py-16 md:py-24 px-4 sm:px-6 lg:px-8 theme-bg-white"
           key="process"
         >
-          <div className="max-w-7xl mx-auto">
+          <div className="flex flex-col justify-center items-center max-w-7xl mx-auto">
             {data.process.title && (
               <div className="text-center mb-16">
                 <h2 className="text-4xl md:text-5xl font-bold theme-text-black mb-4">
@@ -810,14 +864,11 @@ export default function ServiceTemplate({
               </div>
             )}
 
-            <div className="relative">
-              {/* Connection Line (for desktop) */}
-              <div
-                className="hidden lg:block absolute top-1/2 left-0 right-0 h-0.5 theme-gradient transform -translate-y-1/2"
-                style={{ opacity: 0.3 }}
-              ></div>
+            <div className="relative max-w-4xl mx-auto">
+              {/* Vertical Dashed Line */}
+              <div className="absolute left-6 top-0 bottom-0 w-0.5 border-l-2 border-dashed border-gray-300"></div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 relative">
+              <div className="space-y-8">
                 {data.process.steps.map(
                   (
                     step: {
@@ -830,53 +881,54 @@ export default function ServiceTemplate({
                   ) => (
                     <div
                       key={index}
-                      className="relative flex flex-col items-center text-center group"
+                      className="relative flex items-start gap-6 group"
                     >
-                      {/* Step Number/Icon */}
-                      <div className="relative z-10 mb-6">
-                        <div className="w-20 h-20 theme-gradient rounded-full flex items-center justify-center theme-text-white text-2xl font-bold shadow-lg group-hover:scale-110 transition-transform duration-300 overflow-hidden relative">
+                      {/* Square Icon */}
+                      <div className="relative z-10 shrink-0">
+                        <div className="w-12 h-12 theme-bg-primary-mid rounded-lg flex items-center justify-center text-white shadow-md group-hover:shadow-lg transition-all duration-300 group-hover:scale-105">
                           {step.icon && isIconUrl(step.icon) ? (
-                            <Image
-                              src={step.icon}
-                              alt={step.title || `Step ${index + 1}`}
-                              fill
-                              className="object-cover"
-                              unoptimized
-                              onError={(e) => {
-                                const target = e.currentTarget;
-                                target.style.display = "none";
-                                const parent = target.parentElement;
-                                if (parent) {
-                                  const fallback =
-                                    document.createElement("span");
-                                  fallback.textContent =
-                                    step.number || String(index + 1);
-                                  fallback.className = "text-2xl font-bold";
-                                  parent.appendChild(fallback);
-                                }
-                              }}
-                            />
+                            <div className="relative w-8 h-8">
+                              <Image
+                                src={step.icon}
+                                alt={step.title || `Step ${index + 1}`}
+                                fill
+                                className="object-contain p-1.5"
+                                unoptimized
+                                onError={(e) => {
+                                  const target = e.currentTarget;
+                                  target.style.display = "none";
+                                  const parent = target.parentElement;
+                                  if (parent) {
+                                    const fallback =
+                                      document.createElement("span");
+                                    fallback.textContent =
+                                      step.number || String(index + 1);
+                                    fallback.className = "text-lg font-bold";
+                                    parent.appendChild(fallback);
+                                  }
+                                }}
+                              />
+                            </div>
                           ) : step.icon ? (
-                            <span className="text-4xl">{step.icon}</span>
+                            <span className="text-xl">{step.icon}</span>
                           ) : (
-                            <span>{step.number || index + 1}</span>
+                            <span className="text-lg font-bold">
+                              {step.number || index + 1}
+                            </span>
                           )}
                         </div>
                       </div>
 
-                      {/* Step Content */}
-                      <div
-                        className="theme-bg-white rounded-xl p-6 shadow-lg border group-hover:shadow-xl transition-all duration-300 w-full"
-                        style={{ borderColor: "rgba(0, 0, 0, 0.1)" }}
-                      >
+                      {/* Text Content */}
+                      <div className="flex-1 pt-1">
                         {step.title && (
-                          <h3 className="text-xl font-bold theme-text-black mb-3 theme-hover-primary transition-colors">
+                          <h3 className="text-xl font-bold theme-text-black mb-3 theme-hover-primary-mid transition-colors">
                             {step.title}
                           </h3>
                         )}
                         {step.description && (
                           <p
-                            className="theme-text-black leading-relaxed"
+                            className="text-base theme-text-black leading-relaxed wrap-break-word"
                             style={{ opacity: 0.8 }}
                           >
                             {step.description}
@@ -896,7 +948,7 @@ export default function ServiceTemplate({
       data.portfolio.projects &&
       data.portfolio.projects.length > 0 ? (
         <section
-          className="py-20 md:py-28 px-4 sm:px-6 lg:px-8 theme-bg-white"
+          className="py-16 md:py-24 px-4 sm:px-6 lg:px-8 theme-bg-white"
           key="portfolio"
         >
           <div className="max-w-7xl mx-auto">
@@ -985,7 +1037,7 @@ export default function ServiceTemplate({
                       <div className="p-6">
                         {project.category && (
                           <span
-                            className="inline-block px-3 py-1 text-xs font-semibold theme-primary-end rounded-full mb-3"
+                            className="inline-block px-3 py-1 text-xs font-semibold theme-primary-mid rounded-full mb-3"
                             style={{
                               backgroundColor: "rgba(206, 212, 48, 0.1)",
                             }}
@@ -1062,7 +1114,7 @@ export default function ServiceTemplate({
       data.partners.partners &&
       data.partners.partners.length > 0 ? (
         <section
-          className="py-20 md:py-28 px-4 sm:px-6 lg:px-8 theme-bg-white-green-gradient relative overflow-hidden"
+          className="py-16 md:py-24 px-4 sm:px-6 lg:px-8 theme-bg-white-green-gradient relative overflow-hidden"
           key="partners"
         >
           <div className="relative z-10 max-w-7xl mx-auto">
@@ -1073,7 +1125,7 @@ export default function ServiceTemplate({
                     {data.partners.title.split(" ")[0]}
                   </span>
                   {data.partners.title.split(" ").length > 1 && (
-                    <span className="theme-primary-end">
+                    <span className="theme-primary-mid">
                       {" "}
                       {data.partners.title.split(" ").slice(1).join(" ")}
                     </span>
@@ -1097,7 +1149,7 @@ export default function ServiceTemplate({
     cards: () =>
       data.cards && data.cards.items && data.cards.items.length > 0 ? (
         <section
-          className="py-20 md:py-28 px-4 sm:px-6 lg:px-8 theme-bg-white"
+          className="py-16 md:py-24 px-4 sm:px-6 lg:px-8 theme-bg-white"
           key="cards"
         >
           <div className="max-w-7xl mx-auto">
@@ -1225,7 +1277,7 @@ export default function ServiceTemplate({
     faq: () =>
       data.faq && data.faq.items && data.faq.items.length > 0 ? (
         <section
-          className="py-20 md:py-28 px-4 sm:px-6 lg:px-8 theme-bg-white"
+          className="py-16 md:py-24 px-4 sm:px-6 lg:px-8 theme-bg-white"
           key="faq"
         >
           <div className="max-w-4xl mx-auto">
@@ -1311,7 +1363,7 @@ export default function ServiceTemplate({
       ) : null,
     cta: () =>
       data.cta ? (
-        <section className="py-16 lg:py-24 bg-gray-900 text-white" key="cta">
+        <section className="py-16 md:py-24 bg-gray-900 text-white" key="cta">
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">
               {data.cta.title}
@@ -1322,7 +1374,7 @@ export default function ServiceTemplate({
             {data.cta.buttonText && (
               <Link
                 href={data.cta.buttonLink || "#contact"}
-                className="inline-block px-8 py-4 bg-[#5c8c24] text-white rounded-lg font-semibold transition-all hover:bg-[#4a7320] hover:shadow-lg"
+                className="inline-block px-8 py-4 theme-bg-primary-mid text-white rounded-lg font-semibold transition-all hover:opacity-90 hover:shadow-lg"
               >
                 {data.cta.buttonText}
               </Link>

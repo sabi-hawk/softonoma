@@ -23,7 +23,7 @@ export default function FAQSection({ section }: FAQSectionProps) {
 
   return (
     <section
-      className={`py-20 md:py-28 px-4 sm:px-6 lg:px-8 ${
+      className={`py-16 md:py-24 px-4 sm:px-6 lg:px-8 ${
         background.className || ""
       }`}
       style={background.style}

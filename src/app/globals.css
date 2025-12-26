@@ -7,6 +7,7 @@
   /* Theme Colors */
   --color-primary-start: #5c8c24;
   --color-primary-end: #ced430;
+  --color-primary-mid: #79b246;
   --color-primary-gradient: linear-gradient(99.01deg, #5c8c24 -0.67%, #ced430);
   --color-black: #000000;
   --color-white: #ffffff;
@@ -78,6 +79,19 @@ body {
 
 .theme-primary-end {
   color: var(--color-primary-end);
+}
+
+.theme-primary-mid {
+  color: var(--color-primary-mid);
+}
+
+.theme-bg-primary-mid {
+  background-color: var(--color-primary-mid);
+}
+
+.theme-hover-primary-mid:hover {
+  color: var(--color-primary-mid);
+  transition: color 0.3s ease;
 }
 
 .theme-bg-black {

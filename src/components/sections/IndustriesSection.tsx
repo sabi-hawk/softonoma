@@ -20,7 +20,7 @@ export default function IndustriesSection({ section }: IndustriesSectionProps) {
 
   return (
     <section
-      className={`py-16 ${background.className || ""}`}
+      className={`py-14 ${background.className || ""}`}
       style={background.style}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

@@ -8,7 +8,7 @@ export default function FeaturesSection({ section }: FeaturesSectionProps) {
   const { content } = section;
 
   return (
-    <section className="py-20 md:py-28 px-4 sm:px-6 lg:px-8 theme-bg-white-green-gradient">
+    <section className="py-16 md:py-24 px-4 sm:px-6 lg:px-8 theme-bg-white-green-gradient">
       <div className="max-w-7xl mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
           <div>
@@ -33,7 +33,7 @@ export default function FeaturesSection({ section }: FeaturesSectionProps) {
                     index: number
                   ) => (
                     <div key={index} className="flex items-start group">
-                      <div className="shrink-0 w-14 h-14 theme-gradient rounded-xl flex items-center justify-center mr-5 shadow-lg group-hover:scale-110 transition-transform duration-300">
+                      <div className="shrink-0 w-12 h-12 theme-bg-primary-mid rounded-xl flex items-center justify-center mr-5 shadow-lg group-hover:scale-110 transition-transform duration-300">
                         <svg
                           className="w-7 h-7 theme-text-white"
                           fill="none"
@@ -48,7 +48,7 @@ export default function FeaturesSection({ section }: FeaturesSectionProps) {
                       </div>
                       <div className="flex-1">
                         {feature.title && (
-                          <h3 className="text-xl font-bold theme-text-black mb-2 theme-hover-primary transition-colors">
+                          <h3 className="text-xl font-bold theme-text-black mb-2 theme-hover-primary-mid transition-colors">
                             {feature.title}
                           </h3>
                         )}
@@ -69,7 +69,7 @@ export default function FeaturesSection({ section }: FeaturesSectionProps) {
           </div>
           {content.image ? (
             <div className="relative">
-              <div className="absolute inset-0 theme-gradient rounded-2xl transform rotate-3 opacity-20"></div>
+              <div className="absolute inset-0 theme-bg-primary-mid rounded-2xl transform rotate-3 opacity-20"></div>
               <img
                 src={content.image}
                 alt={content.title || "Section image"}
@@ -78,8 +78,8 @@ export default function FeaturesSection({ section }: FeaturesSectionProps) {
             </div>
           ) : (
             <div className="relative">
-              <div className="absolute inset-0 theme-gradient rounded-2xl transform rotate-3 opacity-20"></div>
-              <div className="relative h-96 theme-gradient rounded-2xl shadow-2xl flex items-center justify-center overflow-hidden">
+              <div className="absolute inset-0 theme-bg-primary-mid rounded-2xl transform rotate-3 opacity-20"></div>
+              <div className="relative h-96 theme-bg-primary-mid rounded-2xl shadow-2xl flex items-center justify-center overflow-hidden">
                 {/* Tech pattern overlay */}
                 <div
                   className="absolute inset-0 opacity-10"
