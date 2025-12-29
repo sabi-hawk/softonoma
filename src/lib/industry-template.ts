@@ -232,7 +232,10 @@ export function parseIndustryTemplateData(
         ? {
             ...defaultIndustryTemplateData.stats,
             ...parsed.stats,
-            items: parsed.stats.items || defaultIndustryTemplateData.stats?.items || [],
+            items:
+              parsed.stats.items ||
+              defaultIndustryTemplateData.stats?.items ||
+              [],
           }
         : defaultIndustryTemplateData.stats,
       subServices: parsed.subServices
@@ -260,7 +263,9 @@ export function parseIndustryTemplateData(
             ...defaultIndustryTemplateData.cards,
             ...parsed.cards,
             items:
-              parsed.cards.items || defaultIndustryTemplateData.cards?.items || [],
+              parsed.cards.items ||
+              defaultIndustryTemplateData.cards?.items ||
+              [],
           }
         : defaultIndustryTemplateData.cards,
       portfolio: parsed.portfolio
@@ -305,76 +310,123 @@ export function parseIndustryTemplateData(
   }
 }
 
+// Industry-specific content templates
+import { IndustryContentTemplate } from "./industry-templates/types";
+import { getFintechTemplate } from "./industry-templates/fintech";
+import { getMedicalTemplate } from "./industry-templates/medical";
+import { getEcommerceTemplate } from "./industry-templates/ecommerce";
+import { getEducationTemplate } from "./industry-templates/education";
+import { getRealEstateTemplate } from "./industry-templates/real-estate";
+import { getManufacturingTemplate } from "./industry-templates/manufacturing";
+import { getGenericIndustryTemplate } from "./industry-templates/generic";
+
+function detectIndustryType(title: string): string {
+  const lowerTitle = title.toLowerCase();
+
+  if (
+    lowerTitle.includes("fintech") ||
+    lowerTitle.includes("financial") ||
+    lowerTitle.includes("banking") ||
+    lowerTitle.includes("finance")
+  ) {
+    return "fintech";
+  }
+  if (
+    lowerTitle.includes("medical") ||
+    lowerTitle.includes("healthcare") ||
+    lowerTitle.includes("health") ||
+    lowerTitle.includes("hospital")
+  ) {
+    return "medical";
+  }
+  if (
+    lowerTitle.includes("ecommerce") ||
+    lowerTitle.includes("e-commerce") ||
+    lowerTitle.includes("retail") ||
+    lowerTitle.includes("shopping")
+  ) {
+    return "ecommerce";
+  }
+  if (
+    lowerTitle.includes("education") ||
+    lowerTitle.includes("edtech") ||
+    lowerTitle.includes("learning") ||
+    lowerTitle.includes("school")
+  ) {
+    return "education";
+  }
+  if (
+    lowerTitle.includes("real estate") ||
+    lowerTitle.includes("realestate") ||
+    lowerTitle.includes("property") ||
+    lowerTitle.includes("realtor")
+  ) {
+    return "real-estate";
+  }
+  if (
+    lowerTitle.includes("manufacturing") ||
+    lowerTitle.includes("industrial") ||
+    lowerTitle.includes("factory") ||
+    lowerTitle.includes("production")
+  ) {
+    return "manufacturing";
+  }
+
+  return "generic";
+}
+
+function getIndustryContentTemplate(
+  industryType: string,
+  title: string
+): IndustryContentTemplate {
+  switch (industryType) {
+    case "fintech":
+      return getFintechTemplate(title);
+    case "medical":
+      return getMedicalTemplate(title);
+    case "ecommerce":
+      return getEcommerceTemplate(title);
+    case "education":
+      return getEducationTemplate(title);
+    case "real-estate":
+      return getRealEstateTemplate(title);
+    case "manufacturing":
+      return getManufacturingTemplate(title);
+    default:
+      return getGenericIndustryTemplate(title);
+  }
+}
+
 export function getDefaultIndustryTemplateForTitle(
   title: string
 ): IndustryTemplateData {
+  const industryType = detectIndustryType(title);
+  const template = getIndustryContentTemplate(industryType, title);
+
   return {
     hero: {
-      title: title,
-      description: `We provide specialized solutions tailored to the unique needs of the ${title.toLowerCase()} industry.`,
-      primaryButtonText: "Get Started",
+      title: template.hero.title,
+      description: template.hero.description,
+      primaryButtonText: template.hero.primaryButtonText,
       primaryButtonLink: "/contact",
       backgroundImage: "",
       backgroundVideo: "",
       backgroundOpacity: 0.3,
     },
     overview: {
-      title: `About ${title} Industry`,
-      paragraphs: [
-        {
-          text: `The ${title.toLowerCase()} industry faces unique challenges and opportunities. Our team brings deep expertise and innovative solutions to help businesses in this sector thrive and grow.`,
-        },
-      ],
-      image: "",
+      title: template.overview.title,
+      paragraphs: template.overview.paragraphs.map((text) => ({ text })),
+      image: template.overview.image,
       isActive: true,
     },
     stats: {
-      items: [
-        {
-          icon: "👥",
-          value: "400+",
-          label: "Software Developers",
-        },
-        {
-          icon: "📅",
-          value: "13+",
-          label: "Years in Business",
-        },
-        {
-          icon: "✅",
-          value: "800+",
-          label: "Projects Successfully Delivered",
-        },
-        {
-          icon: "⭐",
-          value: "4.8",
-          label: "Star Rating on Clutch",
-        },
-      ],
+      items: template.stats,
       isActive: true,
     },
     subServices: {
       title: "Our Solutions",
       description: "Tailored solutions for your industry",
-      items: [
-        {
-          icon: "⚡",
-          title: "Custom Solutions",
-          description: `Specialized solutions designed specifically for the ${title.toLowerCase()} industry.`,
-        },
-        {
-          icon: "🖥️",
-          title: "Industry Expertise",
-          description:
-            "Deep understanding of industry-specific challenges and opportunities.",
-        },
-        {
-          icon: "💬",
-          title: "Proven Results",
-          description:
-            "Track record of successful implementations and satisfied clients.",
-        },
-      ],
+      items: template.subServices,
       ctaButtonText: "Reach Out to Our Specialists",
       ctaButtonLink: "/contact",
       isActive: true,
@@ -382,24 +434,14 @@ export function getDefaultIndustryTemplateForTitle(
     partners: {
       title: "Our Partners",
       description: "Trusted by leading companies worldwide",
-      partners: [
-        { name: "Partner 1", logo: "🚀" },
-        { name: "Partner 2", logo: "⚡" },
-      ],
+      partners: template.partners,
       isActive: true,
     },
     cards: {
       title: "What Our Clients Say",
       description: "Testimonials from satisfied customers",
       showStars: true,
-      items: [
-        {
-          quote: `Great service and excellent results in the ${title.toLowerCase()} industry!`,
-          author: "John Doe",
-          role: "CEO",
-          company: "Company Inc.",
-        },
-      ],
+      items: template.cards,
       isActive: true,
     },
     portfolio: {
@@ -418,12 +460,7 @@ export function getDefaultIndustryTemplateForTitle(
     technologies: {
       title: "Technologies & Tools",
       description: "Technologies we use for this industry",
-      items: [
-        { name: "Cloud Solutions", icon: "☁️" },
-        { name: "Data Analytics", icon: "📊" },
-        { name: "Automation", icon: "⚙️" },
-        { name: "Security", icon: "🔒" },
-      ],
+      items: template.technologies,
       isActive: true,
     },
     sectionOrder: [

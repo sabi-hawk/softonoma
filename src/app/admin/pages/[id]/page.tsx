@@ -228,350 +228,574 @@ export default function PageSectionsAdmin() {
   const getDefaultContent = (type: Section["type"]): Section["content"] => {
     const defaults: Record<Section["type"], Section["content"]> = {
       hero: {
-        title: "Welcome to Our Platform",
+        title:
+          "Transform Your Business with\nCutting-Edge Technology Solutions",
         subtitle: "Innovative Solutions for Modern Businesses",
         description:
-          "Transform your business with cutting-edge technology solutions. We deliver excellence through innovation, expertise, and dedication.",
-        // Colors are predefined by theme - automatically uses dark gradient
-        buttonText: "Get Started",
+          "We deliver excellence through innovation, expertise, and dedication. Partner with us to accelerate your digital transformation and achieve remarkable business growth with world-class technology solutions.",
+        buttonText: "Get Started Today",
         buttonLink: "/contact",
-        secondaryButtonText: "Learn More",
-        secondaryButtonLink: "/about",
+        secondaryButtonText: "Explore Our Services",
+        secondaryButtonLink: "/services",
+        backgroundImage: "",
+        backgroundVideo: "",
+        backgroundOpacity: 0.3,
       },
       services: {
-        title: "Our Top-Class Services",
-        description: "Discover our comprehensive range of services",
-        // Colors and card styling are predefined by theme - matches homepage
+        title: "Our Comprehensive Services",
+        description:
+          "Discover our full range of technology services designed to drive your business forward",
         services: [
           {
-            icon: "💻",
+            icon: "https://saigontechnology.com/wp-content/uploads/folder-check-1.svg",
+            title: "Custom Software Development",
+            description:
+              "Tailored software solutions built with modern technologies to meet your unique business requirements and drive digital transformation.",
+          },
+          {
+            icon: "https://saigontechnology.com/wp-content/uploads/users.svg",
             title: "Web Development",
             description:
-              "Custom web applications built with modern technologies and best practices.",
+              "Responsive, scalable web applications built with cutting-edge frameworks and best practices for optimal performance and user experience.",
           },
           {
-            icon: "📱",
-            title: "Mobile Apps",
+            icon: "https://saigontechnology.com/wp-content/uploads/calendar.svg",
+            title: "Mobile App Development",
             description:
-              "Native and cross-platform mobile applications for iOS and Android.",
+              "Native and cross-platform mobile applications for iOS and Android, delivering seamless user experiences across all devices.",
           },
           {
-            icon: "☁️",
-            title: "Cloud Solutions",
+            icon: "https://saigontechnology.com/wp-content/uploads/yellow_stars_in_flat_outline_and_glyph.svg",
+            title: "Cloud Solutions & DevOps",
             description:
-              "Scalable cloud infrastructure and migration services for your business.",
+              "Scalable cloud infrastructure, migration services, and CI/CD pipelines to optimize your operations and reduce costs.",
+          },
+          {
+            icon: "https://saigontechnology.com/wp-content/uploads/folder-check-1.svg",
+            title: "UI/UX Design",
+            description:
+              "User-centered design services that create intuitive, beautiful interfaces that engage users and drive conversions.",
+          },
+          {
+            icon: "https://saigontechnology.com/wp-content/uploads/users.svg",
+            title: "Backend Development",
+            description:
+              "Robust, scalable backend systems and APIs built with modern technologies to power your applications and services.",
           },
         ],
       },
       stats: {
-        title: "Our Achievements",
-        description: "Numbers that speak for themselves",
-        // Colors are predefined by theme - automatically uses white background
+        title: "Our Track Record",
+        description:
+          "Numbers that demonstrate our commitment to excellence and client success",
         stats: [
           {
-            number: "500+",
-            title: "Projects Completed",
+            number: "800+",
+            title: "Projects Delivered",
             description:
-              "Successfully delivered projects across various industries",
+              "Successfully completed projects across various industries and technologies, delivering exceptional results for our clients.",
           },
           {
-            number: "200+",
-            title: "Happy Clients",
-            description: "Satisfied customers who trust us with their business",
+            number: "400+",
+            title: "Expert Developers",
+            description:
+              "A talented team of software engineers, designers, and consultants dedicated to your success.",
           },
           {
-            number: "10+",
-            title: "Years Experience",
-            description: "Years of expertise in delivering quality solutions",
+            number: "13+",
+            title: "Years of Experience",
+            description:
+              "Over a decade of expertise in delivering innovative technology solutions and digital transformation services.",
+          },
+          {
+            number: "4.8",
+            title: "Client Satisfaction",
+            description:
+              "Consistently high ratings and positive feedback from clients who trust us with their technology needs.",
           },
         ],
       },
       cta: {
         title: "Ready to Transform Your Business?",
-        description: "Get started today and experience the difference",
-        buttonText: "Get Started",
+        description:
+          "Let's discuss how we can help you achieve your goals. Get started today and experience the difference that expert technology solutions can make for your business.",
+        buttonText: "Schedule a Free Consultation",
         buttonLink: "/contact",
       },
       footer: {
-        companyName: "IT Solutions",
+        companyName: "Saigon Technology",
         companyDescription:
-          "Leading IT solutions provider delivering innovative technology services to businesses worldwide.",
-        email: "contact@example.com",
-        phone: "+1 (555) 123-4567",
-        address: "123 Tech Street, Silicon Valley, CA 94000",
+          "Leading IT solutions provider delivering innovative technology services to businesses worldwide. We transform ideas into reality through cutting-edge software development, cloud solutions, and digital transformation services.",
+        email: "contact@saigontechnology.com",
+        phone: "+84 28 3526 2100",
+        address: "123 Tech Street, Ho Chi Minh City, Vietnam",
+        facebook: "https://facebook.com/saigontechnology",
+        twitter: "https://twitter.com/saigontech",
+        linkedin: "https://linkedin.com/company/saigontechnology",
+        github: "https://github.com/saigontechnology",
         quickLinks: [
           { title: "Home", href: "/" },
           { title: "About Us", href: "/about" },
           { title: "Services", href: "/services" },
+          { title: "Industries", href: "/industries" },
+          { title: "Portfolio", href: "/portfolio" },
+          { title: "Blog", href: "/blog" },
           { title: "Contact", href: "/contact" },
         ],
         footerServices: [
+          {
+            title: "Custom Software Development",
+            href: "/services/custom-software",
+          },
           { title: "Web Development", href: "/services/web-development" },
-          { title: "Mobile Apps", href: "/services/mobile-apps" },
-          { title: "Cloud Solutions", href: "/services/cloud" },
+          { title: "Mobile App Development", href: "/services/mobile-apps" },
+          { title: "Backend Development", href: "/services/backend" },
+          { title: "DevOps & Cloud Solutions", href: "/services/devops" },
+          { title: "UI/UX Design", href: "/services/ui-ux" },
         ],
         newsletterText:
-          "Subscribe to our newsletter for the latest updates and insights.",
-        newsletterButtonText: "Subscribe",
+          "Subscribe to our newsletter for the latest technology insights, industry trends, and exclusive updates delivered straight to your inbox.",
+        newsletterButtonText: "Subscribe Now",
+        copyrightText: "© 2024 Saigon Technology. All rights reserved.",
       },
       features: {
         title: "Why Choose Us",
         description:
-          "Discover what makes us different and why clients trust us",
-        image: "",
+          "Discover what makes us different and why leading companies trust us with their technology needs",
+        image:
+          "https://cloud.appwrite.io/v1/storage/buckets/694cc45b003184dc8584/files/694e63f9000de0525ddc/view?project=694cc43b00225b94d30d",
         features: [
           {
-            title: "Expert Team",
+            title: "Expert Team of 400+ Professionals",
             description:
-              "Our team consists of experienced professionals with years of industry expertise.",
+              "Our team consists of experienced software engineers, designers, and consultants with years of industry expertise and proven track records in delivering complex projects.",
           },
           {
-            title: "Quality Assurance",
+            title: "Quality Assurance & Best Practices",
             description:
-              "We maintain the highest standards in all our projects and deliverables.",
+              "We maintain the highest standards in all our projects through rigorous testing, code reviews, and adherence to industry best practices and security standards.",
           },
           {
-            title: "24/7 Support",
+            title: "24/7 Support & Maintenance",
             description:
-              "Round-the-clock customer support to assist you whenever you need help.",
+              "Round-the-clock customer support and maintenance services to ensure your systems run smoothly and to address any issues that may arise.",
+          },
+          {
+            title: "Agile Development Methodology",
+            description:
+              "We follow agile development practices with regular sprints, continuous integration, and transparent communication to ensure timely delivery and flexibility.",
+          },
+          {
+            title: "Cost-Effective Solutions",
+            description:
+              "We deliver high-quality solutions at competitive prices, helping you maximize ROI while maintaining the highest standards of quality and performance.",
+          },
+          {
+            title: "Proven Track Record",
+            description:
+              "With 800+ successful projects and 13+ years of experience, we have a proven track record of delivering solutions that drive business growth and success.",
           },
         ],
       },
       cards: {
         title: "What Our Clients Say",
-        description: "Hear from our satisfied customers about their experience",
+        description:
+          "Hear from our satisfied customers about their experience working with us",
         showStars: true,
         items: [
           {
             quote:
-              "Outstanding service and excellent support throughout the project. Highly recommended!",
-            author: "John Doe",
+              "Outstanding service and excellent support throughout the project. The team's expertise and dedication to quality is remarkable. They delivered beyond our expectations and continue to provide exceptional ongoing support. Highly recommended!",
+            author: "Robert Kim",
             role: "CEO",
-            company: "Tech Corp",
+            company: "TechCorp Solutions",
           },
           {
             quote:
-              "The team delivered exactly what we needed on time and within budget. Great work!",
-            author: "Jane Smith",
+              "The team delivered exactly what we needed on time and within budget. Their technical expertise and attention to detail made all the difference. The solution they built has transformed our operations and significantly improved our efficiency. Great work!",
+            author: "Sarah Johnson",
             role: "CTO",
             company: "Innovate Inc",
           },
           {
             quote:
-              "Professional, reliable, and innovative solutions. We couldn't be happier!",
-            author: "Mike Johnson",
+              "Professional, reliable, and innovative solutions. We couldn't be happier with the results. Their agile approach and transparent communication throughout the project made the entire process smooth and stress-free. Exceptional partnership!",
+            author: "Michael Chen",
             role: "Founder",
             company: "StartupXYZ",
+          },
+          {
+            quote:
+              "Working with this team has been a game-changer for our business. They understood our vision and translated it into a powerful digital solution. The quality of their work and their commitment to our success is truly impressive.",
+            author: "Lisa Anderson",
+            role: "VP of Engineering",
+            company: "Digital Solutions Pro",
+          },
+          {
+            quote:
+              "Their expertise in cloud migration and DevOps transformed our infrastructure completely. We've seen significant cost savings and improved performance. The team is knowledgeable, responsive, and always goes the extra mile.",
+            author: "David Martinez",
+            role: "IT Director",
+            company: "Enterprise Systems",
           },
         ],
       },
       industries: {
-        title: "Industries We Work With",
-        description: "Serving diverse industries with tailored solutions",
-        // Colors are predefined by theme - automatically uses light theme
+        title: "Industries We Serve",
+        description:
+          "Serving diverse industries with tailored technology solutions",
         industries: [
-          { icon: "💼", name: "Business" },
+          { icon: "💼", name: "Fintech" },
           { icon: "🏥", name: "Healthcare" },
           { icon: "🎓", name: "Education" },
-          { icon: "🏦", name: "Finance" },
+          { icon: "🏦", name: "Banking" },
+          { icon: "🛒", name: "E-Commerce" },
+          { icon: "🏠", name: "Real Estate" },
+          { icon: "🏭", name: "Manufacturing" },
+          { icon: "🚀", name: "Startups" },
         ],
       },
       about: {
-        title: "About Us",
-        description: "Learn more about our company and our mission",
-        // Colors are predefined by theme - automatically uses light theme
+        title: "About Saigon Technology",
+        description:
+          "Learn more about our company, our mission, and our commitment to excellence",
         aboutText:
-          "We are a leading technology company dedicated to delivering innovative solutions that drive business growth. With years of experience and a team of skilled professionals, we help businesses transform their digital presence and achieve their goals. Our commitment to excellence and customer satisfaction sets us apart in the industry.",
-        aboutImage: "",
+          "Saigon Technology is a leading technology company dedicated to delivering innovative solutions that drive business growth. With over 13 years of experience and a team of 400+ skilled professionals, we help businesses transform their digital presence and achieve their goals. Headquartered in Ho Chi Minh City, Vietnam, with representative offices in Singapore and the United States, we serve clients worldwide. Our commitment to excellence, quality assurance, and customer satisfaction sets us apart in the industry. We specialize in custom software development, web and mobile applications, cloud solutions, DevOps, and UI/UX design, delivering solutions that make a real impact on our clients' success.",
+        aboutImage:
+          "https://cloud.appwrite.io/v1/storage/buckets/694cc45b003184dc8584/files/69521107000fadbdb2d0/view?project=694cc43b00225b94d30d",
         aboutLink: "/about",
-        aboutLinkText: "Learn more about us",
+        aboutLinkText: "Learn More About Us",
       },
       partnerships: {
-        title: "Our Partnerships",
-        description: "Trusted by leading organizations worldwide",
-        // Colors are predefined by theme - automatically uses dark gradient
+        title: "Our Strategic Partnerships",
+        description:
+          "Collaborating with leading organizations and technology providers worldwide to deliver exceptional solutions",
         partnerships: [
           {
-            image: "",
-            title: "Strategic Technology Partner",
+            image:
+              "https://cloud.appwrite.io/v1/storage/buckets/694cc45b003184dc8584/files/69521107000fadbdb2d0/view?project=694cc43b00225b94d30d",
+            title: "Strategic Technology Partnerships",
             description:
-              "Collaborating with industry leaders to deliver cutting-edge solutions.",
+              "Collaborating with industry-leading technology providers and platforms to deliver cutting-edge solutions and ensure access to the latest tools and innovations.",
           },
           {
-            image: "",
-            title: "Global Enterprise Alliance",
+            image:
+              "https://cloud.appwrite.io/v1/storage/buckets/694cc45b003184dc8584/files/694e63f9000de0525ddc/view?project=694cc43b00225b94d30d",
+            title: "Global Enterprise Alliances",
             description:
-              "Working with Fortune 500 companies to transform their digital infrastructure.",
+              "Working with Fortune 500 companies and large enterprises to transform their digital infrastructure, streamline operations, and drive innovation at scale.",
           },
           {
-            image: "",
-            title: "Innovation Hub Partnership",
+            image:
+              "https://cloud.appwrite.io/v1/storage/buckets/694cc45b003184dc8584/files/69521107000fadbdb2d0/view?project=694cc43b00225b94d30d",
+            title: "Innovation Hub Collaborations",
             description:
-              "Partnering with startups and innovation centers to drive technological advancement.",
+              "Partnering with startups, innovation centers, and research institutions to drive technological advancement and bring breakthrough solutions to market.",
+          },
+          {
+            image:
+              "https://cloud.appwrite.io/v1/storage/buckets/694cc45b003184dc8584/files/694e63f9000de0525ddc/view?project=694cc43b00225b94d30d",
+            title: "Cloud Platform Partnerships",
+            description:
+              "Certified partnerships with major cloud providers including AWS, Azure, and Google Cloud to deliver scalable, secure, and cost-effective cloud solutions.",
+          },
+          {
+            image:
+              "https://cloud.appwrite.io/v1/storage/buckets/694cc45b003184dc8584/files/69521107000fadbdb2d0/view?project=694cc43b00225b94d30d",
+            title: "Industry Association Memberships",
+            description:
+              "Active members of technology associations and industry groups to stay at the forefront of best practices, standards, and emerging technologies.",
           },
         ],
       },
       portfolio: {
-        title: "Our Portfolio",
-        description: "Explore our successful projects and case studies",
+        title: "Our Success Stories",
+        description:
+          "Explore our portfolio of successful projects and case studies that demonstrate our expertise and impact",
         projects: [
           {
-            image: "",
-            title: "E-Commerce Platform",
+            image:
+              "https://cloud.appwrite.io/v1/storage/buckets/694cc45b003184dc8584/files/69521107000fadbdb2d0/view?project=694cc43b00225b94d30d",
+            title: "Enterprise E-Commerce Platform",
             description:
-              "A modern e-commerce solution with advanced features and seamless user experience.",
-            technologies: ["React", "Node.js", "MongoDB"],
+              "A comprehensive e-commerce solution with advanced features including inventory management, payment processing, order tracking, and seamless user experience. Increased sales by 150% and improved customer satisfaction significantly.",
+            technologies: ["React", "Node.js", "MongoDB", "Stripe", "AWS"],
             category: "Web Development",
             link: "/portfolio/ecommerce-platform",
           },
           {
-            image: "",
-            title: "Mobile Banking App",
+            image:
+              "https://cloud.appwrite.io/v1/storage/buckets/694cc45b003184dc8584/files/694e63f9000de0525ddc/view?project=694cc43b00225b94d30d",
+            title: "Mobile Banking Application",
             description:
-              "Secure and user-friendly mobile banking application for iOS and Android.",
-            technologies: ["React Native", "Firebase", "Stripe"],
+              "Secure and user-friendly mobile banking application for iOS and Android with biometric authentication, real-time transactions, and comprehensive financial management features. Served over 1 million users with 99.9% uptime.",
+            technologies: ["React Native", "Firebase", "Stripe", "AWS"],
             category: "Mobile Apps",
             link: "/portfolio/mobile-banking",
           },
           {
-            image: "",
-            title: "Cloud Migration Project",
+            image:
+              "https://cloud.appwrite.io/v1/storage/buckets/694cc45b003184dc8584/files/69521107000fadbdb2d0/view?project=694cc43b00225b94d30d",
+            title: "Cloud Infrastructure Migration",
             description:
-              "Successfully migrated enterprise infrastructure to AWS cloud platform.",
-            technologies: ["AWS", "Docker", "Kubernetes"],
+              "Successfully migrated enterprise infrastructure from on-premise to AWS cloud platform, reducing costs by 40% and improving scalability and performance. Zero downtime migration with comprehensive disaster recovery.",
+            technologies: ["AWS", "Docker", "Kubernetes", "Terraform"],
             category: "Cloud Solutions",
             link: "/portfolio/cloud-migration",
+          },
+          {
+            image:
+              "https://cloud.appwrite.io/v1/storage/buckets/694cc45b003184dc8584/files/694e63f9000de0525ddc/view?project=694cc43b00225b94d30d",
+            title: "Healthcare Management System",
+            description:
+              "Comprehensive healthcare management system with patient records, appointment scheduling, billing, and telemedicine capabilities. HIPAA compliant with advanced security features and seamless integration with existing systems.",
+            technologies: ["React", "Python", "PostgreSQL", "AWS"],
+            category: "Healthcare",
+            link: "/portfolio/healthcare-system",
+          },
+          {
+            image:
+              "https://cloud.appwrite.io/v1/storage/buckets/694cc45b003184dc8584/files/69521107000fadbdb2d0/view?project=694cc43b00225b94d30d",
+            title: "Fintech Payment Gateway",
+            description:
+              "Secure payment processing platform with support for multiple payment methods, fraud detection, and real-time analytics. Processed over $500M in transactions with 99.99% reliability and PCI DSS compliance.",
+            technologies: ["Node.js", "PostgreSQL", "Redis", "AWS"],
+            category: "Fintech",
+            link: "/portfolio/payment-gateway",
+          },
+          {
+            image:
+              "https://cloud.appwrite.io/v1/storage/buckets/694cc45b003184dc8584/files/694e63f9000de0525ddc/view?project=694cc43b00225b94d30d",
+            title: "AI-Powered Analytics Dashboard",
+            description:
+              "Advanced analytics dashboard with machine learning capabilities for predictive analytics, real-time data visualization, and actionable insights. Improved decision-making speed by 60% and increased operational efficiency.",
+            technologies: ["React", "Python", "TensorFlow", "PostgreSQL"],
+            category: "AI & Analytics",
+            link: "/portfolio/analytics-dashboard",
           },
         ],
       },
       technologies: {
-        title: "Technologies We Work With",
+        title: "Technologies & Tools",
         description:
-          "Cutting-edge tools and frameworks we use to build amazing solutions",
+          "Cutting-edge tools, frameworks, and platforms we use to build amazing solutions",
         technologies: [
           { name: "React", icon: "⚛️", category: "Frontend" },
+          { name: "Next.js", icon: "▲", category: "Frontend" },
+          { name: "Vue.js", icon: "🟢", category: "Frontend" },
+          { name: "Angular", icon: "🅰️", category: "Frontend" },
           { name: "Node.js", icon: "🟢", category: "Backend" },
+          { name: "Python", icon: "🐍", category: "Backend" },
+          { name: "Java", icon: "☕", category: "Backend" },
           { name: "TypeScript", icon: "📘", category: "Language" },
           { name: "AWS", icon: "☁️", category: "Cloud" },
+          { name: "Azure", icon: "🔷", category: "Cloud" },
+          { name: "Google Cloud", icon: "☁️", category: "Cloud" },
           { name: "Docker", icon: "🐳", category: "DevOps" },
+          { name: "Kubernetes", icon: "☸️", category: "DevOps" },
+          { name: "Terraform", icon: "🏗️", category: "DevOps" },
           { name: "MongoDB", icon: "🍃", category: "Database" },
+          { name: "PostgreSQL", icon: "🐘", category: "Database" },
+          { name: "MySQL", icon: "🗄️", category: "Database" },
+          { name: "Redis", icon: "🔴", category: "Database" },
+          { name: "React Native", icon: "📱", category: "Mobile" },
+          { name: "Flutter", icon: "🎯", category: "Mobile" },
         ],
       },
       blog: {
-        title: "Latest Blog Posts",
+        title: "Latest Insights & News",
         description:
-          "Stay updated with our latest insights, tutorials, and industry news",
+          "Stay updated with our latest technology insights, tutorials, industry trends, and expert advice",
         posts: [
           {
-            image: "",
-            title: "10 Best Practices for Modern Web Development",
+            image:
+              "https://cloud.appwrite.io/v1/storage/buckets/694cc45b003184dc8584/files/69521107000fadbdb2d0/view?project=694cc43b00225b94d30d",
+            title: "10 Best Practices for Modern Web Development in 2024",
             excerpt:
-              "Discover the essential best practices that every web developer should follow in 2024.",
+              "Discover the essential best practices that every web developer should follow in 2024. Learn about performance optimization, security, accessibility, and modern development workflows that will elevate your projects.",
             author: "John Doe",
             date: "March 15, 2024",
             category: "Development",
             link: "/blog/web-development-best-practices",
           },
           {
-            image: "",
-            title: "Cloud Migration: A Complete Guide",
+            image:
+              "https://cloud.appwrite.io/v1/storage/buckets/694cc45b003184dc8584/files/694e63f9000de0525ddc/view?project=694cc43b00225b94d30d",
+            title: "Cloud Migration: A Complete Guide for Enterprises",
             excerpt:
-              "Learn how to successfully migrate your infrastructure to the cloud with our comprehensive guide.",
+              "Learn how to successfully migrate your infrastructure to the cloud with our comprehensive guide. Discover strategies, best practices, and common pitfalls to avoid during your cloud migration journey.",
             author: "Jane Smith",
             date: "March 10, 2024",
             category: "Cloud",
             link: "/blog/cloud-migration-guide",
           },
           {
-            image: "",
-            title: "Mobile App Security: What You Need to Know",
+            image:
+              "https://cloud.appwrite.io/v1/storage/buckets/694cc45b003184dc8584/files/69521107000fadbdb2d0/view?project=694cc43b00225b94d30d",
+            title: "Mobile App Security: Essential Practices for 2024",
             excerpt:
-              "Essential security practices for mobile app development to protect user data.",
+              "Essential security practices for mobile app development to protect user data and ensure compliance. Learn about encryption, authentication, secure coding practices, and how to build secure mobile applications.",
             author: "Mike Johnson",
             date: "March 5, 2024",
             category: "Security",
             link: "/blog/mobile-app-security",
+          },
+          {
+            image:
+              "https://cloud.appwrite.io/v1/storage/buckets/694cc45b003184dc8584/files/694e63f9000de0525ddc/view?project=694cc43b00225b94d30d",
+            title: "The Future of AI in Software Development",
+            excerpt:
+              "Explore how artificial intelligence and machine learning are transforming software development. Discover AI-powered tools, automated testing, code generation, and the future of developer productivity.",
+            author: "Sarah Lee",
+            date: "February 28, 2024",
+            category: "AI & ML",
+            link: "/blog/ai-in-software-development",
+          },
+          {
+            image:
+              "https://cloud.appwrite.io/v1/storage/buckets/694cc45b003184dc8584/files/69521107000fadbdb2d0/view?project=694cc43b00225b94d30d",
+            title: "DevOps Best Practices for Continuous Delivery",
+            excerpt:
+              "Master the art of continuous delivery with proven DevOps practices. Learn about CI/CD pipelines, infrastructure as code, monitoring, and how to achieve faster, more reliable deployments.",
+            author: "David Park",
+            date: "February 20, 2024",
+            category: "DevOps",
+            link: "/blog/devops-best-practices",
           },
         ],
       },
       process: {
         title: "Our Development Process",
         description:
-          "A proven methodology that ensures successful project delivery",
+          "A proven, structured methodology that ensures successful project delivery and client satisfaction",
         steps: [
           {
             number: "1",
-            icon: "🔍",
+            icon: "https://saigontechnology.com/wp-content/uploads/folder-check-1.svg",
             title: "Discovery & Planning",
             description:
-              "We start by understanding your business needs, goals, and requirements to create a comprehensive project plan.",
+              "We start by understanding your business needs, goals, and requirements through comprehensive stakeholder interviews and analysis. We create a detailed project plan, define scope, establish timelines, and identify potential challenges to ensure a clear roadmap for success.",
           },
           {
             number: "2",
-            icon: "🎨",
+            icon: "https://saigontechnology.com/wp-content/uploads/users.svg",
             title: "Design & Prototyping",
             description:
-              "Our design team creates intuitive user interfaces and prototypes to visualize the final product.",
+              "Our design team creates intuitive user interfaces, wireframes, and interactive prototypes to visualize the final product. We conduct user research, create design systems, and iterate based on feedback to ensure optimal user experience and alignment with your brand.",
           },
           {
             number: "3",
-            icon: "💻",
-            title: "Development",
+            icon: "https://saigontechnology.com/wp-content/uploads/calendar.svg",
+            title: "Development & Implementation",
             description:
-              "Our developers build your solution using agile methodology with regular updates and feedback loops.",
+              "Our developers build your solution using agile methodology with regular sprints, continuous integration, and transparent communication. We follow best practices, conduct code reviews, and maintain high code quality standards throughout the development process.",
           },
           {
             number: "4",
-            icon: "🚀",
-            title: "Testing & Launch",
+            icon: "https://saigontechnology.com/wp-content/uploads/folder-check-1.svg",
+            title: "Testing & Quality Assurance",
             description:
-              "Rigorous testing ensures quality, followed by deployment and ongoing support for your success.",
+              "Rigorous testing including unit tests, integration tests, and user acceptance testing ensures quality and reliability. We identify and fix issues early, perform security audits, and ensure your solution meets all requirements and performance benchmarks.",
+          },
+          {
+            number: "5",
+            icon: "https://saigontechnology.com/wp-content/uploads/yellow_stars_in_flat_outline_and_glyph.svg",
+            title: "Deployment & Launch",
+            description:
+              "We handle deployment with zero-downtime strategies, comprehensive monitoring, and rollback plans. We ensure smooth launch, provide training and documentation, and establish monitoring and alerting systems for ongoing operations.",
+          },
+          {
+            number: "6",
+            icon: "https://saigontechnology.com/wp-content/uploads/users.svg",
+            title: "Support & Maintenance",
+            description:
+              "Ongoing support and maintenance ensure your systems run smoothly. We provide 24/7 monitoring, regular updates, performance optimization, security patches, and continuous improvement to keep your solution current and efficient.",
           },
         ],
       },
       faq: {
         title: "Frequently Asked Questions",
         description:
-          "Find answers to common questions about our services and processes",
+          "Find answers to common questions about our services, processes, and how we can help you",
         faqs: [
           {
             question: "What services do you offer?",
             answer:
-              "We offer a comprehensive range of IT services including web development, mobile app development, cloud solutions, UI/UX design, and technology consulting. Our team specializes in modern technologies and can help you with any digital transformation needs.",
+              "We offer a comprehensive range of IT services including custom software development, web development, mobile app development (iOS and Android), backend development, DevOps and cloud solutions, UI/UX design, and technology consulting. Our team specializes in modern technologies and can help you with any digital transformation needs, from small projects to large enterprise solutions.",
           },
           {
             question: "How long does a typical project take?",
             answer:
-              "Project timelines vary depending on the scope and complexity. A simple website might take 4-6 weeks, while a complex enterprise application could take 3-6 months. We provide detailed timelines during the discovery phase.",
+              "Project timelines vary depending on the scope, complexity, and requirements. A simple website might take 4-6 weeks, a medium-sized web application typically takes 2-3 months, while a complex enterprise application could take 3-6 months or more. We provide detailed timelines and milestones during the discovery phase and use agile methodology to deliver value incrementally.",
           },
           {
-            question: "Do you provide ongoing support?",
+            question: "Do you provide ongoing support and maintenance?",
             answer:
-              "Yes, we offer comprehensive support and maintenance packages. Our team is available 24/7 to ensure your systems run smoothly and to address any issues that may arise.",
+              "Yes, we offer comprehensive support and maintenance packages tailored to your needs. Our team is available 24/7 to ensure your systems run smoothly, address any issues that may arise, perform regular updates, security patches, and provide continuous optimization. We offer various support tiers from basic maintenance to dedicated support teams.",
           },
           {
             question: "What technologies do you work with?",
             answer:
-              "We work with a wide range of modern technologies including React, Node.js, Python, AWS, Docker, Kubernetes, and many more. We choose the best technology stack based on your specific project requirements.",
+              "We work with a wide range of modern technologies including React, Next.js, Vue.js, Angular (frontend), Node.js, Python, Java (backend), React Native, Flutter (mobile), AWS, Azure, Google Cloud (cloud), Docker, Kubernetes, Terraform (DevOps), MongoDB, PostgreSQL, MySQL, Redis (databases), and many more. We choose the best technology stack based on your specific project requirements, scalability needs, and team expertise.",
+          },
+          {
+            question: "How do you ensure code quality and security?",
+            answer:
+              "We maintain high code quality through code reviews, automated testing, continuous integration, and adherence to industry best practices. For security, we follow OWASP guidelines, perform security audits, implement secure coding practices, conduct penetration testing, and ensure compliance with relevant standards (GDPR, HIPAA, PCI DSS, etc.) based on your industry requirements.",
+          },
+          {
+            question: "Can you work with our existing team?",
+            answer:
+              "Absolutely! We excel at collaborating with in-house teams and can work in various engagement models including dedicated teams, staff augmentation, or project-based collaboration. We adapt to your workflows, use your preferred tools and processes, and ensure seamless integration with your existing team structure.",
+          },
+          {
+            question: "What is your pricing model?",
+            answer:
+              "We offer flexible pricing models including fixed-price projects, time and materials, and dedicated team models. Pricing depends on project scope, complexity, timeline, and team size. We provide transparent pricing with detailed estimates and regular budget updates. Contact us for a customized quote based on your specific requirements.",
+          },
+          {
+            question: "Do you provide project management and communication?",
+            answer:
+              "Yes, every project is assigned a dedicated project manager who ensures clear communication, regular updates, and timely delivery. We use agile methodology with sprint planning, daily standups, and regular demos. We provide transparent reporting, use collaboration tools, and maintain open communication channels throughout the project lifecycle.",
           },
         ],
       },
       partners: {
-        title: "Our Partners",
+        title: "Our Trusted Partners",
         description:
-          "We work with trusted partners and brands worldwide to deliver exceptional results.",
+          "We work with trusted partners and leading technology brands worldwide to deliver exceptional results",
         partners: [
           {
-            logo: "https://via.placeholder.com/150x80?text=Partner+1",
-            name: "Partner 1",
+            logo: "https://saigontechnology.com/wp-content/uploads/Partner-logo-1.png",
+            name: "Technology Partner 1",
           },
           {
-            logo: "https://via.placeholder.com/150x80?text=Partner+2",
-            name: "Partner 2",
+            logo: "https://saigontechnology.com/wp-content/uploads/Partner-logo-2.png",
+            name: "Technology Partner 2",
           },
           {
-            logo: "https://via.placeholder.com/150x80?text=Partner+3",
-            name: "Partner 3",
+            logo: "https://saigontechnology.com/wp-content/uploads/Partner-logo-3.png",
+            name: "Technology Partner 3",
+          },
+          {
+            logo: "https://saigontechnology.com/wp-content/uploads/Partner-logo-4.png",
+            name: "Technology Partner 4",
+          },
+          {
+            logo: "https://saigontechnology.com/wp-content/uploads/Partner-logo-5.png",
+            name: "Technology Partner 5",
+          },
+          {
+            logo: "https://saigontechnology.com/wp-content/uploads/Partner-logo-6.png",
+            name: "Technology Partner 6",
+          },
+          {
+            logo: "https://saigontechnology.com/wp-content/uploads/Partner-logo-8.png",
+            name: "Technology Partner 7",
+          },
+          {
+            logo: "https://saigontechnology.com/wp-content/uploads/Partner-logo-9.png",
+            name: "Technology Partner 8",
           },
         ],
       },

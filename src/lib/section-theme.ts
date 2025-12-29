@@ -32,7 +32,8 @@ export const getSectionTheme = (
     sectionType === "technologies" ||
     sectionType === "blog" ||
     sectionType === "process" ||
-    sectionType === "faq"
+    sectionType === "faq" ||
+    sectionType === "partnerships"
   ) {
     return sectionTheme.light;
   }
