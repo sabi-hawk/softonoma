@@ -20,16 +20,8 @@ export default async function IndustryPage({ params }: IndustryPageProps) {
     notFound();
   }
 
-  // Debug logging
-  console.log("Industry found:", industry.title);
-  console.log("Industry content:", industry.content);
-  console.log("Industry content type:", typeof industry.content);
-  console.log("Industry content length:", industry.content?.length || 0);
-
   // Parse template data
   const templateData = parseIndustryTemplateData(industry.content || "");
-
-  console.log("Parsed template data:", templateData ? "Success" : "Failed");
 
   if (!templateData) {
     return (
@@ -54,7 +46,9 @@ export default async function IndustryPage({ params }: IndustryPageProps) {
     );
   }
 
-  return <IndustryTemplate data={templateData} industryTitle={industry.title} />;
+  return (
+    <IndustryTemplate data={templateData} industryTitle={industry.title} />
+  );
 }
 
 export async function generateMetadata({ params }: IndustryPageProps) {
@@ -99,9 +93,3 @@ export async function generateMetadata({ params }: IndustryPageProps) {
     },
   };
 }
-
-
-
-
-
-
