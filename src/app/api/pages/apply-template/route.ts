@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import connectDB from "@/lib/mongodb";
 import Section from "@/models/Section";
-import { getTemplate, isAboutPage } from "@/lib/about-page-templates";
+import { getTemplate } from "@/lib/about-page-templates";
 
 // POST apply template to a page
 export async function POST(request: NextRequest) {
@@ -18,9 +18,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Get template
-    const template = templateName
-      ? getTemplate(templateName)
-      : null;
+    const template = templateName ? getTemplate(templateName) : null;
 
     if (!template) {
       return NextResponse.json(
@@ -42,7 +40,7 @@ export async function POST(request: NextRequest) {
       createdSections.push({
         ...section.toObject(),
         _id: section._id.toString(),
-        pageId: section.pageId.toString(),
+        pageId: pageId.toString(),
       });
     }
 
@@ -60,4 +58,3 @@ export async function POST(request: NextRequest) {
     );
   }
 }
-

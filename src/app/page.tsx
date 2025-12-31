@@ -59,7 +59,7 @@ export default async function Home() {
   const serializedSections = sections.map((section) => ({
     ...section,
     _id: section._id.toString(),
-    pageId: section.pageId.toString(),
+    pageId: section.pageId ? section.pageId.toString() : undefined,
   }));
 
   return (

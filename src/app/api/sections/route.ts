@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import connectDB from "@/lib/mongodb";
-import Section from "@/models/Section";
+import Section, { ISectionContent, ISection } from "@/models/Section";
+import mongoose from "mongoose";
 
 // GET all sections, optionally filtered by pageId or serviceId
 export async function GET(request: NextRequest) {
@@ -57,15 +58,15 @@ export async function POST(request: NextRequest) {
     }
 
     const sectionData: {
-      pageId?: string;
-      serviceId?: string;
+      pageId?: string | mongoose.Types.ObjectId;
+      serviceId?: string | mongoose.Types.ObjectId;
       type: string;
-      content: unknown;
+      content: ISectionContent;
       order: number;
       isActive: boolean;
     } = {
       type,
-      content: content || {},
+      content: (content || {}) as ISectionContent,
       order: order ?? 0,
       isActive: isActive !== undefined ? isActive : true,
     };
@@ -73,7 +74,11 @@ export async function POST(request: NextRequest) {
     if (pageId) sectionData.pageId = pageId;
     if (serviceId) sectionData.serviceId = serviceId;
 
-    const section = await Section.create(sectionData);
+    // Create section - Mongoose will handle ObjectId conversion from strings
+    // Using type assertion to tell TypeScript this is a single document creation
+    const section = (await Section.create([sectionData]))[0] as ISection & {
+      _id: mongoose.Types.ObjectId;
+    };
 
     // Convert to plain object and serialize ObjectIds
     const serializedSection = {

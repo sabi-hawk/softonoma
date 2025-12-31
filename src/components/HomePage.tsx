@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 
-interface HomePageData {
+export interface HomePageData {
   hero: {
     title: string;
     subtitle: string;
@@ -170,8 +170,6 @@ export default function HomePage({ data }: HomePageProps) {
             </div>
           </div>
         </div>
-
-       
       </section>
 
       {/* Services Section */}
