@@ -1,6 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import connectDB from "@/lib/mongodb";
 import Page from "@/models/Page";
+import Section from "@/models/Section";
+import {
+  isAboutPage,
+  isContactPage,
+  getTemplate,
+} from "@/lib/about-page-templates";
 
 // GET all pages
 export async function GET() {
@@ -35,6 +41,7 @@ export async function POST(request: NextRequest) {
       ogImage,
       ogTitle,
       ogDescription,
+      applyTemplate,
     } = body;
 
     if (!title || !slug) {
@@ -63,7 +70,37 @@ export async function POST(request: NextRequest) {
       ogDescription,
     });
 
-    return NextResponse.json({ success: true, data: page }, { status: 201 });
+    // Auto-apply template if it's an About or Contact page or if explicitly requested
+    let templateApplied = false;
+    let appliedTemplateName = "";
+    if (
+      applyTemplate ||
+      isAboutPage(slug, title) ||
+      isContactPage(slug, title)
+    ) {
+      const templateName = isContactPage(slug, title) ? "contact" : "about";
+      const template = getTemplate(templateName);
+      if (template) {
+        // Create sections from template
+        for (const sectionData of template.sections) {
+          await Section.create({
+            ...sectionData,
+            pageId: page._id.toString(),
+          });
+        }
+        templateApplied = true;
+        appliedTemplateName = template.name;
+      }
+    }
+
+    return NextResponse.json({
+      success: true,
+      data: page,
+      templateApplied,
+      message: templateApplied
+        ? `Page created with ${appliedTemplateName} template applied`
+        : "Page created successfully",
+    });
   } catch (error) {
     if (error instanceof Error && "code" in error && error.code === 11000) {
       return NextResponse.json(

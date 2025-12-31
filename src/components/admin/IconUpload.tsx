@@ -117,6 +117,7 @@ export default function IconUpload({
       const response = await fetch("/api/upload", {
         method: "POST",
         body: formData,
+        credentials: "include",
       });
 
       const result = await response.json();
@@ -165,6 +166,7 @@ export default function IconUpload({
                   method: "DELETE",
                   headers: { "Content-Type": "application/json" },
                   body: JSON.stringify({ fileId: oldFileId }),
+                  credentials: "include",
                 }).catch((error) => {
                   console.error("Error deleting old file:", error);
                 });
@@ -180,6 +182,7 @@ export default function IconUpload({
                   method: "DELETE",
                   headers: { "Content-Type": "application/json" },
                   body: JSON.stringify({ fileId: oldFileId }),
+                  credentials: "include",
                 }).catch((error) => {
                   console.error("Error deleting old file:", error);
                 });

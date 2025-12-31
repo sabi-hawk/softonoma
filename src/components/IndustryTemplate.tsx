@@ -22,6 +22,15 @@ export default function IndustryTemplate({
 }: IndustryTemplateProps) {
   const [portfolioIndex, setPortfolioIndex] = useState(0);
   const [cardsIndex, setCardsIndex] = useState(0);
+  const [techIndex, setTechIndex] = useState(0);
+
+  // Touch handlers for mobile carousels
+  const portfolioTouchStartX = useRef<number | null>(null);
+  const portfolioTouchEndX = useRef<number | null>(null);
+  const cardsTouchStartX = useRef<number | null>(null);
+  const cardsTouchEndX = useRef<number | null>(null);
+  const techTouchStartX = useRef<number | null>(null);
+  const techTouchEndX = useRef<number | null>(null);
 
   // Get background media and opacity from hero
   const backgroundImage = data.hero.backgroundImage;
@@ -29,7 +38,9 @@ export default function IndustryTemplate({
   const backgroundOpacity = data.hero.backgroundOpacity ?? 0.3;
 
   const itemsToShowCards = 3;
+  const mobileItemsToShowCards = 1;
   const totalCardsItems = data.cards?.items?.length || 0;
+  const totalCardsSlides = Math.ceil(totalCardsItems / mobileItemsToShowCards);
 
   const nextCards = () => {
     if (totalCardsItems > 0) {
@@ -43,11 +54,36 @@ export default function IndustryTemplate({
     }
   };
 
-  // Get visible cards items (3 at a time with infinite loop)
-  const getVisibleCardsItems = () => {
+  // Touch handlers for cards
+  const handleCardsTouchStart = (e: React.TouchEvent) => {
+    cardsTouchStartX.current = e.touches[0].clientX;
+  };
+
+  const handleCardsTouchMove = (e: React.TouchEvent) => {
+    cardsTouchEndX.current = e.touches[0].clientX;
+  };
+
+  const handleCardsTouchEnd = () => {
+    if (!cardsTouchStartX.current || !cardsTouchEndX.current) return;
+    const distance = cardsTouchStartX.current - cardsTouchEndX.current;
+    const minSwipeDistance = 50;
+
+    if (distance > minSwipeDistance) {
+      nextCards();
+    } else if (distance < -minSwipeDistance) {
+      prevCards();
+    }
+
+    cardsTouchStartX.current = null;
+    cardsTouchEndX.current = null;
+  };
+
+  // Get visible cards items (3 at a time on desktop, 1 on mobile)
+  const getVisibleCardsItems = (isMobile: boolean = false) => {
     if (!data.cards?.items) return [];
     const visible = [];
-    for (let i = 0; i < itemsToShowCards; i++) {
+    const items = isMobile ? mobileItemsToShowCards : itemsToShowCards;
+    for (let i = 0; i < items; i++) {
       const index = (cardsIndex + i) % totalCardsItems;
       visible.push({
         item: data.cards.items[index],
@@ -57,8 +93,16 @@ export default function IndustryTemplate({
     return visible;
   };
 
+  const getCurrentCardsSlideIndex = () => {
+    return Math.floor(cardsIndex / mobileItemsToShowCards);
+  };
+
   const itemsToShow = 3;
+  const mobileItemsToShow = 1;
   const totalPortfolioItems = data.portfolio?.projects?.length || 0;
+  const totalPortfolioSlides = Math.ceil(
+    totalPortfolioItems / mobileItemsToShow
+  );
 
   const nextPortfolio = () => {
     if (totalPortfolioItems > 0) {
@@ -74,11 +118,36 @@ export default function IndustryTemplate({
     }
   };
 
-  // Get visible portfolio items (3 at a time with infinite loop)
-  const getVisiblePortfolioItems = () => {
+  // Touch handlers for portfolio
+  const handlePortfolioTouchStart = (e: React.TouchEvent) => {
+    portfolioTouchStartX.current = e.touches[0].clientX;
+  };
+
+  const handlePortfolioTouchMove = (e: React.TouchEvent) => {
+    portfolioTouchEndX.current = e.touches[0].clientX;
+  };
+
+  const handlePortfolioTouchEnd = () => {
+    if (!portfolioTouchStartX.current || !portfolioTouchEndX.current) return;
+    const distance = portfolioTouchStartX.current - portfolioTouchEndX.current;
+    const minSwipeDistance = 50;
+
+    if (distance > minSwipeDistance) {
+      nextPortfolio();
+    } else if (distance < -minSwipeDistance) {
+      prevPortfolio();
+    }
+
+    portfolioTouchStartX.current = null;
+    portfolioTouchEndX.current = null;
+  };
+
+  // Get visible portfolio items (3 at a time on desktop, 1 on mobile)
+  const getVisiblePortfolioItems = (isMobile: boolean = false) => {
     if (!data.portfolio?.projects) return [];
     const visible = [];
-    for (let i = 0; i < itemsToShow; i++) {
+    const items = isMobile ? mobileItemsToShow : itemsToShow;
+    for (let i = 0; i < items; i++) {
       const index = (portfolioIndex + i) % totalPortfolioItems;
       visible.push({
         item: data.portfolio.projects[index],
@@ -86,6 +155,74 @@ export default function IndustryTemplate({
       });
     }
     return visible;
+  };
+
+  const getCurrentPortfolioSlideIndex = () => {
+    return Math.floor(portfolioIndex / mobileItemsToShow);
+  };
+
+  // Technologies carousel
+  const mobileItemsToShowTech = 4;
+  const totalTechItems = data.technologies?.items?.length || 0;
+  const totalTechSlides = Math.ceil(totalTechItems / mobileItemsToShowTech);
+  const maxTechIndex = Math.max(
+    0,
+    (totalTechSlides - 1) * mobileItemsToShowTech
+  );
+
+  const nextTech = () => {
+    if (totalTechItems > 0) {
+      setTechIndex((prev) => {
+        const next = prev + mobileItemsToShowTech;
+        return next > maxTechIndex ? maxTechIndex : next;
+      });
+    }
+  };
+
+  const prevTech = () => {
+    if (totalTechItems > 0) {
+      setTechIndex((prev) => Math.max(prev - mobileItemsToShowTech, 0));
+    }
+  };
+
+  // Touch handlers for technologies
+  const handleTechTouchStart = (e: React.TouchEvent) => {
+    techTouchStartX.current = e.touches[0].clientX;
+  };
+
+  const handleTechTouchMove = (e: React.TouchEvent) => {
+    techTouchEndX.current = e.touches[0].clientX;
+  };
+
+  const handleTechTouchEnd = () => {
+    if (!techTouchStartX.current || !techTouchEndX.current) return;
+    const distance = techTouchStartX.current - techTouchEndX.current;
+    const minSwipeDistance = 50;
+
+    if (distance > minSwipeDistance) {
+      // Swipe left - next slide
+      nextTech();
+    } else if (distance < -minSwipeDistance) {
+      // Swipe right - previous slide
+      prevTech();
+    }
+
+    techTouchStartX.current = null;
+    techTouchEndX.current = null;
+  };
+
+  const getVisibleTechItems = () => {
+    if (!data.technologies?.items) return [];
+    const start = techIndex;
+    const end = Math.min(start + mobileItemsToShowTech, totalTechItems);
+    return data.technologies.items.slice(start, end).map((item, idx) => ({
+      item,
+      originalIndex: start + idx,
+    }));
+  };
+
+  const getCurrentTechSlideIndex = () => {
+    return Math.floor(techIndex / mobileItemsToShowTech);
   };
 
   // Auto-scroll partners carousel (using transform like PartnersSection)
@@ -196,7 +333,7 @@ export default function IndustryTemplate({
   const renderHero = () => (
     <section
       key="hero"
-      className="relative py-16 md:py-20 lg:py-24 overflow-hidden theme-bg-black"
+      className="relative py-12 sm:py-16 md:py-20 lg:py-24 overflow-hidden theme-bg-black"
     >
       {/* Background Image/Video */}
       {(backgroundImage || backgroundVideo) && (
@@ -236,21 +373,21 @@ export default function IndustryTemplate({
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="max-w-3xl">
           {data.hero.breadcrumbs && (
-            <div className="mb-4 text-sm theme-text-white opacity-80">
+            <div className="mb-3 sm:mb-4 text-xs sm:text-sm theme-text-white opacity-80">
               {data.hero.breadcrumbs}
             </div>
           )}
-          <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 theme-text-white">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-3 sm:mb-4 theme-text-white">
             {data.hero.title || industryTitle}
           </h1>
           {data.hero.subtitle && (
-            <p className="text-xl md:text-2xl theme-primary-mid mb-4">
+            <p className="text-lg sm:text-xl md:text-2xl theme-primary-mid mb-3 sm:mb-4">
               {data.hero.subtitle}
             </p>
           )}
           {data.hero.description && (
             <p
-              className="text-base md:text-lg theme-text-white mb-6 max-w-3xl leading-relaxed"
+              className="text-sm sm:text-base md:text-lg theme-text-white mb-4 sm:mb-6 max-w-3xl leading-relaxed"
               style={{ opacity: 0.9 }}
             >
               {data.hero.description}
@@ -259,7 +396,7 @@ export default function IndustryTemplate({
           {data.hero.primaryButtonText && (
             <Link
               href={data.hero.primaryButtonLink || "#contact"}
-              className="inline-block px-6 py-3 theme-bg-primary-mid text-white rounded-lg font-semibold transition-all hover:opacity-90 hover:shadow-lg"
+              className="inline-block px-5 py-2.5 sm:px-6 sm:py-3 theme-bg-primary-mid text-white rounded-lg font-semibold text-sm sm:text-base transition-all hover:opacity-90 hover:shadow-lg"
             >
               {data.hero.primaryButtonText}
             </Link>
@@ -276,20 +413,23 @@ export default function IndustryTemplate({
         <section
           key="overview"
           id="overview"
-          className="py-16 md:py-24 bg-gray-50"
+          className="py-12 sm:py-16 md:py-24 bg-gray-50"
         >
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="grid md:grid-cols-2 gap-12 items-center">
+            <div className="grid md:grid-cols-2 gap-8 sm:gap-12 items-center">
               <div>
-                <h2 className="text-3xl md:text-4xl font-bold theme-text-black mb-6">
+                <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold theme-text-black mb-4 sm:mb-6">
                   {data.overview.title}
                 </h2>
-                <div className="space-y-4">
+                <div className="space-y-3 sm:space-y-4">
                   {data.overview.paragraphs.map((para, index) => (
-                    <div key={index} className="flex items-start gap-3">
-                      <div className="shrink-0 w-6 h-6 rounded-full theme-bg-primary-mid flex items-center justify-center mt-1">
+                    <div
+                      key={index}
+                      className="flex items-start gap-2 sm:gap-3"
+                    >
+                      <div className="shrink-0 w-5 h-5 sm:w-6 sm:h-6 rounded-full theme-bg-primary-mid flex items-center justify-center mt-1">
                         <svg
-                          className="w-4 h-4 theme-text-white"
+                          className="w-3 h-3 sm:w-4 sm:h-4 theme-text-white"
                           fill="none"
                           strokeLinecap="round"
                           strokeLinejoin="round"
@@ -300,7 +440,7 @@ export default function IndustryTemplate({
                           <path d="M5 13l4 4L19 7"></path>
                         </svg>
                       </div>
-                      <p className="text-lg theme-text-black leading-relaxed">
+                      <p className="text-base sm:text-lg theme-text-black leading-relaxed">
                         {para.text}
                       </p>
                     </div>
@@ -324,14 +464,14 @@ export default function IndustryTemplate({
       ) : null,
     stats: () =>
       data.stats && data.stats.items && data.stats.items.length > 0 ? (
-        <section className="py-16 md:py-24 bg-white" key="stats">
+        <section className="py-12 sm:py-16 md:py-24 bg-white" key="stats">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="bg-gray-900 rounded-xl p-8 md:p-12">
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+            <div className="bg-gray-900 rounded-xl p-6 sm:p-8 md:p-12">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 md:gap-8">
                 {data.stats.items.map((stat, index) => (
                   <div key={index} className="text-center">
                     {stat.icon && (
-                      <div className="w-10 h-10 rounded-lg flex items-center justify-center text-white text-2xl mb-4 relative overflow-hidden mx-auto">
+                      <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg flex items-center justify-center text-white text-xl sm:text-2xl mb-3 sm:mb-4 relative overflow-hidden mx-auto">
                         {isIconUrl(stat.icon) && stat.icon ? (
                           <Image
                             src={stat.icon}
@@ -346,7 +486,7 @@ export default function IndustryTemplate({
                               if (parent) {
                                 const fallback = document.createElement("div");
                                 if (stat.icon && !isIconUrl(stat.icon)) {
-                                  fallback.className = "text-2xl";
+                                  fallback.className = "text-xl sm:text-2xl";
                                   fallback.textContent = stat.icon;
                                 } else if (stat.label) {
                                   fallback.className =
@@ -358,14 +498,14 @@ export default function IndustryTemplate({
                             }}
                           />
                         ) : stat.icon ? (
-                          <div className="text-2xl">{stat.icon}</div>
+                          <div className="text-xl sm:text-2xl">{stat.icon}</div>
                         ) : null}
                       </div>
                     )}
-                    <div className="text-3xl md:text-4xl font-bold text-white mb-2">
+                    <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-1 sm:mb-2">
                       {stat.value}
                     </div>
-                    <div className="text-lg text-white opacity-90">
+                    <div className="text-sm sm:text-base md:text-lg text-white opacity-90">
                       {stat.label}
                     </div>
                   </div>
@@ -379,27 +519,30 @@ export default function IndustryTemplate({
       data.subServices &&
       data.subServices.items &&
       data.subServices.items.length > 0 ? (
-        <section className="py-16 md:py-24 bg-gray-50" key="subServices">
+        <section
+          className="py-12 sm:py-16 md:py-24 bg-gray-50"
+          key="subServices"
+        >
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-12">
-              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+            <div className="text-center mb-8 sm:mb-10 md:mb-12">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-3 sm:mb-4 px-2">
                 {data.subServices.title}
               </h2>
               {data.subServices.description && (
-                <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+                <p className="text-base sm:text-lg text-gray-600 max-w-2xl mx-auto px-2">
                   {data.subServices.description}
                 </p>
               )}
             </div>
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
               {data.subServices.items.map((item, index) => (
                 <div
                   key={index}
-                  className="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-shadow border border-gray-200 group cursor-pointer"
+                  className="bg-white p-4 sm:p-6 rounded-xl shadow-md hover:shadow-lg transition-shadow border border-gray-200 group cursor-pointer"
                 >
-                  <div className="flex items-start gap-4">
+                  <div className="flex items-start gap-3 sm:gap-4">
                     {item.icon && (
-                      <div className="shrink-0 w-12 h-12 theme-bg-primary-mid rounded-lg flex items-center justify-center text-2xl">
+                      <div className="shrink-0 w-10 h-10 sm:w-12 sm:h-12 theme-bg-primary-mid rounded-lg flex items-center justify-center text-xl sm:text-2xl">
                         {isIconUrl(item.icon) ? (
                           <Image
                             src={item.icon}
@@ -415,37 +558,22 @@ export default function IndustryTemplate({
                       </div>
                     )}
                     <div className="flex-1">
-                      <h3 className="text-xl font-semibold text-gray-900 mb-2 group-hover:theme-text-primary transition-colors">
+                      <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-1 sm:mb-2 group-hover:theme-text-primary transition-colors">
                         {item.title}
                       </h3>
-                      <p className="text-gray-600 leading-relaxed">
+                      <p className="text-sm sm:text-base text-gray-600 leading-relaxed">
                         {item.description}
                       </p>
-                    </div>
-                    <div className="shrink-0 theme-text-primary">
-                      <svg
-                        className="w-5 h-5"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M9 5l7 7-7 7"
-                        />
-                      </svg>
                     </div>
                   </div>
                 </div>
               ))}
             </div>
             {data.subServices.ctaButtonText && (
-              <div className="text-center mt-12">
+              <div className="text-center mt-8 sm:mt-10 md:mt-12">
                 <Link
                   href={data.subServices.ctaButtonLink || "#contact"}
-                  className="inline-block px-8 py-3 theme-bg-primary-mid text-white rounded-lg font-semibold transition-all hover:opacity-90 hover:shadow-lg"
+                  className="inline-block px-6 py-2.5 sm:px-8 sm:py-3 theme-bg-primary-mid text-white rounded-lg font-semibold text-sm sm:text-base transition-all hover:opacity-90 hover:shadow-lg"
                 >
                   {data.subServices.ctaButtonText}
                 </Link>
@@ -459,12 +587,12 @@ export default function IndustryTemplate({
       data.partners.partners &&
       data.partners.partners.length > 0 ? (
         <section
-          className="py-16 md:py-24 px-4 sm:px-6 lg:px-8 theme-bg-white-green-gradient relative overflow-hidden"
+          className="py-12 sm:py-16 md:py-24 px-4 sm:px-6 lg:px-8 theme-bg-white-green-gradient relative overflow-hidden"
           key="partners"
         >
           <div className="relative z-10 max-w-7xl mx-auto">
             {data.partners.title && (
-              <div className="text-center mb-12">
+              <div className="text-center mb-8 sm:mb-10 md:mb-12">
                 {/* Split title to show first part in white and second part in theme color */}
                 {(() => {
                   const getTitleParts = (title: string) => {
@@ -491,7 +619,7 @@ export default function IndustryTemplate({
 
                   const titleParts = getTitleParts(data.partners.title);
                   return (
-                    <h2 className="text-4xl md:text-5xl font-bold mb-4">
+                    <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-3 sm:mb-4 px-2">
                       <span className="theme-text-black">
                         {titleParts.firstPart}
                       </span>
@@ -506,7 +634,7 @@ export default function IndustryTemplate({
                 })()}
                 {data.partners.description && (
                   <p
-                    className="text-lg theme-text-black max-w-3xl mx-auto"
+                    className="text-base sm:text-lg theme-text-black max-w-3xl mx-auto px-2"
                     style={{ opacity: 0.8 }}
                   >
                     {data.partners.description}
@@ -561,17 +689,17 @@ export default function IndustryTemplate({
     cards: () =>
       data.cards && data.cards.items && data.cards.items.length > 0 ? (
         <section
-          className="py-16 md:py-24 px-4 sm:px-6 lg:px-8 theme-bg-white"
+          className="py-12 sm:py-16 md:py-24 px-4 sm:px-6 lg:px-8 theme-bg-white"
           key="cards"
         >
           <div className="max-w-7xl mx-auto">
             {data.cards.title && (
-              <div className="text-center mb-12">
-                <h2 className="text-4xl md:text-5xl font-bold theme-text-black mb-4">
+              <div className="text-center mb-8 sm:mb-10 md:mb-12">
+                <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold theme-text-black mb-3 sm:mb-4 px-2">
                   {data.cards.title}
                 </h2>
                 {data.cards.description && (
-                  <p className="text-xl theme-text-black max-w-3xl mx-auto opacity-80">
+                  <p className="text-base sm:text-lg md:text-xl theme-text-black max-w-3xl mx-auto opacity-80 px-2">
                     {data.cards.description}
                   </p>
                 )}
@@ -579,52 +707,109 @@ export default function IndustryTemplate({
             )}
             {totalCardsItems > 0 && (
               <div className="relative">
+                {/* Left Arrow - Desktop Only */}
                 {totalCardsItems > itemsToShowCards && (
-                  <>
-                    <button
-                      onClick={prevCards}
-                      className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 w-12 h-12 bg-transparent border-2 theme-text-black rounded-full flex items-center justify-center shadow-md hover:scale-110 transition-all backdrop-blur-sm"
-                      style={{ borderColor: "rgba(0, 0, 0, 0.2)" }}
-                      aria-label="Previous"
+                  <button
+                    onClick={prevCards}
+                    className="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 w-12 h-12 bg-transparent border-2 theme-text-black rounded-full items-center justify-center shadow-md hover:scale-110 transition-all backdrop-blur-sm"
+                    style={{ borderColor: "rgba(0, 0, 0, 0.2)" }}
+                    aria-label="Previous"
+                  >
+                    <svg
+                      className="w-6 h-6"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
                     >
-                      <svg
-                        className="w-6 h-6"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M15 19l-7-7 7-7"
-                        />
-                      </svg>
-                    </button>
-                    <button
-                      onClick={nextCards}
-                      className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 w-12 h-12 bg-transparent border-2 theme-text-black rounded-full flex items-center justify-center shadow-md hover:scale-110 transition-all backdrop-blur-sm"
-                      style={{ borderColor: "rgba(0, 0, 0, 0.2)" }}
-                      aria-label="Next"
-                    >
-                      <svg
-                        className="w-6 h-6"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M9 5l7 7-7 7"
-                        />
-                      </svg>
-                    </button>
-                  </>
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M15 19l-7-7 7-7"
+                      />
+                    </svg>
+                  </button>
                 )}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 px-8">
-                  {getVisibleCardsItems().map(
+
+                {/* Mobile Carousel */}
+                <div
+                  className="md:hidden overflow-hidden"
+                  onTouchStart={handleCardsTouchStart}
+                  onTouchMove={handleCardsTouchMove}
+                  onTouchEnd={handleCardsTouchEnd}
+                >
+                  <div className="flex gap-4">
+                    {getVisibleCardsItems(true).map(
+                      ({ item, originalIndex }, visibleIndex) => (
+                        <div
+                          key={`card-mobile-${originalIndex}-${visibleIndex}-${
+                            item.author || visibleIndex
+                          }`}
+                          className="group p-6 theme-bg-white rounded-xl border border-gray-200 shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 shrink-0 mx-auto max-w-sm"
+                          style={{
+                            width: "calc(100vw - 2rem)",
+                            borderColor: "rgba(0, 0, 0, 0.1)",
+                          }}
+                        >
+                          {data.cards && data.cards.showStars !== false && (
+                            <div
+                              className="mb-4 text-lg"
+                              style={{ color: "var(--color-primary-end)" }}
+                            >
+                              {"★★★★★".split("").map((star, i) => (
+                                <span key={i}>{star}</span>
+                              ))}
+                            </div>
+                          )}
+                          {item.quote && (
+                            <p className="text-gray-700 mb-6 leading-relaxed italic text-sm">
+                              &ldquo;{item.quote}&rdquo;
+                            </p>
+                          )}
+                          <div className="border-t border-gray-200 pt-4">
+                            {item.author && (
+                              <p className="font-semibold text-gray-900">
+                                {item.author}
+                              </p>
+                            )}
+                            {(item.role || item.company) && (
+                              <p className="text-sm text-gray-600">
+                                {item.role}
+                                {item.role && item.company && ", "}
+                                {item.company}
+                              </p>
+                            )}
+                          </div>
+                        </div>
+                      )
+                    )}
+                  </div>
+                  {/* Dot indicators for mobile */}
+                  {totalCardsSlides > 1 && (
+                    <div className="flex justify-center gap-2 mt-6">
+                      {Array.from({ length: totalCardsSlides }).map(
+                        (_, idx) => (
+                          <button
+                            key={idx}
+                            onClick={() =>
+                              setCardsIndex(idx * mobileItemsToShowCards)
+                            }
+                            className={`w-2 h-2 rounded-full transition-all ${
+                              getCurrentCardsSlideIndex() === idx
+                                ? "bg-gray-800 w-6"
+                                : "bg-gray-300"
+                            }`}
+                            aria-label={`Go to slide ${idx + 1}`}
+                          />
+                        )
+                      )}
+                    </div>
+                  )}
+                </div>
+
+                {/* Desktop Grid */}
+                <div className="hidden md:grid grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 px-8">
+                  {getVisibleCardsItems(false).map(
                     ({ item, originalIndex }, visibleIndex) => (
                       <div
                         key={`card-${originalIndex}-${visibleIndex}-${
@@ -666,6 +851,30 @@ export default function IndustryTemplate({
                     )
                   )}
                 </div>
+
+                {/* Right Arrow - Desktop Only */}
+                {totalCardsItems > itemsToShowCards && (
+                  <button
+                    onClick={nextCards}
+                    className="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 w-12 h-12 bg-transparent border-2 theme-text-black rounded-full items-center justify-center shadow-md hover:scale-110 transition-all backdrop-blur-sm"
+                    style={{ borderColor: "rgba(0, 0, 0, 0.2)" }}
+                    aria-label="Next"
+                  >
+                    <svg
+                      className="w-6 h-6"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M9 5l7 7-7 7"
+                      />
+                    </svg>
+                  </button>
+                )}
               </div>
             )}
           </div>
@@ -676,17 +885,17 @@ export default function IndustryTemplate({
       data.portfolio.projects &&
       data.portfolio.projects.length > 0 ? (
         <section
-          className="py-16 md:py-24 px-4 sm:px-6 lg:px-8 theme-bg-white"
+          className="py-12 sm:py-16 md:py-24 px-4 sm:px-6 lg:px-8 theme-bg-white"
           key="portfolio"
         >
           <div className="max-w-7xl mx-auto">
             {data.portfolio.title && (
-              <div className="text-center mb-12">
-                <h2 className="text-4xl md:text-5xl font-bold theme-text-black mb-4">
+              <div className="text-center mb-8 sm:mb-10 md:mb-12">
+                <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold theme-text-black mb-3 sm:mb-4 px-2">
                   {data.portfolio.title}
                 </h2>
                 {data.portfolio.description && (
-                  <p className="text-xl theme-text-black max-w-3xl mx-auto opacity-80">
+                  <p className="text-base sm:text-lg md:text-xl theme-text-black max-w-3xl mx-auto opacity-80 px-2">
                     {data.portfolio.description}
                   </p>
                 )}
@@ -694,52 +903,101 @@ export default function IndustryTemplate({
             )}
             {totalPortfolioItems > 0 && (
               <div className="relative">
+                {/* Left Arrow - Desktop Only */}
                 {totalPortfolioItems > itemsToShow && (
-                  <>
-                    <button
-                      onClick={prevPortfolio}
-                      className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 w-12 h-12 bg-transparent border-2 theme-text-black rounded-full flex items-center justify-center shadow-md hover:scale-110 transition-all backdrop-blur-sm"
-                      style={{ borderColor: "rgba(0, 0, 0, 0.2)" }}
-                      aria-label="Previous"
+                  <button
+                    onClick={prevPortfolio}
+                    className="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 w-12 h-12 bg-transparent border-2 theme-text-black rounded-full items-center justify-center shadow-md hover:scale-110 transition-all backdrop-blur-sm"
+                    style={{ borderColor: "rgba(0, 0, 0, 0.2)" }}
+                    aria-label="Previous"
+                  >
+                    <svg
+                      className="w-6 h-6"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
                     >
-                      <svg
-                        className="w-6 h-6"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M15 19l-7-7 7-7"
-                        />
-                      </svg>
-                    </button>
-                    <button
-                      onClick={nextPortfolio}
-                      className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 w-12 h-12 bg-transparent border-2 theme-text-black rounded-full flex items-center justify-center shadow-md hover:scale-110 transition-all backdrop-blur-sm"
-                      style={{ borderColor: "rgba(0, 0, 0, 0.2)" }}
-                      aria-label="Next"
-                    >
-                      <svg
-                        className="w-6 h-6"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M9 5l7 7-7 7"
-                        />
-                      </svg>
-                    </button>
-                  </>
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M15 19l-7-7 7-7"
+                      />
+                    </svg>
+                  </button>
                 )}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 px-8">
-                  {getVisiblePortfolioItems().map(
+
+                {/* Mobile Carousel */}
+                <div
+                  className="md:hidden overflow-hidden"
+                  onTouchStart={handlePortfolioTouchStart}
+                  onTouchMove={handlePortfolioTouchMove}
+                  onTouchEnd={handlePortfolioTouchEnd}
+                >
+                  <div className="flex gap-4">
+                    {getVisiblePortfolioItems(true).map(
+                      ({ item: project, originalIndex }, visibleIndex) => (
+                        <div
+                          key={`portfolio-mobile-${originalIndex}-${visibleIndex}-${
+                            project.title || visibleIndex
+                          }`}
+                          className="group relative theme-bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 shrink-0 mx-auto max-w-sm"
+                          style={{ width: "calc(100vw - 2rem)" }}
+                        >
+                          {project.image && (
+                            <div className="relative w-full h-48 overflow-hidden">
+                              <Image
+                                src={project.image}
+                                alt={project.title}
+                                fill
+                                className="object-cover group-hover:scale-110 transition-transform duration-300"
+                                unoptimized
+                              />
+                            </div>
+                          )}
+                          <div className="p-6">
+                            {project.category && (
+                              <span className="inline-block px-3 py-1 text-xs font-semibold theme-bg-primary-mid theme-text-white rounded-full mb-3">
+                                {project.category}
+                              </span>
+                            )}
+                            <h3 className="text-xl font-bold theme-text-black mb-2">
+                              {project.title}
+                            </h3>
+                            <p className="text-gray-600 mb-4 line-clamp-2">
+                              {project.description}
+                            </p>
+                          </div>
+                        </div>
+                      )
+                    )}
+                  </div>
+                  {/* Dot indicators for mobile */}
+                  {totalPortfolioSlides > 1 && (
+                    <div className="flex justify-center gap-2 mt-6">
+                      {Array.from({ length: totalPortfolioSlides }).map(
+                        (_, idx) => (
+                          <button
+                            key={idx}
+                            onClick={() =>
+                              setPortfolioIndex(idx * mobileItemsToShow)
+                            }
+                            className={`w-2 h-2 rounded-full transition-all ${
+                              getCurrentPortfolioSlideIndex() === idx
+                                ? "bg-gray-800 w-6"
+                                : "bg-gray-300"
+                            }`}
+                            aria-label={`Go to slide ${idx + 1}`}
+                          />
+                        )
+                      )}
+                    </div>
+                  )}
+                </div>
+
+                {/* Desktop Grid */}
+                <div className="hidden md:grid grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 px-8">
+                  {getVisiblePortfolioItems(false).map(
                     ({ item: project, originalIndex }, visibleIndex) => (
                       <div
                         key={`portfolio-${originalIndex}-${visibleIndex}-${
@@ -770,7 +1028,7 @@ export default function IndustryTemplate({
                           <p className="text-gray-600 mb-4 line-clamp-2">
                             {project.description}
                           </p>
-                          {project.link && (
+                          {/* {project.link && (
                             <Link
                               href={project.link}
                               className="inline-flex items-center gap-2 text-sm font-semibold theme-text-primary hover:gap-3 transition-all"
@@ -790,12 +1048,36 @@ export default function IndustryTemplate({
                                 />
                               </svg>
                             </Link>
-                          )}
+                          )} */}
                         </div>
                       </div>
                     )
                   )}
                 </div>
+
+                {/* Right Arrow - Desktop Only */}
+                {totalPortfolioItems > itemsToShow && (
+                  <button
+                    onClick={nextPortfolio}
+                    className="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 w-12 h-12 bg-transparent border-2 theme-text-black rounded-full items-center justify-center shadow-md hover:scale-110 transition-all backdrop-blur-sm"
+                    style={{ borderColor: "rgba(0, 0, 0, 0.2)" }}
+                    aria-label="Next"
+                  >
+                    <svg
+                      className="w-6 h-6"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M9 5l7 7-7 7"
+                      />
+                    </svg>
+                  </button>
+                )}
               </div>
             )}
           </div>
@@ -806,12 +1088,12 @@ export default function IndustryTemplate({
       data.technologies.items &&
       data.technologies.items.length > 0 ? (
         <section
-          className="py-16 md:py-24 px-4 sm:px-6 lg:px-8 theme-bg-white-green-gradient relative overflow-hidden"
+          className="py-12 sm:py-16 md:py-24 px-4 sm:px-6 lg:px-8 theme-bg-white-green-gradient relative overflow-hidden"
           key="technologies"
         >
           <div className="relative z-10 max-w-7xl mx-auto">
             {data.technologies.title && (
-              <div className="text-center mb-16">
+              <div className="text-center mb-8 sm:mb-12 md:mb-16">
                 {/* Split title like TechnologiesSection */}
                 {(() => {
                   const getTitleParts = (title: string) => {
@@ -855,7 +1137,7 @@ export default function IndustryTemplate({
                   const titleParts = getTitleParts(data.technologies.title);
                   return (
                     <>
-                      <h2 className="text-4xl md:text-5xl font-bold mb-4">
+                      <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-3 sm:mb-4 px-2">
                         <span className="theme-text-black">
                           {titleParts.firstPart}
                         </span>
@@ -868,7 +1150,7 @@ export default function IndustryTemplate({
                       </h2>
                       {data.technologies.description && (
                         <p
-                          className="text-xl theme-text-black max-w-3xl mx-auto"
+                          className="text-base sm:text-lg md:text-xl theme-text-black max-w-3xl mx-auto px-2"
                           style={{ opacity: 0.8 }}
                         >
                           {data.technologies.description}
@@ -879,46 +1161,136 @@ export default function IndustryTemplate({
                 })()}
               </div>
             )}
-            <div className="max-w-5xl mx-auto px-8 md:px-12 lg:px-16">
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 md:gap-3">
+            <div className="max-w-5xl mx-auto px-4 sm:px-6 md:px-12 lg:px-16">
+              {/* Mobile Carousel */}
+              <div
+                className="md:hidden overflow-hidden px-1"
+                onTouchStart={handleTechTouchStart}
+                onTouchMove={handleTechTouchMove}
+                onTouchEnd={handleTechTouchEnd}
+              >
+                <div className="flex gap-2">
+                  {getVisibleTechItems().map(
+                    ({ item: tech, originalIndex }) => (
+                      <div
+                        key={originalIndex}
+                        className="group theme-bg-white rounded-lg flex flex-col items-center justify-center transition-all duration-300 hover:shadow-xl hover:-translate-y-1 overflow-hidden p-3 shrink-0"
+                        style={{
+                          width: `calc((100% - ${
+                            (mobileItemsToShowTech - 1) * 8
+                          }px) / ${mobileItemsToShowTech})`,
+                          aspectRatio: "1/1",
+                          minHeight: "60px",
+                        }}
+                      >
+                        {/* Tech Logo/Icon - Only Logo, No Text */}
+                        <div className="w-full h-full flex items-center justify-center relative">
+                          {isIconUrl(tech.icon) && tech.icon ? (
+                            <div className="relative w-10 h-10">
+                              <Image
+                                src={tech.icon}
+                                alt={tech.name || "Technology"}
+                                fill
+                                className="object-contain transition-all duration-300 group-hover:scale-105"
+                                unoptimized
+                                onError={(e) => {
+                                  // Fallback to emoji or name if image fails
+                                  const target = e.currentTarget;
+                                  target.style.display = "none";
+                                  const parent = target.parentElement;
+                                  if (parent) {
+                                    const fallback =
+                                      document.createElement("div");
+                                    if (tech.icon && !isIconUrl(tech.icon)) {
+                                      fallback.className = "text-lg";
+                                      fallback.textContent = tech.icon;
+                                    } else if (tech.name) {
+                                      fallback.className =
+                                        "text-xs font-bold theme-text-black text-center";
+                                      fallback.textContent = tech.name;
+                                    }
+                                    parent.appendChild(fallback);
+                                  }
+                                }}
+                              />
+                            </div>
+                          ) : tech.icon ? (
+                            <div className="text-lg">{tech.icon}</div>
+                          ) : tech.name ? (
+                            <div className="text-xs font-semibold theme-text-black text-center px-1">
+                              {tech.name}
+                            </div>
+                          ) : null}
+                        </div>
+                      </div>
+                    )
+                  )}
+                </div>
+                {/* Dot indicators for mobile */}
+                {totalTechSlides > 1 && (
+                  <div className="flex justify-center gap-2 mt-4">
+                    {Array.from({ length: totalTechSlides }).map((_, idx) => (
+                      <button
+                        key={idx}
+                        onClick={() =>
+                          setTechIndex(idx * mobileItemsToShowTech)
+                        }
+                        className={`w-2 h-2 rounded-full transition-all ${
+                          getCurrentTechSlideIndex() === idx
+                            ? "bg-gray-800 w-6"
+                            : "bg-gray-300"
+                        }`}
+                        aria-label={`Go to slide ${idx + 1}`}
+                      />
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* Desktop Grid */}
+              <div className="hidden md:grid grid-cols-4 lg:grid-cols-5 gap-3">
                 {data.technologies.items.map((tech, index) => (
                   <div
                     key={index}
-                    className="group theme-bg-white rounded-md flex flex-col items-center justify-center transition-all duration-300 hover:shadow-xl hover:-translate-y-1 overflow-hidden p-3 md:p-4"
-                    style={{ aspectRatio: "5/3", minHeight: "40px" }}
+                    className="group theme-bg-white rounded-lg flex flex-col items-center justify-center transition-all duration-300 hover:shadow-xl hover:-translate-y-1 overflow-hidden p-3"
+                    style={{ aspectRatio: "1/1", minHeight: "60px" }}
                   >
                     {/* Tech Logo/Icon - Only Logo, No Text */}
-                    <div className="w-full h-full flex items-center justify-center relative p-2">
+                    <div className="w-full h-full flex items-center justify-center relative">
                       {isIconUrl(tech.icon) && tech.icon ? (
-                        <Image
-                          src={tech.icon}
-                          alt={tech.name || "Technology"}
-                          fill
-                          className="object-contain transition-all duration-300 group-hover:scale-105"
-                          unoptimized
-                          onError={(e) => {
-                            // Fallback to emoji or name if image fails
-                            const target = e.currentTarget;
-                            target.style.display = "none";
-                            const parent = target.parentElement;
-                            if (parent) {
-                              const fallback = document.createElement("div");
-                              if (tech.icon && !isIconUrl(tech.icon)) {
-                                fallback.className = "text-xl md:text-2xl";
-                                fallback.textContent = tech.icon;
-                              } else if (tech.name) {
-                                fallback.className =
-                                  "text-xs md:text-sm font-bold theme-text-black text-center";
-                                fallback.textContent = tech.name;
+                        <div className="relative w-12 h-12 md:w-14 md:h-14">
+                          <Image
+                            src={tech.icon}
+                            alt={tech.name || "Technology"}
+                            fill
+                            className="object-contain transition-all duration-300 group-hover:scale-105"
+                            unoptimized
+                            onError={(e) => {
+                              // Fallback to emoji or name if image fails
+                              const target = e.currentTarget;
+                              target.style.display = "none";
+                              const parent = target.parentElement;
+                              if (parent) {
+                                const fallback = document.createElement("div");
+                                if (tech.icon && !isIconUrl(tech.icon)) {
+                                  fallback.className = "text-base md:text-lg";
+                                  fallback.textContent = tech.icon;
+                                } else if (tech.name) {
+                                  fallback.className =
+                                    "text-xs md:text-sm font-bold theme-text-black text-center";
+                                  fallback.textContent = tech.name;
+                                }
+                                parent.appendChild(fallback);
                               }
-                              parent.appendChild(fallback);
-                            }
-                          }}
-                        />
+                            }}
+                          />
+                        </div>
                       ) : tech.icon ? (
-                        <div className="text-xl md:text-2xl">{tech.icon}</div>
+                        <div className="text-base md:text-base">
+                          {tech.icon}
+                        </div>
                       ) : tech.name ? (
-                        <div className="text-xs md:text-sm font-semibold theme-text-black text-center">
+                        <div className="text-xs md:text-sm font-semibold theme-text-black text-center px-1">
                           {tech.name}
                         </div>
                       ) : null}

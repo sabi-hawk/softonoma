@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import ServiceTemplateEditor from "@/components/admin/ServiceTemplateEditor";
+import Loader from "@/components/admin/Loader";
 
 interface Service {
   _id: string;
@@ -72,11 +73,7 @@ export default function ServiceTemplateAdmin() {
   };
 
   if (loading) {
-    return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
-        <div className="text-gray-600 dark:text-gray-400">Loading...</div>
-      </div>
-    );
+    return <Loader />;
   }
 
   if (!service) {

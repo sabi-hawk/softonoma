@@ -34,8 +34,8 @@ export default function FooterSection({ section }: FooterSectionProps) {
 
   return (
     <footer className="theme-bg-black theme-text-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10 md:py-12">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
           {/* Company Info - Always show if content exists */}
           {(companyName ||
             companyDescription ||
@@ -48,13 +48,13 @@ export default function FooterSection({ section }: FooterSectionProps) {
             github) && (
             <div>
               {companyName && (
-                <h3 className="theme-text-white text-lg font-semibold mb-4">
+                <h3 className="theme-text-white text-base sm:text-lg font-semibold mb-3 sm:mb-4">
                   {companyName}
                 </h3>
               )}
               {companyDescription && (
                 <p
-                  className="text-sm mb-4 leading-relaxed theme-text-white"
+                  className="text-xs sm:text-sm mb-3 sm:mb-4 leading-relaxed theme-text-white"
                   style={{ opacity: 0.9 }}
                 >
                   {companyDescription}
@@ -62,7 +62,7 @@ export default function FooterSection({ section }: FooterSectionProps) {
               )}
               {address && (
                 <p
-                  className="text-sm mb-2 theme-text-white"
+                  className="text-xs sm:text-sm mb-2 theme-text-white"
                   style={{ opacity: 0.8 }}
                 >
                   <span className="font-medium">Address:</span> {address}
@@ -70,7 +70,7 @@ export default function FooterSection({ section }: FooterSectionProps) {
               )}
               {phone && (
                 <p
-                  className="text-sm mb-2 theme-text-white"
+                  className="text-xs sm:text-sm mb-2 theme-text-white"
                   style={{ opacity: 0.8 }}
                 >
                   <span className="font-medium">Phone:</span>{" "}
@@ -84,13 +84,13 @@ export default function FooterSection({ section }: FooterSectionProps) {
               )}
               {email && (
                 <p
-                  className="text-sm mb-4 theme-text-white"
+                  className="text-xs sm:text-sm mb-3 sm:mb-4 theme-text-white"
                   style={{ opacity: 0.8 }}
                 >
                   <span className="font-medium">Email:</span>{" "}
                   <a
                     href={`mailto:${email}`}
-                    className="theme-hover-primary underline transition-colors"
+                    className="theme-hover-primary underline transition-colors break-all"
                   >
                     {email}
                   </a>
@@ -98,7 +98,7 @@ export default function FooterSection({ section }: FooterSectionProps) {
               )}
               {/* Social Links */}
               {(facebook || twitter || linkedin || github) && (
-                <div className="flex space-x-4 mt-4">
+                <div className="flex space-x-3 sm:space-x-4 mt-3 sm:mt-4">
                   {facebook && (
                     <a
                       href={facebook}
@@ -109,7 +109,7 @@ export default function FooterSection({ section }: FooterSectionProps) {
                       aria-label="Facebook"
                     >
                       <svg
-                        className="w-6 h-6"
+                        className="w-5 h-5 sm:w-6 sm:h-6"
                         fill="currentColor"
                         viewBox="0 0 24 24"
                       >
@@ -127,7 +127,7 @@ export default function FooterSection({ section }: FooterSectionProps) {
                       aria-label="Twitter"
                     >
                       <svg
-                        className="w-6 h-6"
+                        className="w-5 h-5 sm:w-6 sm:h-6"
                         fill="currentColor"
                         viewBox="0 0 24 24"
                       >
@@ -145,7 +145,7 @@ export default function FooterSection({ section }: FooterSectionProps) {
                       aria-label="LinkedIn"
                     >
                       <svg
-                        className="w-6 h-6"
+                        className="w-5 h-5 sm:w-6 sm:h-6"
                         fill="currentColor"
                         viewBox="0 0 24 24"
                       >
@@ -163,7 +163,7 @@ export default function FooterSection({ section }: FooterSectionProps) {
                       aria-label="GitHub"
                     >
                       <svg
-                        className="w-6 h-6"
+                        className="w-5 h-5 sm:w-6 sm:h-6"
                         fill="currentColor"
                         viewBox="0 0 24 24"
                       >
@@ -180,16 +180,16 @@ export default function FooterSection({ section }: FooterSectionProps) {
           {Array.isArray(content.quickLinks) &&
             content.quickLinks.length > 0 && (
               <div>
-                <h3 className="theme-text-white text-lg font-semibold mb-4">
+                <h3 className="theme-text-white text-base sm:text-lg font-semibold mb-3 sm:mb-4">
                   Quick Links
                 </h3>
-                <ul className="space-y-2">
+                <ul className="space-y-1.5 sm:space-y-2">
                   {content.quickLinks.map(
                     (link: { title: string; href: string }, index: number) => (
                       <li key={index}>
                         <Link
                           href={link.href}
-                          className="text-sm theme-text-white theme-hover-primary transition-colors"
+                          className="text-xs sm:text-sm theme-text-white theme-hover-primary transition-colors"
                           style={{ opacity: 0.8 }}
                         >
                           {link.title}
@@ -205,10 +205,10 @@ export default function FooterSection({ section }: FooterSectionProps) {
           {Array.isArray(content.footerServices) &&
             content.footerServices.length > 0 && (
               <div>
-                <h3 className="theme-text-white text-lg font-semibold mb-4">
+                <h3 className="theme-text-white text-base sm:text-lg font-semibold mb-3 sm:mb-4">
                   Our Services
                 </h3>
-                <ul className="space-y-2">
+                <ul className="space-y-1.5 sm:space-y-2">
                   {content.footerServices.map(
                     (
                       service: { title: string; href: string },
@@ -217,7 +217,7 @@ export default function FooterSection({ section }: FooterSectionProps) {
                       <li key={index}>
                         <Link
                           href={service.href}
-                          className="text-sm theme-text-white theme-hover-primary transition-colors"
+                          className="text-xs sm:text-sm theme-text-white theme-hover-primary transition-colors"
                           style={{ opacity: 0.8 }}
                         >
                           {service.title}
@@ -231,12 +231,12 @@ export default function FooterSection({ section }: FooterSectionProps) {
 
           {/* Contact/Newsletter - Always show */}
           <div>
-            <h3 className="theme-text-white text-lg font-semibold mb-4">
+            <h3 className="theme-text-white text-base sm:text-lg font-semibold mb-3 sm:mb-4">
               Get In Touch
             </h3>
             {newsletterText && (
               <p
-                className="text-sm mb-4 theme-text-white"
+                className="text-xs sm:text-sm mb-3 sm:mb-4 theme-text-white"
                 style={{ opacity: 0.9 }}
               >
                 {newsletterText}
@@ -247,7 +247,7 @@ export default function FooterSection({ section }: FooterSectionProps) {
                 <input
                   type="email"
                   placeholder="Your email"
-                  className="px-4 py-2 theme-bg-black border rounded-md theme-text-white placeholder-gray-400 focus:outline-none focus:ring-2 transition-colors"
+                  className="px-3 py-2 sm:px-4 sm:py-2 theme-bg-black border rounded-md theme-text-white placeholder-gray-400 focus:outline-none focus:ring-2 transition-colors text-sm"
                   style={{
                     borderColor: "rgba(206, 212, 48, 0.3)",
                     backgroundColor: "rgba(0, 0, 0, 0.3)",
@@ -255,7 +255,7 @@ export default function FooterSection({ section }: FooterSectionProps) {
                 />
                 <button
                   type="submit"
-                  className="theme-gradient theme-text-white px-4 py-2 rounded-md transition-all hover:shadow-lg"
+                  className="theme-gradient theme-text-white px-3 py-2 sm:px-4 sm:py-2 rounded-md transition-all hover:shadow-lg text-sm font-semibold"
                 >
                   {newsletterButtonText}
                 </button>
@@ -266,10 +266,10 @@ export default function FooterSection({ section }: FooterSectionProps) {
 
         {/* Copyright */}
         <div
-          className="border-t mt-8 pt-8 text-center"
+          className="border-t mt-6 sm:mt-8 pt-6 sm:pt-8 text-center"
           style={{ borderColor: "rgba(255, 255, 255, 0.1)" }}
         >
-          <p className="text-sm theme-text-white" style={{ opacity: 0.7 }}>
+          <p className="text-xs sm:text-sm theme-text-white" style={{ opacity: 0.7 }}>
             {copyrightText ||
               `© ${currentYear} ${
                 companyName || "IT Solutions"

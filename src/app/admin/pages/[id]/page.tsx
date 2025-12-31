@@ -7,6 +7,8 @@ import SectionRenderer from "@/components/sections/SectionRenderer";
 import { ISection } from "@/models/Section";
 import FileUpload from "@/components/admin/FileUpload";
 import IconUpload from "@/components/admin/IconUpload";
+import Loader from "@/components/admin/Loader";
+import { isContactPage } from "@/lib/about-page-templates";
 
 interface Section {
   _id: string;
@@ -118,6 +120,34 @@ export default function PageSectionsAdmin() {
       setLoading(false);
     }
   }, [pageId]);
+
+  const handleApplyTemplate = async (templateName: string) => {
+    if (
+      !confirm(
+        `This will replace all existing sections with the "${templateName}" template. Are you sure?`
+      )
+    )
+      return;
+
+    try {
+      const res = await fetch("/api/pages/apply-template", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ pageId, templateName }),
+      });
+
+      const data = await res.json();
+      if (data.success) {
+        alert(data.message || "Template applied successfully!");
+        await fetchData(); // Refresh sections
+      } else {
+        alert(data.error || "Error applying template");
+      }
+    } catch (error) {
+      console.error("Error applying template:", error);
+      alert("Error applying template");
+    }
+  };
 
   useEffect(() => {
     fetchData();
@@ -245,6 +275,7 @@ export default function PageSectionsAdmin() {
         title: "Our Comprehensive Services",
         description:
           "Discover our full range of technology services designed to drive your business forward",
+        backgroundColor: "theme-bg-white-green-gradient",
         services: [
           {
             icon: "https://saigontechnology.com/wp-content/uploads/folder-check-1.svg",
@@ -288,6 +319,7 @@ export default function PageSectionsAdmin() {
         title: "Our Track Record",
         description:
           "Numbers that demonstrate our commitment to excellence and client success",
+        backgroundColor: "white",
         stats: [
           {
             number: "800+",
@@ -321,18 +353,19 @@ export default function PageSectionsAdmin() {
           "Let's discuss how we can help you achieve your goals. Get started today and experience the difference that expert technology solutions can make for your business.",
         buttonText: "Schedule a Free Consultation",
         buttonLink: "/contact",
+        backgroundColor: "theme-bg-white-green-gradient",
       },
       footer: {
-        companyName: "Saigon Technology",
+        companyName: "Softonoma",
         companyDescription:
           "Leading IT solutions provider delivering innovative technology services to businesses worldwide. We transform ideas into reality through cutting-edge software development, cloud solutions, and digital transformation services.",
-        email: "contact@saigontechnology.com",
+        email: "contact@softonoma.com",
         phone: "+84 28 3526 2100",
         address: "123 Tech Street, Ho Chi Minh City, Vietnam",
-        facebook: "https://facebook.com/saigontechnology",
-        twitter: "https://twitter.com/saigontech",
-        linkedin: "https://linkedin.com/company/saigontechnology",
-        github: "https://github.com/saigontechnology",
+        facebook: "https://facebook.com/softonoma",
+        twitter: "https://twitter.com/softonoma",
+        linkedin: "https://linkedin.com/company/softonoma",
+        github: "https://github.com/softonoma",
         quickLinks: [
           { title: "Home", href: "/" },
           { title: "About Us", href: "/about" },
@@ -356,12 +389,13 @@ export default function PageSectionsAdmin() {
         newsletterText:
           "Subscribe to our newsletter for the latest technology insights, industry trends, and exclusive updates delivered straight to your inbox.",
         newsletterButtonText: "Subscribe Now",
-        copyrightText: "© 2024 Saigon Technology. All rights reserved.",
+        copyrightText: "© 2024 Softonoma. All rights reserved.",
       },
       features: {
         title: "Why Choose Us",
         description:
           "Discover what makes us different and why leading companies trust us with their technology needs",
+        backgroundColor: "theme-bg-white-green-gradient",
         image:
           "https://cloud.appwrite.io/v1/storage/buckets/694cc45b003184dc8584/files/694e63f9000de0525ddc/view?project=694cc43b00225b94d30d",
         features: [
@@ -402,6 +436,7 @@ export default function PageSectionsAdmin() {
         description:
           "Hear from our satisfied customers about their experience working with us",
         showStars: true,
+        backgroundColor: "white",
         items: [
           {
             quote:
@@ -444,6 +479,7 @@ export default function PageSectionsAdmin() {
         title: "Industries We Serve",
         description:
           "Serving diverse industries with tailored technology solutions",
+        backgroundColor: "white",
         industries: [
           { icon: "💼", name: "Fintech" },
           { icon: "🏥", name: "Healthcare" },
@@ -456,11 +492,12 @@ export default function PageSectionsAdmin() {
         ],
       },
       about: {
-        title: "About Saigon Technology",
+        title: "About Softonoma",
         description:
           "Learn more about our company, our mission, and our commitment to excellence",
+        backgroundColor: "white",
         aboutText:
-          "Saigon Technology is a leading technology company dedicated to delivering innovative solutions that drive business growth. With over 13 years of experience and a team of 400+ skilled professionals, we help businesses transform their digital presence and achieve their goals. Headquartered in Ho Chi Minh City, Vietnam, with representative offices in Singapore and the United States, we serve clients worldwide. Our commitment to excellence, quality assurance, and customer satisfaction sets us apart in the industry. We specialize in custom software development, web and mobile applications, cloud solutions, DevOps, and UI/UX design, delivering solutions that make a real impact on our clients' success.",
+          "Softonoma is a leading technology company dedicated to delivering innovative solutions that drive business growth. With over 13 years of experience and a team of 400+ skilled professionals, we help businesses transform their digital presence and achieve their goals. Headquartered in Ho Chi Minh City, Vietnam, with representative offices in Singapore and the United States, we serve clients worldwide. Our commitment to excellence, quality assurance, and customer satisfaction sets us apart in the industry. We specialize in custom software development, web and mobile applications, cloud solutions, DevOps, and UI/UX design, delivering solutions that make a real impact on our clients' success.",
         aboutImage:
           "https://cloud.appwrite.io/v1/storage/buckets/694cc45b003184dc8584/files/69521107000fadbdb2d0/view?project=694cc43b00225b94d30d",
         aboutLink: "/about",
@@ -470,6 +507,7 @@ export default function PageSectionsAdmin() {
         title: "Our Strategic Partnerships",
         description:
           "Collaborating with leading organizations and technology providers worldwide to deliver exceptional solutions",
+        backgroundColor: "theme-bg-white-green-gradient",
         partnerships: [
           {
             image:
@@ -512,6 +550,7 @@ export default function PageSectionsAdmin() {
         title: "Our Success Stories",
         description:
           "Explore our portfolio of successful projects and case studies that demonstrate our expertise and impact",
+        backgroundColor: "white",
         projects: [
           {
             image:
@@ -579,6 +618,7 @@ export default function PageSectionsAdmin() {
         title: "Technologies & Tools",
         description:
           "Cutting-edge tools, frameworks, and platforms we use to build amazing solutions",
+        backgroundColor: "theme-bg-white-green-gradient",
         technologies: [
           { name: "React", icon: "⚛️", category: "Frontend" },
           { name: "Next.js", icon: "▲", category: "Frontend" },
@@ -606,6 +646,7 @@ export default function PageSectionsAdmin() {
         title: "Latest Insights & News",
         description:
           "Stay updated with our latest technology insights, tutorials, industry trends, and expert advice",
+        backgroundColor: "white",
         posts: [
           {
             image:
@@ -668,6 +709,7 @@ export default function PageSectionsAdmin() {
         title: "Our Development Process",
         description:
           "A proven, structured methodology that ensures successful project delivery and client satisfaction",
+        backgroundColor: "white",
         steps: [
           {
             number: "1",
@@ -717,6 +759,7 @@ export default function PageSectionsAdmin() {
         title: "Frequently Asked Questions",
         description:
           "Find answers to common questions about our services, processes, and how we can help you",
+        backgroundColor: "white",
         faqs: [
           {
             question: "What services do you offer?",
@@ -764,6 +807,7 @@ export default function PageSectionsAdmin() {
         title: "Our Trusted Partners",
         description:
           "We work with trusted partners and leading technology brands worldwide to deliver exceptional results",
+        backgroundColor: "white",
         partners: [
           {
             logo: "https://saigontechnology.com/wp-content/uploads/Partner-logo-1.png",
@@ -1107,7 +1151,7 @@ export default function PageSectionsAdmin() {
   } as unknown as ISection;
 
   if (loading) {
-    return <div className="p-8">Loading...</div>;
+    return <Loader />;
   }
 
   if (!page) {
@@ -1117,6 +1161,61 @@ export default function PageSectionsAdmin() {
         <Link href="/admin" className="text-blue-600 hover:text-blue-800">
           ← Back to Admin
         </Link>
+      </div>
+    );
+  }
+
+  // Check if this is a contact page - show non-editable message
+  const isContact = isContactPage(page.slug, page.title);
+  if (isContact) {
+    return (
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <div className="mb-6">
+            <Link href="/admin" className="text-blue-600 hover:text-blue-800">
+              ← Back to Admin
+            </Link>
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-white mt-4">
+              {page.title}
+            </h1>
+            <div className="mt-6 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-6">
+              <div className="flex items-start gap-3">
+                <svg
+                  className="w-6 h-6 text-blue-600 dark:text-blue-400 shrink-0 mt-0.5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
+                </svg>
+                <div>
+                  <h3 className="text-lg font-semibold text-blue-900 dark:text-blue-100 mb-2">
+                    Contact Page - Not Editable
+                  </h3>
+                  <p className="text-blue-800 dark:text-blue-200">
+                    This is a custom contact page with a predefined layout. The
+                    contact form and content are automatically generated and
+                    cannot be edited through the section editor. To view the
+                    page, visit{" "}
+                    <a
+                      href={`/${page.slug}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="underline font-medium hover:text-blue-600"
+                    >
+                      /{page.slug}
+                    </a>
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     );
   }
@@ -1254,6 +1353,34 @@ export default function PageSectionsAdmin() {
                       rows={3}
                       className="w-full px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600"
                     />
+                  </div>
+                )}
+
+                {/* Background Color - for all sections except hero */}
+                {sectionForm.type !== "hero" && (
+                  <div>
+                    <label className="block text-sm font-medium mb-1">
+                      Background Color
+                    </label>
+                    <select
+                      value={
+                        (sectionForm.content.backgroundColor as string) || ""
+                      }
+                      onChange={(e) =>
+                        updateContentField("backgroundColor", e.target.value)
+                      }
+                      className="w-full px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600"
+                    >
+                      <option value="">Use Default</option>
+                      <option value="white">White</option>
+                      <option value="theme-bg-white-green-gradient">
+                        White-Green Gradient
+                      </option>
+                    </select>
+                    <p className="text-xs text-gray-500 mt-1">
+                      Select background color for this section. Defaults are set
+                      per section type.
+                    </p>
                   </div>
                 )}
 

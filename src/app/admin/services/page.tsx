@@ -2,12 +2,15 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import Loader from "@/components/admin/Loader";
+import IconUpload from "@/components/admin/IconUpload";
 
 interface Service {
   _id: string;
   title: string;
   slug: string;
   description?: string;
+  icon?: string;
   isPublished: boolean;
   order: number;
   seoTitle?: string;
@@ -27,6 +30,7 @@ export default function ServicesAdmin() {
     title: "",
     slug: "",
     description: "",
+    icon: "",
     isPublished: true,
     seoTitle: "",
     seoDescription: "",
@@ -78,6 +82,7 @@ export default function ServicesAdmin() {
           title: "",
           slug: "",
           description: "",
+          icon: "",
           isPublished: true,
           seoTitle: "",
           seoDescription: "",
@@ -157,6 +162,7 @@ export default function ServicesAdmin() {
       title: service.title,
       slug: service.slug,
       description: service.description || "",
+      icon: service.icon || "",
       isPublished: service.isPublished,
       seoTitle: service.seoTitle || "",
       seoDescription: service.seoDescription || "",
@@ -169,7 +175,7 @@ export default function ServicesAdmin() {
   };
 
   if (loading) {
-    return <div className="p-8">Loading...</div>;
+    return <Loader />;
   }
 
   return (
@@ -199,6 +205,7 @@ export default function ServicesAdmin() {
                 title: "",
                 slug: "",
                 description: "",
+                icon: "",
                 isPublished: true,
                 seoTitle: "",
                 seoDescription: "",
@@ -271,6 +278,23 @@ export default function ServicesAdmin() {
                   className="w-full px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600"
                   placeholder="Brief description of the service"
                 />
+              </div>
+              <div>
+                <IconUpload
+                  label="Icon (for dropdown menu)"
+                  value={serviceForm.icon}
+                  onChange={(value) =>
+                    setServiceForm({
+                      ...serviceForm,
+                      icon: value,
+                    })
+                  }
+                  placeholder="📱 or https://example.com/icon.svg or upload image"
+                />
+                <p className="text-xs text-gray-500 mt-1">
+                  Icon displayed in the navigation dropdown menu. Can be an
+                  emoji, URL, or uploaded image.
+                </p>
               </div>
               <div className="border-t pt-4 mt-4">
                 <h4 className="text-md font-semibold mb-4 text-gray-900 dark:text-white">

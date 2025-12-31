@@ -3,6 +3,10 @@
 import Image from "next/image";
 import { ISection } from "@/models/Section";
 import { useEffect, useRef } from "react";
+import {
+  getBackgroundStyle,
+  getDefaultBackground,
+} from "@/lib/section-helpers";
 
 interface PartnersSectionProps {
   section: ISection;
@@ -16,6 +20,12 @@ const isLogoUrl = (logo?: string): boolean => {
 
 export default function PartnersSection({ section }: PartnersSectionProps) {
   const { content } = section;
+  const backgroundColor =
+    (content.backgroundColor as string) || getDefaultBackground("partners");
+  const background = getBackgroundStyle(
+    backgroundColor,
+    content.backgroundColorOpacity as number
+  );
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   const partners = Array.isArray(content.partners) ? content.partners : [];
@@ -76,11 +86,16 @@ export default function PartnersSection({ section }: PartnersSectionProps) {
   const titleParts = content.title ? getTitleParts(content.title) : null;
 
   return (
-    <section className="py-16 md:py-24 px-4 sm:px-6 lg:px-8 theme-bg-white-green-gradient relative overflow-hidden">
+    <section
+      className={`py-12 sm:py-16 md:py-24 px-4 sm:px-6 lg:px-8 relative overflow-hidden ${
+        background.className || ""
+      }`}
+      style={background.style}
+    >
       <div className="relative z-10 max-w-7xl mx-auto">
         {content.title && (
-          <div className="text-center mb-12">
-            <h2 className="text-4xl md:text-5xl font-bold mb-4">
+          <div className="text-center mb-8 sm:mb-10 md:mb-12">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-3 sm:mb-4 px-2">
               {titleParts ? (
                 <>
                   <span className="theme-text-black">
@@ -99,7 +114,7 @@ export default function PartnersSection({ section }: PartnersSectionProps) {
             </h2>
             {content.description && (
               <p
-                className="text-lg theme-text-black max-w-3xl mx-auto"
+                className="text-base sm:text-lg theme-text-black max-w-3xl mx-auto px-2"
                 style={{ opacity: 0.8 }}
               >
                 {content.description}
@@ -126,7 +141,7 @@ export default function PartnersSection({ section }: PartnersSectionProps) {
                   className="shrink-0 px-8 flex items-center justify-center"
                   style={{ width: "200px" }}
                 >
-                  <div className="w-full h-32 flex items-center justify-center opacity-60 hover:opacity-100 transition-opacity duration-300">
+                  <div className="w-full h-32 flex items-center justify-center opacity-100 transition-opacity duration-300">
                     {isLogoUrl(partner.logo) && partner.logo ? (
                       <Image
                         src={partner.logo}

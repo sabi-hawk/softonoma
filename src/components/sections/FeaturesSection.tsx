@@ -1,4 +1,5 @@
 import { ISection } from "@/models/Section";
+import { getBackgroundStyle, getDefaultBackground } from "@/lib/section-helpers";
 
 interface FeaturesSectionProps {
   section: ISection;
@@ -6,36 +7,38 @@ interface FeaturesSectionProps {
 
 export default function FeaturesSection({ section }: FeaturesSectionProps) {
   const { content } = section;
+  const backgroundColor = (content.backgroundColor as string) || getDefaultBackground("features");
+  const background = getBackgroundStyle(backgroundColor, content.backgroundColorOpacity as number);
 
   return (
-    <section className="py-16 md:py-24 px-4 sm:px-6 lg:px-8 theme-bg-white-green-gradient">
+    <section className={`py-12 sm:py-16 md:py-24 px-4 sm:px-6 lg:px-8 ${background.className || ""}`} style={background.style}>
       <div className="max-w-7xl mx-auto">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-12 lg:gap-16 items-center">
           <div>
             {content.title && (
-              <h2 className="text-4xl md:text-5xl font-bold theme-text-black mb-6">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold theme-text-black mb-4 sm:mb-6">
                 {content.title}
               </h2>
             )}
             {content.description && (
               <p
-                className="text-lg theme-text-black mb-10 leading-relaxed"
+                className="text-base sm:text-lg theme-text-black mb-6 sm:mb-10 leading-relaxed"
                 style={{ opacity: 0.8 }}
               >
                 {content.description}
               </p>
             )}
             {Array.isArray(content.features) && content.features.length > 0 && (
-              <div className="space-y-6">
+              <div className="space-y-4 sm:space-y-6">
                 {content.features.map(
                   (
                     feature: { title?: string; description?: string },
                     index: number
                   ) => (
                     <div key={index} className="flex items-start group">
-                      <div className="shrink-0 w-12 h-12 theme-bg-primary-mid rounded-xl flex items-center justify-center mr-5 shadow-lg group-hover:scale-110 transition-transform duration-300">
+                      <div className="shrink-0 w-10 h-10 sm:w-12 sm:h-12 theme-bg-primary-mid rounded-xl flex items-center justify-center mr-3 sm:mr-5 shadow-lg group-hover:scale-110 transition-transform duration-300">
                         <svg
-                          className="w-7 h-7 theme-text-white"
+                          className="w-5 h-5 sm:w-7 sm:h-7 theme-text-white"
                           fill="none"
                           strokeLinecap="round"
                           strokeLinejoin="round"
@@ -48,13 +51,13 @@ export default function FeaturesSection({ section }: FeaturesSectionProps) {
                       </div>
                       <div className="flex-1">
                         {feature.title && (
-                          <h3 className="text-xl font-bold theme-text-black mb-2 theme-hover-primary-mid transition-colors">
+                          <h3 className="text-lg sm:text-xl font-bold theme-text-black mb-1 sm:mb-2 theme-hover-primary-mid transition-colors">
                             {feature.title}
                           </h3>
                         )}
                         {feature.description && (
                           <p
-                            className="theme-text-black leading-relaxed"
+                            className="text-sm sm:text-base theme-text-black leading-relaxed"
                             style={{ opacity: 0.8 }}
                           >
                             {feature.description}

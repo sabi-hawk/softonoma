@@ -15,7 +15,7 @@ export default function HeroSection({ section }: HeroSectionProps) {
     (content.backgroundOpacity as number | undefined) ?? 0.3; // Default 30% opacity
 
   return (
-    <section className="relative py-28 md:py-32 lg:py-36 overflow-hidden theme-bg-black">
+    <section className="relative py-16 sm:py-20 md:py-32 lg:py-36 overflow-hidden theme-bg-black">
       {/* Background Image/Video */}
       {(backgroundImage || backgroundVideo) && (
         <div className="absolute inset-0">
@@ -111,24 +111,24 @@ export default function HeroSection({ section }: HeroSectionProps) {
         <div className="max-w-4xl mx-auto text-center">
           {content.subtitle && (
             <div
-              className="inline-flex items-center gap-2 px-4 py-2 mb-6 rounded-full"
+              className="inline-flex items-center gap-2 px-3 py-1.5 sm:px-4 sm:py-2 mb-4 sm:mb-6 rounded-full"
               style={{
                 backgroundColor: "rgba(92, 140, 36, 0.1)",
                 border: "1px solid rgba(206, 212, 48, 0.2)",
               }}
             >
               <span
-                className="w-2 h-2 rounded-full animate-pulse"
+                className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full animate-pulse"
                 style={{ backgroundColor: "var(--color-primary-end)" }}
               ></span>
-              <p className="text-sm md:text-base font-medium tracking-wide theme-text-white">
+              <p className="text-xs sm:text-sm md:text-base font-medium tracking-wide theme-text-white">
                 {content.subtitle}
               </p>
             </div>
           )}
 
           {content.title && (
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold theme-text-white mb-6 leading-tight">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold theme-text-white mb-4 sm:mb-6 leading-tight px-2">
               <span className="theme-gradient-text">
                 {content.title.split("\n").map((line, i, arr) => (
                   <span key={i}>
@@ -142,18 +142,18 @@ export default function HeroSection({ section }: HeroSectionProps) {
 
           {content.description && (
             <p
-              className="text-lg md:text-xl theme-text-white mb-8 max-w-2xl mx-auto leading-relaxed"
+              className="text-base sm:text-lg md:text-xl theme-text-white mb-6 sm:mb-8 max-w-2xl mx-auto leading-relaxed px-2"
               style={{ opacity: 0.9 }}
             >
               {content.description}
             </p>
           )}
 
-          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center px-2">
             {content.buttonText && content.buttonLink && (
               <Link
                 href={content.buttonLink}
-                className="group relative px-8 py-4 theme-bg-white rounded-lg font-semibold text-base transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-0.5 overflow-hidden"
+                className="group relative px-6 py-3 sm:px-8 sm:py-4 theme-bg-white rounded-lg font-semibold text-sm sm:text-base transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-0.5 overflow-hidden w-full sm:w-auto"
                 style={{ color: "var(--color-black)" }}
               >
                 <span className="relative z-10 group-hover:theme-text-white transition-colors">
@@ -165,7 +165,7 @@ export default function HeroSection({ section }: HeroSectionProps) {
             {content.secondaryButtonText && content.secondaryButtonLink && (
               <Link
                 href={String(content.secondaryButtonLink)}
-                className="px-8 py-4 bg-transparent border-2 theme-text-white rounded-lg font-semibold text-base hover:bg-white/10 transition-all duration-300 backdrop-blur-sm"
+                className="px-6 py-3 sm:px-8 sm:py-4 bg-transparent border-2 theme-text-white rounded-lg font-semibold text-sm sm:text-base hover:bg-white/10 transition-all duration-300 backdrop-blur-sm w-full sm:w-auto"
                 style={{ borderColor: "rgba(255, 255, 255, 0.3)" }}
               >
                 {content.secondaryButtonText}

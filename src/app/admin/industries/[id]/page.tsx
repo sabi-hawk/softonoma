@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import IndustryTemplateEditor from "@/components/admin/IndustryTemplateEditor";
+import Loader from "@/components/admin/Loader";
 
 interface Industry {
   _id: string;
@@ -58,7 +59,10 @@ export default function IndustryTemplateAdmin() {
       if (data.success) {
         // Update local state
         setIndustry((prev) => (prev ? { ...prev, content } : null));
-        console.log("Industry state updated with content length:", content.length);
+        console.log(
+          "Industry state updated with content length:",
+          content.length
+        );
       } else {
         throw new Error(data.error || "Failed to save");
       }
@@ -69,11 +73,7 @@ export default function IndustryTemplateAdmin() {
   };
 
   if (loading) {
-    return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
-        <div className="text-gray-600 dark:text-gray-400">Loading...</div>
-      </div>
-    );
+    return <Loader />;
   }
 
   if (!industry) {
@@ -136,9 +136,3 @@ export default function IndustryTemplateAdmin() {
     </div>
   );
 }
-
-
-
-
-
-

@@ -3,6 +3,8 @@ import connectDB from "@/lib/mongodb";
 import Page from "@/models/Page";
 import Section from "@/models/Section";
 import SectionRenderer from "@/components/sections/SectionRenderer";
+import ContactPage from "@/components/ContactPage";
+import { isContactPage } from "@/lib/about-page-templates";
 
 interface PageProps {
   params: Promise<{ slug: string[] }>;
@@ -14,34 +16,20 @@ export default async function DynamicPage({ params }: PageProps) {
   const { slug } = await params;
   const pageSlug = slug.join("/");
 
-  // Get page content
-  const page = await Page.findOne({ slug: pageSlug, isPublished: true }).lean();
+  // Get page content - allow both published and unpublished pages to be viewed
+  const page = await Page.findOne({ slug: pageSlug }).lean();
 
-  // If not found, check if page exists but is unpublished (for debugging)
+  // If page not found, return 404
   if (!page) {
-    const unpublishedPage = await Page.findOne({ slug: pageSlug }).lean();
-    if (unpublishedPage) {
-      console.log(
-        "Page exists but is unpublished:",
-        pageSlug,
-        "isPublished:",
-        unpublishedPage.isPublished
-      );
-    } else {
-      console.log("Page not found at all:", pageSlug);
-      // List all pages with similar slugs for debugging
-      const similarPages = await Page.find({
-        slug: { $regex: pageSlug.replace(/\//g, "\\/") },
-      }).lean();
-      console.log(
-        "Similar pages found:",
-        similarPages.map((p) => ({ slug: p.slug, isPublished: p.isPublished }))
-      );
-    }
     notFound();
   }
 
-  // All pages use sections approach - get sections
+  // Check if this is a contact page - render custom contact page
+  if (isContactPage(pageSlug, page.title)) {
+    return <ContactPage title={page.title} />;
+  }
+
+  // All other pages use sections approach - get sections
   const sections = await Section.find({ pageId: page._id, isActive: true })
     .sort({ order: 1 })
     .lean();
@@ -92,7 +80,8 @@ export async function generateMetadata({ params }: PageProps) {
   await connectDB();
   const { slug } = await params;
   const pageSlug = slug.join("/");
-  const page = await Page.findOne({ slug: pageSlug, isPublished: true }).lean();
+  // Allow metadata for both published and unpublished pages
+  const page = await Page.findOne({ slug: pageSlug }).lean();
 
   if (!page) {
     return {

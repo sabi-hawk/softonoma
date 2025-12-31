@@ -225,6 +225,15 @@ export default function ServiceTemplate({
   const [expandedFaq, setExpandedFaq] = useState<number | null>(0);
   const [portfolioIndex, setPortfolioIndex] = useState(0);
   const [cardsIndex, setCardsIndex] = useState(0);
+  const [techIndex, setTechIndex] = useState(0);
+
+  // Touch handlers for mobile carousels
+  const portfolioTouchStartX = useRef<number | null>(null);
+  const portfolioTouchEndX = useRef<number | null>(null);
+  const cardsTouchStartX = useRef<number | null>(null);
+  const cardsTouchEndX = useRef<number | null>(null);
+  const techTouchStartX = useRef<number | null>(null);
+  const techTouchEndX = useRef<number | null>(null);
 
   // Get background media and opacity from hero
   const backgroundImage = data.hero.backgroundImage;
@@ -236,7 +245,9 @@ export default function ServiceTemplate({
   };
 
   const itemsToShowCards = 3;
+  const mobileItemsToShowCards = 1;
   const totalCardsItems = data.cards?.items?.length || 0;
+  const totalCardsSlides = Math.ceil(totalCardsItems / mobileItemsToShowCards);
 
   const nextCards = () => {
     if (totalCardsItems > 0) {
@@ -250,11 +261,36 @@ export default function ServiceTemplate({
     }
   };
 
-  // Get visible cards items (3 at a time with infinite loop)
-  const getVisibleCardsItems = () => {
+  // Touch handlers for cards
+  const handleCardsTouchStart = (e: React.TouchEvent) => {
+    cardsTouchStartX.current = e.touches[0].clientX;
+  };
+
+  const handleCardsTouchMove = (e: React.TouchEvent) => {
+    cardsTouchEndX.current = e.touches[0].clientX;
+  };
+
+  const handleCardsTouchEnd = () => {
+    if (!cardsTouchStartX.current || !cardsTouchEndX.current) return;
+    const distance = cardsTouchStartX.current - cardsTouchEndX.current;
+    const minSwipeDistance = 50;
+
+    if (distance > minSwipeDistance) {
+      nextCards();
+    } else if (distance < -minSwipeDistance) {
+      prevCards();
+    }
+
+    cardsTouchStartX.current = null;
+    cardsTouchEndX.current = null;
+  };
+
+  // Get visible cards items (3 at a time on desktop, 1 on mobile)
+  const getVisibleCardsItems = (isMobile: boolean = false) => {
     if (!data.cards?.items) return [];
     const visible = [];
-    for (let i = 0; i < itemsToShowCards; i++) {
+    const items = isMobile ? mobileItemsToShowCards : itemsToShowCards;
+    for (let i = 0; i < items; i++) {
       const index = (cardsIndex + i) % totalCardsItems;
       visible.push({
         item: data.cards.items[index],
@@ -264,8 +300,16 @@ export default function ServiceTemplate({
     return visible;
   };
 
+  const getCurrentCardsSlideIndex = () => {
+    return Math.floor(cardsIndex / mobileItemsToShowCards);
+  };
+
   const itemsToShow = 3;
+  const mobileItemsToShow = 1;
   const totalPortfolioItems = data.portfolio?.projects?.length || 0;
+  const totalPortfolioSlides = Math.ceil(
+    totalPortfolioItems / mobileItemsToShow
+  );
 
   const nextPortfolio = () => {
     if (totalPortfolioItems > 0) {
@@ -281,11 +325,36 @@ export default function ServiceTemplate({
     }
   };
 
-  // Get visible portfolio items (3 at a time with infinite loop)
-  const getVisiblePortfolioItems = () => {
+  // Touch handlers for portfolio
+  const handlePortfolioTouchStart = (e: React.TouchEvent) => {
+    portfolioTouchStartX.current = e.touches[0].clientX;
+  };
+
+  const handlePortfolioTouchMove = (e: React.TouchEvent) => {
+    portfolioTouchEndX.current = e.touches[0].clientX;
+  };
+
+  const handlePortfolioTouchEnd = () => {
+    if (!portfolioTouchStartX.current || !portfolioTouchEndX.current) return;
+    const distance = portfolioTouchStartX.current - portfolioTouchEndX.current;
+    const minSwipeDistance = 50;
+
+    if (distance > minSwipeDistance) {
+      nextPortfolio();
+    } else if (distance < -minSwipeDistance) {
+      prevPortfolio();
+    }
+
+    portfolioTouchStartX.current = null;
+    portfolioTouchEndX.current = null;
+  };
+
+  // Get visible portfolio items (3 at a time on desktop, 1 on mobile)
+  const getVisiblePortfolioItems = (isMobile: boolean = false) => {
     if (!data.portfolio?.projects) return [];
     const visible = [];
-    for (let i = 0; i < itemsToShow; i++) {
+    const items = isMobile ? mobileItemsToShow : itemsToShow;
+    for (let i = 0; i < items; i++) {
       const index = (portfolioIndex + i) % totalPortfolioItems;
       visible.push({
         item: data.portfolio.projects[index],
@@ -293,6 +362,74 @@ export default function ServiceTemplate({
       });
     }
     return visible;
+  };
+
+  const getCurrentPortfolioSlideIndex = () => {
+    return Math.floor(portfolioIndex / mobileItemsToShow);
+  };
+
+  // Technologies carousel
+  const mobileItemsToShowTech = 4;
+  const totalTechItems = data.technologies?.items?.length || 0;
+  const totalTechSlides = Math.ceil(totalTechItems / mobileItemsToShowTech);
+  const maxTechIndex = Math.max(
+    0,
+    (totalTechSlides - 1) * mobileItemsToShowTech
+  );
+
+  const nextTech = () => {
+    if (totalTechItems > 0) {
+      setTechIndex((prev) => {
+        const next = prev + mobileItemsToShowTech;
+        return next > maxTechIndex ? maxTechIndex : next;
+      });
+    }
+  };
+
+  const prevTech = () => {
+    if (totalTechItems > 0) {
+      setTechIndex((prev) => Math.max(prev - mobileItemsToShowTech, 0));
+    }
+  };
+
+  // Touch handlers for technologies
+  const handleTechTouchStart = (e: React.TouchEvent) => {
+    techTouchStartX.current = e.touches[0].clientX;
+  };
+
+  const handleTechTouchMove = (e: React.TouchEvent) => {
+    techTouchEndX.current = e.touches[0].clientX;
+  };
+
+  const handleTechTouchEnd = () => {
+    if (!techTouchStartX.current || !techTouchEndX.current) return;
+    const distance = techTouchStartX.current - techTouchEndX.current;
+    const minSwipeDistance = 50;
+
+    if (distance > minSwipeDistance) {
+      // Swipe left - next slide
+      nextTech();
+    } else if (distance < -minSwipeDistance) {
+      // Swipe right - previous slide
+      prevTech();
+    }
+
+    techTouchStartX.current = null;
+    techTouchEndX.current = null;
+  };
+
+  const getVisibleTechItems = () => {
+    if (!data.technologies?.items) return [];
+    const start = techIndex;
+    const end = Math.min(start + mobileItemsToShowTech, totalTechItems);
+    return data.technologies.items.slice(start, end).map((item, idx) => ({
+      item,
+      originalIndex: start + idx,
+    }));
+  };
+
+  const getCurrentTechSlideIndex = () => {
+    return Math.floor(techIndex / mobileItemsToShowTech);
   };
 
   // Default section order
@@ -394,7 +531,7 @@ export default function ServiceTemplate({
   const renderHero = () => (
     <section
       key="hero"
-      className="relative py-16 md:py-20 lg:py-24 overflow-hidden theme-bg-black"
+      className="relative py-12 sm:py-16 md:py-20 lg:py-24 overflow-hidden theme-bg-black"
     >
       {/* Background Image/Video */}
       {(backgroundImage || backgroundVideo) && (
@@ -436,31 +573,31 @@ export default function ServiceTemplate({
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl text-left">
           {data.hero.breadcrumbs && (
-            <div className="text-sm text-white mb-4 opacity-90">
+            <div className="text-xs sm:text-sm text-white mb-3 sm:mb-4 opacity-90">
               {data.hero.breadcrumbs}
             </div>
           )}
 
           {data.hero.title && (
-            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold theme-text-white mb-4 leading-tight">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold theme-text-white mb-3 sm:mb-4 leading-tight">
               {data.hero.title || serviceTitle}
             </h1>
           )}
 
           {data.hero.description && (
             <p
-              className="text-base md:text-lg theme-text-white mb-6 max-w-3xl leading-relaxed"
+              className="text-sm sm:text-base md:text-lg theme-text-white mb-4 sm:mb-6 max-w-3xl leading-relaxed"
               style={{ opacity: 0.9 }}
             >
               {data.hero.description}
             </p>
           )}
 
-          <div className="flex flex-col sm:flex-row gap-4 items-start">
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 items-start">
             {data.hero.primaryButtonText && (
               <Link
                 href={data.hero.primaryButtonLink || "#contact"}
-                className="inline-block px-8 py-4 theme-bg-primary-mid text-white rounded-lg font-semibold transition-all hover:opacity-90 hover:shadow-lg"
+                className="inline-block px-6 py-2.5 sm:px-8 sm:py-4 theme-bg-primary-mid text-white rounded-lg font-semibold text-sm sm:text-base transition-all hover:opacity-90 hover:shadow-lg"
               >
                 {data.hero.primaryButtonText}
               </Link>
@@ -479,21 +616,24 @@ export default function ServiceTemplate({
         <section
           key="overview"
           id="overview"
-          className="py-16 md:py-24 bg-gray-50"
+          className="py-12 sm:py-16 md:py-24 bg-gray-50"
         >
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="grid md:grid-cols-2 gap-12 items-center">
+            <div className="grid md:grid-cols-2 gap-8 sm:gap-12 items-center">
               {/* Left Side - Text with Checkmarks */}
               <div>
-                <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-8">
+                <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-6 sm:mb-8">
                   {data.overview.title}
                 </h2>
                 {data.overview.paragraphs &&
                   data.overview.paragraphs.map((para, index) => (
-                    <div key={index} className="mb-6 flex items-start gap-4">
-                      <div className="shrink-0 w-6 h-6 rounded-full theme-bg-primary-mid flex items-center justify-center mt-1">
+                    <div
+                      key={index}
+                      className="mb-4 sm:mb-6 flex items-start gap-3 sm:gap-4"
+                    >
+                      <div className="shrink-0 w-5 h-5 sm:w-6 sm:h-6 rounded-full theme-bg-primary-mid flex items-center justify-center mt-1">
                         <svg
-                          className="w-4 h-4 text-white"
+                          className="w-3 h-3 sm:w-4 sm:h-4 text-white"
                           fill="none"
                           strokeLinecap="round"
                           strokeLinejoin="round"
@@ -504,7 +644,7 @@ export default function ServiceTemplate({
                           <path d="M5 13l4 4L19 7"></path>
                         </svg>
                       </div>
-                      <p className="text-lg text-gray-700 leading-relaxed">
+                      <p className="text-base sm:text-lg text-gray-700 leading-relaxed">
                         {para.text}
                       </p>
                     </div>
@@ -514,7 +654,7 @@ export default function ServiceTemplate({
               {/* Right Side - Image */}
               <div>
                 {data.overview.image && (
-                  <div className="relative w-full h-[500px] rounded-lg overflow-hidden shadow-xl">
+                  <div className="relative w-full h-[300px] sm:h-[400px] md:h-[500px] rounded-lg overflow-hidden shadow-xl">
                     <Image
                       src={data.overview.image}
                       alt={data.overview.title}
@@ -531,14 +671,14 @@ export default function ServiceTemplate({
       ) : null,
     stats: () =>
       data.stats && data.stats.items && data.stats.items.length > 0 ? (
-        <section className="py-16 md:py-24 bg-white" key="stats">
+        <section className="py-12 sm:py-16 md:py-24 bg-white" key="stats">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="bg-gray-900 rounded-xl p-8 md:p-12">
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+            <div className="bg-gray-900 rounded-xl p-6 sm:p-8 md:p-12">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 md:gap-8">
                 {data.stats.items.map((stat, index) => (
                   <div key={index} className="text-center">
                     {stat.icon && (
-                      <div className="w-10 h-10 rounded-lg flex items-center justify-center text-white text-2xl mb-4 relative overflow-hidden mx-auto">
+                      <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg flex items-center justify-center text-white text-xl sm:text-2xl mb-3 sm:mb-4 relative overflow-hidden mx-auto">
                         {isIconUrl(stat.icon) && stat.icon ? (
                           <Image
                             src={stat.icon}
@@ -553,7 +693,7 @@ export default function ServiceTemplate({
                               if (parent) {
                                 const fallback = document.createElement("div");
                                 if (stat.icon && !isIconUrl(stat.icon)) {
-                                  fallback.className = "text-2xl";
+                                  fallback.className = "text-xl sm:text-2xl";
                                   fallback.textContent = stat.icon;
                                 } else if (stat.label) {
                                   fallback.className =
@@ -565,14 +705,14 @@ export default function ServiceTemplate({
                             }}
                           />
                         ) : stat.icon ? (
-                          <div className="text-2xl">{stat.icon}</div>
+                          <div className="text-xl sm:text-2xl">{stat.icon}</div>
                         ) : null}
                       </div>
                     )}
-                    <div className="text-3xl md:text-4xl font-bold text-white mb-2">
+                    <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-1 sm:mb-2">
                       {stat.value}
                     </div>
-                    <div className="text-lg text-white opacity-90">
+                    <div className="text-sm sm:text-base md:text-lg text-white opacity-90">
                       {stat.label}
                     </div>
                   </div>
@@ -586,26 +726,29 @@ export default function ServiceTemplate({
       data.subServices &&
       data.subServices.items &&
       data.subServices.items.length > 0 ? (
-        <section className="py-16 md:py-24 bg-gray-50" key="subServices">
+        <section
+          className="py-12 sm:py-16 md:py-24 bg-gray-50"
+          key="subServices"
+        >
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-12">
-              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+            <div className="text-center mb-8 sm:mb-10 md:mb-12">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-3 sm:mb-4 px-2">
                 {data.subServices.title}
               </h2>
               {data.subServices.description && (
-                <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+                <p className="text-base sm:text-lg text-gray-600 max-w-2xl mx-auto px-2">
                   {data.subServices.description}
                 </p>
               )}
             </div>
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-8 sm:mb-10 md:mb-12">
               {data.subServices.items.map((service, index) => (
                 <div
                   key={index}
-                  className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow border border-gray-200"
+                  className="bg-white p-4 sm:p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow border border-gray-200"
                 >
                   {service.icon && (
-                    <div className="w-10 h-10 rounded-lg flex items-center justify-center text-white text-2xl mb-4 relative overflow-hidden">
+                    <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg flex items-center justify-center text-white text-xl sm:text-2xl mb-3 sm:mb-4 relative overflow-hidden">
                       {isIconUrl(service.icon) && service.icon ? (
                         <Image
                           src={service.icon}
@@ -620,7 +763,7 @@ export default function ServiceTemplate({
                             if (parent) {
                               const fallback = document.createElement("div");
                               if (service.icon && !isIconUrl(service.icon)) {
-                                fallback.className = "text-2xl";
+                                fallback.className = "text-xl sm:text-2xl";
                                 fallback.textContent = service.icon;
                               } else if (service.title) {
                                 fallback.className =
@@ -632,29 +775,18 @@ export default function ServiceTemplate({
                           }}
                         />
                       ) : service.icon ? (
-                        <div className="text-2xl">{service.icon}</div>
+                        <div className="text-xl sm:text-2xl">
+                          {service.icon}
+                        </div>
                       ) : null}
                     </div>
                   )}
-                  <h3 className="text-xl font-bold text-gray-900 mb-3">
+                  <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-2 sm:mb-3">
                     {service.title}
                   </h3>
-                  <p className="text-gray-600 mb-4 line-clamp-3">
+                  <p className="text-sm sm:text-base text-gray-600 mb-3 sm:mb-4 line-clamp-3">
                     {service.description}
                   </p>
-                  <div className="flex justify-end">
-                    <svg
-                      className="w-5 h-5 text-gray-400"
-                      fill="none"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path d="M19 9l-7 7-7-7"></path>
-                    </svg>
-                  </div>
                 </div>
               ))}
             </div>
@@ -662,7 +794,7 @@ export default function ServiceTemplate({
               <div className="text-center">
                 <Link
                   href={data.subServices.ctaButtonLink || "#contact"}
-                  className="inline-block px-8 py-4 theme-bg-primary-mid text-white rounded-lg font-semibold transition-all hover:opacity-90 hover:shadow-lg"
+                  className="inline-block px-6 py-2.5 sm:px-8 sm:py-4 theme-bg-primary-mid text-white rounded-lg font-semibold text-sm sm:text-base transition-all hover:opacity-90 hover:shadow-lg"
                 >
                   {data.subServices.ctaButtonText}
                 </Link>
@@ -673,26 +805,26 @@ export default function ServiceTemplate({
       ) : null,
     whyChooseUs: () =>
       data.whyChooseUs ? (
-        <section className="py-16 md:py-24 bg-white" key="whyChooseUs">
+        <section className="py-12 sm:py-16 md:py-24 bg-white" key="whyChooseUs">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="grid md:grid-cols-2 gap-12 mb-12">
+            <div className="grid md:grid-cols-2 gap-8 sm:gap-12 mb-8 sm:mb-10 md:mb-12">
               {/* Left Side - Text */}
               <div>
-                <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+                <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-3 sm:mb-4">
                   {data.whyChooseUs.title}
                 </h2>
                 {data.whyChooseUs.subtitle && (
-                  <p className="text-lg text-gray-600 mb-8">
+                  <p className="text-base sm:text-lg text-gray-600 mb-6 sm:mb-8">
                     {data.whyChooseUs.subtitle}
                   </p>
                 )}
                 {data.whyChooseUs.items &&
                   data.whyChooseUs.items.map((item, index) => (
-                    <div key={index} className="mb-6">
-                      <div className="flex items-start gap-4 pb-4 border-b border-gray-200">
-                        <div className="shrink-0 w-6 h-6 rounded-full theme-bg-primary-mid flex items-center justify-center mt-1">
+                    <div key={index} className="mb-4 sm:mb-6">
+                      <div className="flex items-start gap-3 sm:gap-4 pb-3 sm:pb-4 border-b border-gray-200">
+                        <div className="shrink-0 w-5 h-5 sm:w-6 sm:h-6 rounded-full theme-bg-primary-mid flex items-center justify-center mt-1">
                           <svg
-                            className="w-4 h-4 text-white"
+                            className="w-3 h-3 sm:w-4 sm:h-4 text-white"
                             fill="none"
                             strokeLinecap="round"
                             strokeLinejoin="round"
@@ -703,7 +835,9 @@ export default function ServiceTemplate({
                             <path d="M5 13l4 4L19 7"></path>
                           </svg>
                         </div>
-                        <p className="text-lg text-gray-700">{item.text}</p>
+                        <p className="text-base sm:text-lg text-gray-700">
+                          {item.text}
+                        </p>
                       </div>
                     </div>
                   ))}
@@ -712,7 +846,7 @@ export default function ServiceTemplate({
               {/* Right Side - Image */}
               <div>
                 {data.whyChooseUs.image && (
-                  <div className="relative w-full h-[500px] rounded-lg overflow-hidden shadow-xl">
+                  <div className="relative w-full h-[300px] sm:h-[400px] md:h-[500px] rounded-lg overflow-hidden shadow-xl">
                     <Image
                       src={data.whyChooseUs.image}
                       alt={data.whyChooseUs.title}
@@ -728,14 +862,14 @@ export default function ServiceTemplate({
             {/* Certifications */}
             {data.whyChooseUs.certifications &&
               data.whyChooseUs.certifications.length > 0 && (
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 sm:gap-6">
                   {data.whyChooseUs.certifications.map((cert, index) => (
                     <div
                       key={index}
-                      className="bg-gray-50 p-4 rounded-lg flex items-center justify-center"
+                      className="bg-gray-50 p-3 sm:p-4 rounded-lg flex items-center justify-center"
                     >
                       {cert.image ? (
-                        <div className="relative w-full h-20">
+                        <div className="relative w-full h-16 sm:h-20">
                           <Image
                             src={cert.image}
                             alt={cert.name}
@@ -745,7 +879,7 @@ export default function ServiceTemplate({
                           />
                         </div>
                       ) : (
-                        <span className="text-sm text-gray-600 text-center">
+                        <span className="text-xs sm:text-sm text-gray-600 text-center">
                           {cert.name}
                         </span>
                       )}
@@ -761,20 +895,20 @@ export default function ServiceTemplate({
       data.technologies.items &&
       data.technologies.items.length > 0 ? (
         <section
-          className="py-16 md:py-24 px-4 sm:px-6 lg:px-8 theme-bg-white-green-gradient relative overflow-hidden"
+          className="py-12 sm:py-16 md:py-24 px-4 sm:px-6 lg:px-8 theme-bg-white-green-gradient relative overflow-hidden"
           key="technologies"
         >
           <div className="relative z-10 max-w-7xl mx-auto">
             {data.technologies.title && (
-              <div className="text-center mb-16">
-                <h2 className="text-4xl md:text-5xl font-bold mb-4">
+              <div className="text-center mb-8 sm:mb-12 md:mb-16">
+                <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-3 sm:mb-4 px-2">
                   <span className="theme-text-black">
                     {data.technologies.title}
                   </span>
                 </h2>
                 {data.technologies.description && (
                   <p
-                    className="text-xl theme-text-black max-w-3xl mx-auto"
+                    className="text-base sm:text-lg md:text-xl theme-text-black max-w-3xl mx-auto px-2"
                     style={{ opacity: 0.8 }}
                   >
                     {data.technologies.description}
@@ -783,8 +917,102 @@ export default function ServiceTemplate({
               </div>
             )}
 
-            <div className="max-w-5xl mx-auto px-8 md:px-12 lg:px-16">
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 md:gap-3">
+            <div className="max-w-5xl mx-auto px-4 sm:px-6 md:px-12 lg:px-16">
+              {/* Mobile Carousel */}
+              <div
+                className="md:hidden overflow-hidden px-1"
+                onTouchStart={handleTechTouchStart}
+                onTouchMove={handleTechTouchMove}
+                onTouchEnd={handleTechTouchEnd}
+              >
+                <div className="flex gap-2">
+                  {getVisibleTechItems().map(
+                    ({
+                      item: tech,
+                      originalIndex,
+                    }: {
+                      item: {
+                        name?: string;
+                        icon?: string;
+                        category?: string;
+                      };
+                      originalIndex: number;
+                    }) => (
+                      <div
+                        key={originalIndex}
+                        className="group theme-bg-white rounded-lg flex flex-col items-center justify-center transition-all duration-300 hover:shadow-xl hover:-translate-y-1 overflow-hidden p-3 shrink-0"
+                        style={{
+                          width: `calc((100% - ${
+                            (mobileItemsToShowTech - 1) * 8
+                          }px) / ${mobileItemsToShowTech})`,
+                          aspectRatio: "1/1",
+                          minHeight: "60px",
+                        }}
+                      >
+                        <div className="w-full h-full flex items-center justify-center relative">
+                          {isIconUrl(tech.icon) && tech.icon ? (
+                            <div className="relative w-10 h-10">
+                              <Image
+                                src={tech.icon}
+                                alt={tech.name || "Technology"}
+                                fill
+                                className="object-contain transition-all duration-300 group-hover:scale-105"
+                                unoptimized
+                                onError={(e) => {
+                                  const target = e.currentTarget;
+                                  target.style.display = "none";
+                                  const parent = target.parentElement;
+                                  if (parent) {
+                                    const fallback =
+                                      document.createElement("div");
+                                    if (tech.icon && !isIconUrl(tech.icon)) {
+                                      fallback.className = "text-lg";
+                                      fallback.textContent = tech.icon;
+                                    } else if (tech.name) {
+                                      fallback.className =
+                                        "text-xs font-bold theme-text-black text-center";
+                                      fallback.textContent = tech.name;
+                                    }
+                                    parent.appendChild(fallback);
+                                  }
+                                }}
+                              />
+                            </div>
+                          ) : tech.icon ? (
+                            <div className="text-lg">{tech.icon}</div>
+                          ) : tech.name ? (
+                            <div className="text-xs font-semibold theme-text-black text-center px-1">
+                              {tech.name}
+                            </div>
+                          ) : null}
+                        </div>
+                      </div>
+                    )
+                  )}
+                </div>
+                {/* Dot indicators for mobile */}
+                {totalTechSlides > 1 && (
+                  <div className="flex justify-center gap-2 mt-4">
+                    {Array.from({ length: totalTechSlides }).map((_, idx) => (
+                      <button
+                        key={idx}
+                        onClick={() =>
+                          setTechIndex(idx * mobileItemsToShowTech)
+                        }
+                        className={`w-2 h-2 rounded-full transition-all ${
+                          getCurrentTechSlideIndex() === idx
+                            ? "bg-gray-800 w-6"
+                            : "bg-gray-300"
+                        }`}
+                        aria-label={`Go to slide ${idx + 1}`}
+                      />
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* Desktop Grid */}
+              <div className="hidden md:grid grid-cols-4 lg:grid-cols-5 gap-3">
                 {data.technologies.items.map(
                   (
                     tech: {
@@ -796,39 +1024,44 @@ export default function ServiceTemplate({
                   ) => (
                     <div
                       key={index}
-                      className="group theme-bg-white rounded-md flex flex-col items-center justify-center transition-all duration-300 hover:shadow-xl hover:-translate-y-1 overflow-hidden p-3 md:p-4"
-                      style={{ aspectRatio: "5/3", minHeight: "40px" }}
+                      className="group theme-bg-white rounded-lg flex flex-col items-center justify-center transition-all duration-300 hover:shadow-xl hover:-translate-y-1 overflow-hidden p-3"
+                      style={{ aspectRatio: "1/1", minHeight: "60px" }}
                     >
-                      <div className="w-[70%] h-[70%] flex items-center justify-center relative p-2">
+                      <div className="w-full h-full flex items-center justify-center relative">
                         {isIconUrl(tech.icon) && tech.icon ? (
-                          <Image
-                            src={tech.icon}
-                            alt={tech.name || "Technology"}
-                            fill
-                            className="object-contain transition-all duration-300 group-hover:scale-105"
-                            unoptimized
-                            onError={(e) => {
-                              const target = e.currentTarget;
-                              target.style.display = "none";
-                              const parent = target.parentElement;
-                              if (parent) {
-                                const fallback = document.createElement("div");
-                                if (tech.icon && !isIconUrl(tech.icon)) {
-                                  fallback.className = "text-xl md:text-2xl";
-                                  fallback.textContent = tech.icon;
-                                } else if (tech.name) {
-                                  fallback.className =
-                                    "text-xs md:text-sm font-bold theme-text-black text-center";
-                                  fallback.textContent = tech.name;
+                          <div className="relative w-12 h-12 md:w-14 md:h-14">
+                            <Image
+                              src={tech.icon}
+                              alt={tech.name || "Technology"}
+                              fill
+                              className="object-contain transition-all duration-300 group-hover:scale-105"
+                              unoptimized
+                              onError={(e) => {
+                                const target = e.currentTarget;
+                                target.style.display = "none";
+                                const parent = target.parentElement;
+                                if (parent) {
+                                  const fallback =
+                                    document.createElement("div");
+                                  if (tech.icon && !isIconUrl(tech.icon)) {
+                                    fallback.className = "text-base md:text-lg";
+                                    fallback.textContent = tech.icon;
+                                  } else if (tech.name) {
+                                    fallback.className =
+                                      "text-xs md:text-sm font-bold theme-text-black text-center";
+                                    fallback.textContent = tech.name;
+                                  }
+                                  parent.appendChild(fallback);
                                 }
-                                parent.appendChild(fallback);
-                              }
-                            }}
-                          />
+                              }}
+                            />
+                          </div>
                         ) : tech.icon ? (
-                          <div className="text-xl md:text-2xl">{tech.icon}</div>
+                          <div className="text-base md:text-base">
+                            {tech.icon}
+                          </div>
                         ) : tech.name ? (
-                          <div className="text-xs md:text-sm font-semibold theme-text-black text-center">
+                          <div className="text-xs md:text-sm font-semibold theme-text-black text-center px-1">
                             {tech.name}
                           </div>
                         ) : null}
@@ -844,18 +1077,18 @@ export default function ServiceTemplate({
     process: () =>
       data.process && data.process.steps && data.process.steps.length > 0 ? (
         <section
-          className="py-16 md:py-24 px-4 sm:px-6 lg:px-8 theme-bg-white"
+          className="py-12 sm:py-16 md:py-24 px-4 sm:px-6 lg:px-8 theme-bg-white"
           key="process"
         >
           <div className="flex flex-col justify-center items-center max-w-7xl mx-auto">
             {data.process.title && (
-              <div className="text-center mb-16">
-                <h2 className="text-4xl md:text-5xl font-bold theme-text-black mb-4">
+              <div className="text-center mb-8 sm:mb-12 md:mb-16">
+                <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold theme-text-black mb-3 sm:mb-4 px-2">
                   {data.process.title}
                 </h2>
                 {data.process.description && (
                   <p
-                    className="text-xl theme-text-black max-w-3xl mx-auto"
+                    className="text-base sm:text-lg md:text-xl theme-text-black max-w-3xl mx-auto px-2"
                     style={{ opacity: 0.8 }}
                   >
                     {data.process.description}
@@ -866,9 +1099,9 @@ export default function ServiceTemplate({
 
             <div className="relative max-w-4xl mx-auto">
               {/* Vertical Dashed Line */}
-              <div className="absolute left-6 top-0 bottom-0 w-0.5 border-l-2 border-dashed border-gray-300"></div>
+              <div className="absolute left-4 sm:left-6 top-0 bottom-0 w-0.5 border-l-2 border-dashed border-gray-300"></div>
 
-              <div className="space-y-8">
+              <div className="space-y-6 sm:space-y-8">
                 {data.process.steps.map(
                   (
                     step: {
@@ -881,18 +1114,18 @@ export default function ServiceTemplate({
                   ) => (
                     <div
                       key={index}
-                      className="relative flex items-start gap-6 group"
+                      className="relative flex items-start gap-4 sm:gap-6 group"
                     >
                       {/* Square Icon */}
                       <div className="relative z-10 shrink-0">
-                        <div className="w-12 h-12 theme-bg-primary-mid rounded-lg flex items-center justify-center text-white shadow-md group-hover:shadow-lg transition-all duration-300 group-hover:scale-105">
+                        <div className="w-10 h-10 sm:w-12 sm:h-12 theme-bg-primary-mid rounded-lg flex items-center justify-center text-white shadow-md group-hover:shadow-lg transition-all duration-300 group-hover:scale-105">
                           {step.icon && isIconUrl(step.icon) ? (
-                            <div className="relative w-8 h-8">
+                            <div className="relative w-6 h-6 sm:w-8 sm:h-8">
                               <Image
                                 src={step.icon}
                                 alt={step.title || `Step ${index + 1}`}
                                 fill
-                                className="object-contain p-1.5"
+                                className="object-contain p-1 sm:p-1.5"
                                 unoptimized
                                 onError={(e) => {
                                   const target = e.currentTarget;
@@ -903,16 +1136,19 @@ export default function ServiceTemplate({
                                       document.createElement("span");
                                     fallback.textContent =
                                       step.number || String(index + 1);
-                                    fallback.className = "text-lg font-bold";
+                                    fallback.className =
+                                      "text-sm sm:text-lg font-bold";
                                     parent.appendChild(fallback);
                                   }
                                 }}
                               />
                             </div>
                           ) : step.icon ? (
-                            <span className="text-xl">{step.icon}</span>
+                            <span className="text-lg sm:text-xl">
+                              {step.icon}
+                            </span>
                           ) : (
-                            <span className="text-lg font-bold">
+                            <span className="text-sm sm:text-lg font-bold">
                               {step.number || index + 1}
                             </span>
                           )}
@@ -922,13 +1158,13 @@ export default function ServiceTemplate({
                       {/* Text Content */}
                       <div className="flex-1 pt-1">
                         {step.title && (
-                          <h3 className="text-xl font-bold theme-text-black mb-3 theme-hover-primary-mid transition-colors">
+                          <h3 className="text-lg sm:text-xl font-bold theme-text-black mb-2 sm:mb-3 theme-hover-primary-mid transition-colors">
                             {step.title}
                           </h3>
                         )}
                         {step.description && (
                           <p
-                            className="text-base theme-text-black leading-relaxed wrap-break-word"
+                            className="text-sm sm:text-base theme-text-black leading-relaxed wrap-break-word"
                             style={{ opacity: 0.8 }}
                           >
                             {step.description}
@@ -948,18 +1184,18 @@ export default function ServiceTemplate({
       data.portfolio.projects &&
       data.portfolio.projects.length > 0 ? (
         <section
-          className="py-16 md:py-24 px-4 sm:px-6 lg:px-8 theme-bg-white"
+          className="py-12 sm:py-16 md:py-24 px-4 sm:px-6 lg:px-8 theme-bg-white"
           key="portfolio"
         >
           <div className="max-w-7xl mx-auto">
             {data.portfolio.title && (
-              <div className="text-center mb-16">
-                <h2 className="text-4xl md:text-5xl font-bold theme-text-black mb-4">
+              <div className="text-center mb-8 sm:mb-12 md:mb-16">
+                <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold theme-text-black mb-3 sm:mb-4 px-2">
                   {data.portfolio.title}
                 </h2>
                 {data.portfolio.description && (
                   <p
-                    className="text-xl theme-text-black max-w-3xl mx-auto"
+                    className="text-base sm:text-lg md:text-xl theme-text-black max-w-3xl mx-auto px-2"
                     style={{ opacity: 0.8 }}
                   >
                     {data.portfolio.description}
@@ -969,11 +1205,11 @@ export default function ServiceTemplate({
             )}
 
             <div className="relative">
-              {/* Left Arrow */}
+              {/* Left Arrow - Desktop Only */}
               {totalPortfolioItems > itemsToShow && (
                 <button
                   onClick={prevPortfolio}
-                  className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 w-12 h-12 bg-transparent border-2 theme-text-black rounded-full flex items-center justify-center shadow-md hover:scale-110 transition-all backdrop-blur-sm"
+                  className="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 w-12 h-12 bg-transparent border-2 theme-text-black rounded-full items-center justify-center shadow-md hover:scale-110 transition-all backdrop-blur-sm"
                   style={{ borderColor: "rgba(0, 0, 0, 0.2)" }}
                   aria-label="Previous"
                 >
@@ -993,9 +1229,116 @@ export default function ServiceTemplate({
                 </button>
               )}
 
-              {/* Carousel Container */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 px-8">
-                {getVisiblePortfolioItems().map(
+              {/* Mobile Carousel */}
+              <div
+                className="md:hidden overflow-hidden"
+                onTouchStart={handlePortfolioTouchStart}
+                onTouchMove={handlePortfolioTouchMove}
+                onTouchEnd={handlePortfolioTouchEnd}
+              >
+                <div className="flex gap-4">
+                  {getVisiblePortfolioItems(true).map(
+                    ({ item: project, originalIndex }, visibleIndex) => (
+                      <div
+                        key={`portfolio-mobile-${originalIndex}-${visibleIndex}-${
+                          project.title || visibleIndex
+                        }`}
+                        className="group relative theme-bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 shrink-0 mx-auto max-w-sm"
+                        style={{ width: "calc(100vw - 2rem)" }}
+                      >
+                        {/* Project Image */}
+                        <div className="relative h-64 overflow-hidden theme-gradient">
+                          {isImageUrl(project.image) && project.image ? (
+                            <Image
+                              src={project.image}
+                              alt={project.title || "Project"}
+                              fill
+                              className="object-cover group-hover:scale-110 transition-transform duration-500"
+                              unoptimized
+                            />
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center">
+                              <div className="theme-text-white text-6xl animate-float">
+                                {project.image || "💼"}
+                              </div>
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Project Content */}
+                        <div className="p-6">
+                          {project.category && (
+                            <span
+                              className="inline-block px-3 py-1 text-xs font-semibold theme-primary-mid rounded-full mb-3"
+                              style={{
+                                backgroundColor: "rgba(206, 212, 48, 0.1)",
+                              }}
+                            >
+                              {project.category}
+                            </span>
+                          )}
+                          {project.title && (
+                            <h3 className="text-xl font-bold theme-text-black mb-3 theme-hover-primary transition-colors">
+                              {project.title}
+                            </h3>
+                          )}
+                          {project.description && (
+                            <p
+                              className="theme-text-black mb-4 line-clamp-3"
+                              style={{ opacity: 0.8 }}
+                            >
+                              {project.description}
+                            </p>
+                          )}
+                          {Array.isArray(project.technologies) &&
+                            project.technologies.length > 0 && (
+                              <div className="flex flex-wrap gap-2">
+                                {project.technologies.map(
+                                  (tech: string, techIndex: number) => (
+                                    <span
+                                      key={techIndex}
+                                      className="px-2 py-1 text-xs font-medium theme-text-black rounded"
+                                      style={{
+                                        backgroundColor: "rgba(0, 0, 0, 0.05)",
+                                      }}
+                                    >
+                                      {tech}
+                                    </span>
+                                  )
+                                )}
+                              </div>
+                            )}
+                        </div>
+                      </div>
+                    )
+                  )}
+                </div>
+                {/* Dot indicators for mobile */}
+                {totalPortfolioSlides > 1 && (
+                  <div className="flex justify-center gap-2 mt-6">
+                    {Array.from({ length: totalPortfolioSlides }).map(
+                      (_, idx) => (
+                        <button
+                          key={idx}
+                          onClick={() =>
+                            setPortfolioIndex(idx * mobileItemsToShow)
+                          }
+                          className={`w-2 h-2 rounded-full transition-all ${
+                            getCurrentPortfolioSlideIndex() === idx
+                              ? "bg-gray-800 w-6"
+                              : "bg-gray-300"
+                          }`}
+                          aria-label={`Go to slide ${idx + 1}`}
+                        />
+                      )
+                    )}
+                  </div>
+                )}
+              </div>
+
+              {/* Desktop Grid */}
+              <div className="hidden md:grid grid-cols-2 lg:grid-cols-3 gap-8 px-8">
+                {getVisiblePortfolioItems(false).map(
                   ({ item: project, originalIndex }, visibleIndex) => (
                     <div
                       key={`portfolio-${originalIndex}-${visibleIndex}-${
@@ -1021,7 +1364,7 @@ export default function ServiceTemplate({
                           </div>
                         )}
                         {/* Overlay on hover */}
-                        <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-6">
+                        {/* <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-6">
                           {project.link && (
                             <Link
                               href={project.link}
@@ -1030,7 +1373,7 @@ export default function ServiceTemplate({
                               View Project →
                             </Link>
                           )}
-                        </div>
+                        </div> */}
                       </div>
 
                       {/* Project Content */}
@@ -1082,11 +1425,11 @@ export default function ServiceTemplate({
                 )}
               </div>
 
-              {/* Right Arrow */}
+              {/* Right Arrow - Desktop Only */}
               {totalPortfolioItems > itemsToShow && (
                 <button
                   onClick={nextPortfolio}
-                  className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 w-12 h-12 bg-transparent border-2 theme-text-black rounded-full flex items-center justify-center shadow-md hover:scale-110 transition-all backdrop-blur-sm"
+                  className="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 w-12 h-12 bg-transparent border-2 theme-text-black rounded-full items-center justify-center shadow-md hover:scale-110 transition-all backdrop-blur-sm"
                   style={{ borderColor: "rgba(0, 0, 0, 0.2)" }}
                   aria-label="Next"
                 >
@@ -1114,13 +1457,13 @@ export default function ServiceTemplate({
       data.partners.partners &&
       data.partners.partners.length > 0 ? (
         <section
-          className="py-16 md:py-24 px-4 sm:px-6 lg:px-8 theme-bg-white-green-gradient relative overflow-hidden"
+          className="py-12 sm:py-16 md:py-24 px-4 sm:px-6 lg:px-8 theme-bg-white-green-gradient relative overflow-hidden"
           key="partners"
         >
           <div className="relative z-10 max-w-7xl mx-auto">
             {data.partners.title && (
-              <div className="text-center mb-12">
-                <h2 className="text-4xl md:text-5xl font-bold mb-4">
+              <div className="text-center mb-8 sm:mb-10 md:mb-12">
+                <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-3 sm:mb-4 px-2">
                   <span className="theme-text-black">
                     {data.partners.title.split(" ")[0]}
                   </span>
@@ -1133,7 +1476,7 @@ export default function ServiceTemplate({
                 </h2>
                 {data.partners.description && (
                   <p
-                    className="text-lg theme-text-black max-w-3xl mx-auto"
+                    className="text-base sm:text-lg theme-text-black max-w-3xl mx-auto px-2"
                     style={{ opacity: 0.8 }}
                   >
                     {data.partners.description}
@@ -1149,19 +1492,19 @@ export default function ServiceTemplate({
     cards: () =>
       data.cards && data.cards.items && data.cards.items.length > 0 ? (
         <section
-          className="py-16 md:py-24 px-4 sm:px-6 lg:px-8 theme-bg-white"
+          className="py-12 sm:py-16 md:py-24 px-4 sm:px-6 lg:px-8 theme-bg-white"
           key="cards"
         >
           <div className="max-w-7xl mx-auto">
-            <div className="text-center mb-16">
+            <div className="text-center mb-8 sm:mb-12 md:mb-16">
               {data.cards.title && (
-                <h2 className="text-4xl md:text-5xl font-bold theme-text-black mb-4">
+                <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold theme-text-black mb-3 sm:mb-4 px-2">
                   {data.cards.title}
                 </h2>
               )}
               {data.cards.description && (
                 <p
-                  className="text-xl theme-text-black max-w-3xl mx-auto"
+                  className="text-base sm:text-lg md:text-xl theme-text-black max-w-3xl mx-auto px-2"
                   style={{ opacity: 0.8 }}
                 >
                   {data.cards.description}
@@ -1169,11 +1512,11 @@ export default function ServiceTemplate({
               )}
             </div>
             <div className="relative">
-              {/* Left Arrow */}
+              {/* Left Arrow - Desktop Only */}
               {totalCardsItems > itemsToShowCards && (
                 <button
                   onClick={prevCards}
-                  className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 w-12 h-12 bg-transparent border-2 theme-text-black rounded-full flex items-center justify-center shadow-md hover:scale-110 transition-all backdrop-blur-sm"
+                  className="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 w-12 h-12 bg-transparent border-2 theme-text-black rounded-full items-center justify-center shadow-md hover:scale-110 transition-all backdrop-blur-sm"
                   style={{ borderColor: "rgba(0, 0, 0, 0.2)" }}
                   aria-label="Previous"
                 >
@@ -1193,9 +1536,92 @@ export default function ServiceTemplate({
                 </button>
               )}
 
-              {/* Carousel Container */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 px-8">
-                {getVisibleCardsItems().map(
+              {/* Mobile Carousel */}
+              <div
+                className="md:hidden overflow-hidden"
+                onTouchStart={handleCardsTouchStart}
+                onTouchMove={handleCardsTouchMove}
+                onTouchEnd={handleCardsTouchEnd}
+              >
+                <div className="flex gap-4">
+                  {getVisibleCardsItems(true).map(
+                    ({ item, originalIndex }, visibleIndex) => (
+                      <div
+                        key={`card-mobile-${originalIndex}-${visibleIndex}-${
+                          item.author || visibleIndex
+                        }`}
+                        className="group p-6 theme-bg-white rounded-xl border border-gray-200 shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 shrink-0 mx-auto max-w-sm"
+                        style={{
+                          width: "calc(100vw - 2rem)",
+                          borderColor: "rgba(0, 0, 0, 0.1)",
+                        }}
+                      >
+                        {data.cards && data.cards.showStars !== false && (
+                          <div
+                            className="mb-4 text-lg"
+                            style={{ color: "var(--color-primary-end)" }}
+                          >
+                            {"★★★★★".split("").map((star, i) => (
+                              <span key={i}>{star}</span>
+                            ))}
+                          </div>
+                        )}
+                        {item.quote && (
+                          <p
+                            className="theme-text-black mb-6 leading-relaxed italic text-sm"
+                            style={{ opacity: 0.8 }}
+                          >
+                            &ldquo;{item.quote}&rdquo;
+                          </p>
+                        )}
+                        <div
+                          className="pt-4 border-t"
+                          style={{ borderColor: "rgba(0, 0, 0, 0.1)" }}
+                        >
+                          {item.author && (
+                            <p className="font-bold theme-text-black mb-1">
+                              {item.author}
+                            </p>
+                          )}
+                          {(item.role || item.company) && (
+                            <p
+                              className="text-xs theme-text-black"
+                              style={{ opacity: 0.6 }}
+                            >
+                              {item.role && `${item.role}`}
+                              {item.role && item.company && ", "}
+                              {item.company}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                    )
+                  )}
+                </div>
+                {/* Dot indicators for mobile */}
+                {totalCardsSlides > 1 && (
+                  <div className="flex justify-center gap-2 mt-6">
+                    {Array.from({ length: totalCardsSlides }).map((_, idx) => (
+                      <button
+                        key={idx}
+                        onClick={() =>
+                          setCardsIndex(idx * mobileItemsToShowCards)
+                        }
+                        className={`w-2 h-2 rounded-full transition-all ${
+                          getCurrentCardsSlideIndex() === idx
+                            ? "bg-gray-800 w-6"
+                            : "bg-gray-300"
+                        }`}
+                        aria-label={`Go to slide ${idx + 1}`}
+                      />
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* Desktop Grid */}
+              <div className="hidden md:grid grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 px-8">
+                {getVisibleCardsItems(false).map(
                   ({ item, originalIndex }, visibleIndex) => (
                     <div
                       key={`card-${originalIndex}-${visibleIndex}-${
@@ -1247,11 +1673,11 @@ export default function ServiceTemplate({
                 )}
               </div>
 
-              {/* Right Arrow */}
+              {/* Right Arrow - Desktop Only */}
               {totalCardsItems > itemsToShowCards && (
                 <button
                   onClick={nextCards}
-                  className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 w-12 h-12 bg-transparent border-2 theme-text-black rounded-full flex items-center justify-center shadow-md hover:scale-110 transition-all backdrop-blur-sm"
+                  className="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 w-12 h-12 bg-transparent border-2 theme-text-black rounded-full items-center justify-center shadow-md hover:scale-110 transition-all backdrop-blur-sm"
                   style={{ borderColor: "rgba(0, 0, 0, 0.2)" }}
                   aria-label="Next"
                 >
@@ -1277,18 +1703,18 @@ export default function ServiceTemplate({
     faq: () =>
       data.faq && data.faq.items && data.faq.items.length > 0 ? (
         <section
-          className="py-16 md:py-24 px-4 sm:px-6 lg:px-8 theme-bg-white"
+          className="py-12 sm:py-16 md:py-24 px-4 sm:px-6 lg:px-8 theme-bg-white"
           key="faq"
         >
           <div className="max-w-4xl mx-auto">
             {data.faq.title && (
-              <div className="text-center mb-16">
-                <h2 className="text-4xl md:text-5xl font-bold theme-text-black mb-4">
+              <div className="text-center mb-8 sm:mb-12 md:mb-16">
+                <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold theme-text-black mb-3 sm:mb-4 px-2">
                   {data.faq.title}
                 </h2>
                 {data.faq.description && (
                   <p
-                    className="text-xl theme-text-black max-w-3xl mx-auto"
+                    className="text-base sm:text-lg md:text-xl theme-text-black max-w-3xl mx-auto px-2"
                     style={{ opacity: 0.8 }}
                   >
                     {data.faq.description}
@@ -1297,7 +1723,7 @@ export default function ServiceTemplate({
               </div>
             )}
 
-            <div className="space-y-4">
+            <div className="space-y-3 sm:space-y-4">
               {data.faq.items.map(
                 (
                   faq: {
@@ -1314,19 +1740,19 @@ export default function ServiceTemplate({
                     {/* Question */}
                     <button
                       onClick={() => toggleFaq(index)}
-                      className="w-full px-6 py-5 text-left flex items-center justify-between focus:outline-none focus:ring-2 focus:ring-offset-2 rounded-xl"
+                      className="w-full px-4 py-4 sm:px-6 sm:py-5 text-left flex items-center justify-between focus:outline-none focus:ring-2 focus:ring-offset-2 rounded-xl"
                     >
-                      <span className="text-lg font-semibold theme-text-black pr-4">
+                      <span className="text-base sm:text-lg font-semibold theme-text-black pr-3 sm:pr-4">
                         {faq.question || `Question ${index + 1}`}
                       </span>
                       <div
-                        className={`shrink-0 w-8 h-8 rounded-full bg-transparent border-2 theme-text-black flex items-center justify-center transition-all duration-300 backdrop-blur-sm ${
+                        className={`shrink-0 w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-transparent border-2 theme-text-black flex items-center justify-center transition-all duration-300 backdrop-blur-sm ${
                           expandedFaq === index ? "rotate-180" : ""
                         }`}
                         style={{ borderColor: "rgba(0, 0, 0, 0.2)" }}
                       >
                         <svg
-                          className="w-5 h-5"
+                          className="w-4 h-4 sm:w-5 sm:h-5"
                           fill="none"
                           strokeLinecap="round"
                           strokeLinejoin="round"
@@ -1345,9 +1771,9 @@ export default function ServiceTemplate({
                         expandedFaq === index ? "max-h-96" : "max-h-0"
                       }`}
                     >
-                      <div className="px-6 pb-5 pt-0">
+                      <div className="px-4 pb-4 sm:px-6 sm:pb-5 pt-0">
                         <p
-                          className="theme-text-black leading-relaxed"
+                          className="text-sm sm:text-base theme-text-black leading-relaxed"
                           style={{ opacity: 0.8 }}
                         >
                           {faq.answer || `Answer ${index + 1}`}
@@ -1363,18 +1789,23 @@ export default function ServiceTemplate({
       ) : null,
     cta: () =>
       data.cta ? (
-        <section className="py-16 md:py-24 bg-gray-900 text-white" key="cta">
+        <section
+          className="py-12 sm:py-16 md:py-24 bg-gray-900 text-white"
+          key="cta"
+        >
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 sm:mb-4">
               {data.cta.title}
             </h2>
             {data.cta.description && (
-              <p className="text-lg mb-8 opacity-90">{data.cta.description}</p>
+              <p className="text-base sm:text-lg mb-6 sm:mb-8 opacity-90">
+                {data.cta.description}
+              </p>
             )}
             {data.cta.buttonText && (
               <Link
                 href={data.cta.buttonLink || "#contact"}
-                className="inline-block px-8 py-4 theme-bg-primary-mid text-white rounded-lg font-semibold transition-all hover:opacity-90 hover:shadow-lg"
+                className="inline-block px-6 py-2.5 sm:px-8 sm:py-4 theme-bg-primary-mid text-white rounded-lg font-semibold text-sm sm:text-base transition-all hover:opacity-90 hover:shadow-lg"
               >
                 {data.cta.buttonText}
               </Link>

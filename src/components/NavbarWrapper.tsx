@@ -36,6 +36,8 @@ export default async function NavbarWrapper() {
     slug: service.slug,
     order: service.order,
     navOrder: service.navOrder ?? null,
+    description: service.description || "",
+    icon: service.icon || "",
   }));
 
   const serializedIndustries = industries.map((industry) => ({
@@ -44,6 +46,8 @@ export default async function NavbarWrapper() {
     slug: industry.slug,
     order: industry.order,
     navOrder: industry.navOrder ?? null,
+    description: industry.description || "",
+    icon: industry.icon || "",
   }));
 
   return (

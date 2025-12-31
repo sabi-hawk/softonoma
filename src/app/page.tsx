@@ -95,10 +95,17 @@ export default async function Home() {
 
 export async function generateMetadata() {
   await connectDB();
-  const page = await Page.findOne({
+  // Prefer published home page, but allow unpublished as fallback
+  let page = await Page.findOne({
     $or: [{ slug: "home" }, { slug: "" }],
     isPublished: true,
   }).lean();
+
+  if (!page) {
+    page = await Page.findOne({
+      $or: [{ slug: "home" }, { slug: "" }],
+    }).lean();
+  }
 
   if (!page) {
     return {

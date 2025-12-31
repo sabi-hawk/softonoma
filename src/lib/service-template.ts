@@ -15,7 +15,7 @@ export const defaultServiceTemplateData: ServiceTemplateData = {
     title: "Machine Learning & AI Development Services",
     paragraphs: [
       {
-        text: "Saigon Technology, headquartered in Ho Chi Minh City, Vietnam, and with representative offices in Singapore and the United States, provides a broad range of qualified technical expertise in machine learning, deep learning, computer vision, classification tools, data analytics, natural language processing, and other areas.",
+        text: "Softonoma, headquartered in Ho Chi Minh City, Vietnam, and with representative offices in Singapore and the United States, provides a broad range of qualified technical expertise in machine learning, deep learning, computer vision, classification tools, data analytics, natural language processing, and other areas.",
       },
       {
         text: "If you're looking for an AI development firm, we've got a team of data scientists, machine learning engineers, and software developers that are well versed in cutting-edge AI (Artificial Intelligence), ML (Machine Learning), and Big Data tool-sets to help you solve your business challenges.",
@@ -94,7 +94,7 @@ export const defaultServiceTemplateData: ServiceTemplateData = {
     isActive: true,
   },
   whyChooseUs: {
-    title: "Why Choose Saigon Technology?",
+    title: "Why Choose Softonoma?",
     subtitle:
       "Choose us for your AI development needs. Here's why we stand out.",
     items: [

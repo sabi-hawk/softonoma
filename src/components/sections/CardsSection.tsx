@@ -1,7 +1,11 @@
 "use client";
 
 import { ISection } from "@/models/Section";
-import { useState } from "react";
+import { useState, useRef } from "react";
+import {
+  getBackgroundStyle,
+  getDefaultBackground,
+} from "@/lib/section-helpers";
 
 interface CardsSectionProps {
   section: ISection;
@@ -9,11 +13,21 @@ interface CardsSectionProps {
 
 export default function CardsSection({ section }: CardsSectionProps) {
   const { content } = section;
+  const backgroundColor =
+    (content.backgroundColor as string) || getDefaultBackground("cards");
+  const background = getBackgroundStyle(
+    backgroundColor,
+    content.backgroundColorOpacity as number
+  );
   const items = Array.isArray(content.items) ? content.items : [];
   const [currentIndex, setCurrentIndex] = useState(0);
+  const touchStartX = useRef<number | null>(null);
+  const touchEndX = useRef<number | null>(null);
 
   const itemsToShow = 3;
   const totalItems = items.length;
+  const mobileItemsToShow = 1;
+  const totalSlides = Math.ceil(totalItems / mobileItemsToShow);
 
   const nextSlide = () => {
     setCurrentIndex((prev) => (prev + 1) % totalItems);
@@ -23,28 +37,63 @@ export default function CardsSection({ section }: CardsSectionProps) {
     setCurrentIndex((prev) => (prev - 1 + totalItems) % totalItems);
   };
 
-  // Get visible items (3 at a time with infinite loop)
-  const getVisibleItems = () => {
+  // Touch handlers for mobile swipe
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    touchEndX.current = e.touches[0].clientX;
+  };
+
+  const handleTouchEnd = () => {
+    if (!touchStartX.current || !touchEndX.current) return;
+    const distance = touchStartX.current - touchEndX.current;
+    const minSwipeDistance = 50;
+
+    if (distance > minSwipeDistance) {
+      nextSlide();
+    } else if (distance < -minSwipeDistance) {
+      prevSlide();
+    }
+
+    touchStartX.current = null;
+    touchEndX.current = null;
+  };
+
+  // Get visible items (3 at a time on desktop, 1 on mobile)
+  const getVisibleItems = (isMobile: boolean = false) => {
     const visible = [];
-    for (let i = 0; i < itemsToShow; i++) {
+    const itemsCount = isMobile ? mobileItemsToShow : itemsToShow;
+    for (let i = 0; i < itemsCount; i++) {
       const index = (currentIndex + i) % totalItems;
       visible.push({ item: items[index], originalIndex: index });
     }
     return visible;
   };
 
+  // Calculate current slide index for dots (mobile)
+  const getCurrentSlideIndex = () => {
+    return Math.floor(currentIndex / mobileItemsToShow);
+  };
+
   return (
-    <section className="py-16 md:py-24 px-4 sm:px-6 lg:px-8 theme-bg-white">
+    <section
+      className={`py-12 sm:py-16 md:py-24 px-4 sm:px-6 lg:px-8 ${
+        background.className || ""
+      }`}
+      style={background.style}
+    >
       <div className="max-w-7xl mx-auto">
-        <div className="text-center mb-16">
+        <div className="text-center mb-8 sm:mb-12 md:mb-16">
           {content.title && (
-            <h2 className="text-4xl md:text-5xl font-bold theme-text-black mb-4">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold theme-text-black mb-3 sm:mb-4 px-2">
               {content.title}
             </h2>
           )}
           {content.description && (
             <p
-              className="text-xl theme-text-black max-w-3xl mx-auto"
+              className="text-base sm:text-lg md:text-xl theme-text-black max-w-3xl mx-auto px-2"
               style={{ opacity: 0.8 }}
             >
               {content.description}
@@ -53,11 +102,11 @@ export default function CardsSection({ section }: CardsSectionProps) {
         </div>
         {totalItems > 0 && (
           <div className="relative">
-            {/* Left Arrow */}
+            {/* Left Arrow - Hidden on mobile */}
             {totalItems > itemsToShow && (
               <button
                 onClick={prevSlide}
-                className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 w-12 h-12 bg-transparent border-2 theme-text-black rounded-full flex items-center justify-center shadow-md hover:scale-110 transition-all backdrop-blur-sm"
+                className="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 w-12 h-12 bg-transparent border-2 theme-text-black rounded-full items-center justify-center shadow-md hover:scale-110 transition-all backdrop-blur-sm"
                 style={{ borderColor: "rgba(0, 0, 0, 0.2)" }}
                 aria-label="Previous"
               >
@@ -77,61 +126,113 @@ export default function CardsSection({ section }: CardsSectionProps) {
               </button>
             )}
 
-            {/* Carousel Container */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 px-8">
-              {getVisibleItems().map(({ item, originalIndex }) => (
-                <div
-                  key={originalIndex}
-                  className="group p-8 theme-bg-white rounded-xl border border-gray-200 shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-1"
-                  style={{ borderColor: "rgba(0, 0, 0, 0.1)" }}
-                >
-                  {content.showStars !== false && (
-                    <div
-                      className="mb-4 text-lg"
-                      style={{ color: "var(--color-primary-end)" }}
-                    >
-                      {"★★★★★".split("").map((star, i) => (
-                        <span key={i}>{star}</span>
-                      ))}
-                    </div>
-                  )}
-                  {item.quote && (
-                    <p
-                      className="theme-text-black mb-6 leading-relaxed italic text-sm"
-                      style={{ opacity: 0.8 }}
-                    >
-                      &ldquo;{item.quote}&rdquo;
-                    </p>
-                  )}
+            {/* Carousel Container - Swipeable on mobile */}
+            <div
+              className="relative overflow-hidden"
+              onTouchStart={handleTouchStart}
+              onTouchMove={handleTouchMove}
+              onTouchEnd={handleTouchEnd}
+              style={{ touchAction: 'pan-y' }}
+            >
+              {/* Mobile: Show 1 item at a time */}
+              <div className="md:hidden">
+                {getVisibleItems(true).map(({ item, originalIndex }) => (
                   <div
-                    className="pt-4 border-t"
+                    key={originalIndex}
+                    className="group p-6 theme-bg-white rounded-xl border border-gray-200 shadow-lg transition-all duration-300 mx-auto max-w-sm"
                     style={{ borderColor: "rgba(0, 0, 0, 0.1)" }}
                   >
-                    {item.author && (
-                      <p className="font-bold theme-text-black mb-1">
-                        {item.author}
-                      </p>
+                    {content.showStars !== false && (
+                      <div className="mb-4 text-lg" style={{ color: "#FFD700" }}>
+                        {"★★★★★".split("").map((star, i) => (
+                          <span key={i}>{star}</span>
+                        ))}
+                      </div>
                     )}
-                    {(item.role || item.company) && (
+                    {item.quote && (
                       <p
-                        className="text-xs theme-text-black"
-                        style={{ opacity: 0.6 }}
+                        className="theme-text-black mb-6 leading-relaxed italic text-sm"
+                        style={{ opacity: 0.8 }}
                       >
-                        {item.role && `${item.role}`}
-                        {item.role && item.company && ", "}
-                        {item.company}
+                        &ldquo;{item.quote}&rdquo;
                       </p>
                     )}
+                    <div
+                      className="pt-4 border-t"
+                      style={{ borderColor: "rgba(0, 0, 0, 0.1)" }}
+                    >
+                      {item.author && (
+                        <p className="font-bold theme-text-black mb-1">
+                          {item.author}
+                        </p>
+                      )}
+                      {(item.role || item.company) && (
+                        <p
+                          className="text-xs theme-text-black"
+                          style={{ opacity: 0.6 }}
+                        >
+                          {item.role && `${item.role}`}
+                          {item.role && item.company && ", "}
+                          {item.company}
+                        </p>
+                      )}
+                    </div>
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
+              {/* Desktop: Show 3 items */}
+              <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 px-8">
+                {getVisibleItems(false).map(({ item, originalIndex }) => (
+                  <div
+                    key={originalIndex}
+                    className="group p-8 theme-bg-white rounded-xl border border-gray-200 shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-1"
+                    style={{ borderColor: "rgba(0, 0, 0, 0.1)" }}
+                  >
+                    {content.showStars !== false && (
+                      <div className="mb-4 text-lg" style={{ color: "#FFD700" }}>
+                        {"★★★★★".split("").map((star, i) => (
+                          <span key={i}>{star}</span>
+                        ))}
+                      </div>
+                    )}
+                    {item.quote && (
+                      <p
+                        className="theme-text-black mb-6 leading-relaxed italic text-sm"
+                        style={{ opacity: 0.8 }}
+                      >
+                        &ldquo;{item.quote}&rdquo;
+                      </p>
+                    )}
+                    <div
+                      className="pt-4 border-t"
+                      style={{ borderColor: "rgba(0, 0, 0, 0.1)" }}
+                    >
+                      {item.author && (
+                        <p className="font-bold theme-text-black mb-1">
+                          {item.author}
+                        </p>
+                      )}
+                      {(item.role || item.company) && (
+                        <p
+                          className="text-xs theme-text-black"
+                          style={{ opacity: 0.6 }}
+                        >
+                          {item.role && `${item.role}`}
+                          {item.role && item.company && ", "}
+                          {item.company}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
 
-            {/* Right Arrow */}
+            {/* Right Arrow - Hidden on mobile */}
             {totalItems > itemsToShow && (
               <button
                 onClick={nextSlide}
-                className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 w-12 h-12 bg-transparent border-2 theme-text-black rounded-full flex items-center justify-center shadow-md hover:scale-110 transition-all backdrop-blur-sm"
+                className="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 w-12 h-12 bg-transparent border-2 theme-text-black rounded-full items-center justify-center shadow-md hover:scale-110 transition-all backdrop-blur-sm"
                 style={{ borderColor: "rgba(0, 0, 0, 0.2)" }}
                 aria-label="Next"
               >
@@ -149,6 +250,24 @@ export default function CardsSection({ section }: CardsSectionProps) {
                   />
                 </svg>
               </button>
+            )}
+
+            {/* Dot Indicators - Only visible on mobile */}
+            {totalItems > mobileItemsToShow && (
+              <div className="flex justify-center gap-2 mt-8 md:hidden">
+                {Array.from({ length: totalSlides }).map((_, index) => (
+                  <button
+                    key={index}
+                    onClick={() => setCurrentIndex(index * mobileItemsToShow)}
+                    className={`w-2 h-2 rounded-full transition-all ${
+                      getCurrentSlideIndex() === index
+                        ? 'bg-[#79b246] w-8'
+                        : 'bg-gray-300'
+                    }`}
+                    aria-label={`Go to slide ${index + 1}`}
+                  />
+                ))}
+              </div>
             )}
           </div>
         )}

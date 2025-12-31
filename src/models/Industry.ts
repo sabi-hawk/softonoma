@@ -4,6 +4,7 @@ export interface IIndustry extends Document {
   title: string;
   slug: string;
   description?: string;
+  icon?: string;
   content?: string; // JSON string for template data
   isPublished: boolean;
   order: number;
@@ -37,6 +38,10 @@ const IndustrySchema: Schema = new Schema(
       ],
     },
     description: {
+      type: String,
+      trim: true,
+    },
+    icon: {
       type: String,
       trim: true,
     },

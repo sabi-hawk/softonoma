@@ -1,6 +1,10 @@
 import Image from "next/image";
 import { ISection } from "@/models/Section";
 import Link from "next/link";
+import {
+  getBackgroundStyle,
+  getDefaultBackground,
+} from "@/lib/section-helpers";
 
 interface AboutSectionProps {
   section: ISection;
@@ -8,21 +12,32 @@ interface AboutSectionProps {
 
 export default function AboutSection({ section }: AboutSectionProps) {
   const { content } = section;
+  const backgroundColor =
+    (content.backgroundColor as string) || getDefaultBackground("about");
+  const background = getBackgroundStyle(
+    backgroundColor,
+    content.backgroundColorOpacity as number
+  );
 
   return (
-    <section className="py-16 md:py-24 px-4 sm:px-6 lg:px-8 theme-bg-white">
+    <section
+      className={`py-12 sm:py-16 md:py-24 px-4 sm:px-6 lg:px-8 ${
+        background.className || ""
+      }`}
+      style={background.style}
+    >
       <div className="max-w-7xl mx-auto">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-12 lg:gap-16 items-center">
           {/* Left Column - Text Content */}
           <div className="order-2 lg:order-1">
             {content.title && (
-              <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold theme-text-black mb-6">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold theme-text-black mb-4 sm:mb-6">
                 {content.title}
               </h2>
             )}
             {content.aboutText && (
               <p
-                className="text-lg leading-relaxed theme-text-black mb-6"
+                className="text-base sm:text-lg leading-relaxed theme-text-black mb-4 sm:mb-6"
                 style={{ opacity: 0.8 }}
               >
                 {content.aboutText}
@@ -30,7 +45,7 @@ export default function AboutSection({ section }: AboutSectionProps) {
             )}
             {content.description && (
               <p
-                className="text-lg leading-relaxed theme-text-black mb-8"
+                className="text-base sm:text-lg leading-relaxed theme-text-black mb-6 sm:mb-8"
                 style={{ opacity: 0.8 }}
               >
                 {content.description}
@@ -39,11 +54,11 @@ export default function AboutSection({ section }: AboutSectionProps) {
             {content.aboutLink && content.aboutLinkText && (
               <Link
                 href={content.aboutLink}
-                className="inline-flex items-center gap-2 px-6 py-3 theme-bg-black theme-text-white rounded-lg font-semibold text-base transition-all duration-300 hover:bg-opacity-90 hover:shadow-lg"
+                className="inline-flex items-center gap-2 px-5 py-2.5 sm:px-6 sm:py-3 theme-bg-black theme-text-white rounded-lg font-semibold text-sm sm:text-base transition-all duration-300 hover:bg-opacity-90 hover:shadow-lg"
               >
                 {content.aboutLinkText}
                 <svg
-                  className="w-5 h-5"
+                  className="w-4 h-4 sm:w-5 sm:h-5"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"

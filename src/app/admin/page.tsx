@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import Loader from "@/components/admin/Loader";
 
 interface Page {
   _id: string;
@@ -209,6 +210,13 @@ export default function AdminPanel() {
           ogTitle: "",
           ogDescription: "",
         });
+        // Show notification if template was auto-applied
+        if (data.templateApplied) {
+          alert(
+            data.message ||
+              "Page created successfully! About Us template has been automatically applied with pre-configured sections."
+          );
+        }
       } else {
         alert(data.error || "Error saving page");
       }
@@ -296,7 +304,7 @@ export default function AdminPanel() {
   };
 
   if (loading) {
-    return <div className="p-8">Loading...</div>;
+    return <Loader />;
   }
 
   return (

@@ -2,12 +2,15 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import Loader from "@/components/admin/Loader";
+import IconUpload from "@/components/admin/IconUpload";
 
 interface Industry {
   _id: string;
   title: string;
   slug: string;
   description?: string;
+  icon?: string;
   isPublished: boolean;
   order: number;
   seoTitle?: string;
@@ -27,6 +30,7 @@ export default function IndustriesAdmin() {
     title: "",
     slug: "",
     description: "",
+    icon: "",
     isPublished: true,
     seoTitle: "",
     seoDescription: "",
@@ -78,6 +82,7 @@ export default function IndustriesAdmin() {
           title: "",
           slug: "",
           description: "",
+          icon: "",
           isPublished: true,
           seoTitle: "",
           seoDescription: "",
@@ -157,6 +162,7 @@ export default function IndustriesAdmin() {
       title: industry.title,
       slug: industry.slug,
       description: industry.description || "",
+      icon: industry.icon || "",
       isPublished: industry.isPublished,
       seoTitle: industry.seoTitle || "",
       seoDescription: industry.seoDescription || "",
@@ -169,7 +175,7 @@ export default function IndustriesAdmin() {
   };
 
   if (loading) {
-    return <div className="p-8">Loading...</div>;
+    return <Loader />;
   }
 
   return (
@@ -183,8 +189,8 @@ export default function IndustriesAdmin() {
             Industries Management
           </h1>
           <p className="text-gray-600 dark:text-gray-400 mt-2">
-            Manage your industries. Each industry creates a pre-filled industry page
-            that you can customize.
+            Manage your industries. Each industry creates a pre-filled industry
+            page that you can customize.
           </p>
         </div>
 
@@ -199,6 +205,7 @@ export default function IndustriesAdmin() {
                 title: "",
                 slug: "",
                 description: "",
+                icon: "",
                 isPublished: true,
                 seoTitle: "",
                 seoDescription: "",
@@ -271,6 +278,23 @@ export default function IndustriesAdmin() {
                   className="w-full px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600"
                   placeholder="Brief description of the industry"
                 />
+              </div>
+              <div>
+                <IconUpload
+                  label="Icon (for dropdown menu)"
+                  value={industryForm.icon}
+                  onChange={(value) =>
+                    setIndustryForm({
+                      ...industryForm,
+                      icon: value,
+                    })
+                  }
+                  placeholder="📱 or https://example.com/icon.svg or upload image"
+                />
+                <p className="text-xs text-gray-500 mt-1">
+                  Icon displayed in the navigation dropdown menu. Can be an
+                  emoji, URL, or uploaded image.
+                </p>
               </div>
               <div className="border-t pt-4 mt-4">
                 <h4 className="text-md font-semibold mb-4 text-gray-900 dark:text-white">

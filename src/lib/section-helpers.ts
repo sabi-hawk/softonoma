@@ -1,5 +1,26 @@
 // Helper functions for section rendering
 
+// Get default background color for section type
+export const getDefaultBackground = (sectionType: string): string => {
+  const defaults: Record<string, string> = {
+    about: "white",
+    services: "theme-bg-white-green-gradient",
+    stats: "white",
+    partnerships: "theme-bg-white-green-gradient",
+    portfolio: "white",
+    technologies: "theme-bg-white-green-gradient",
+    partners: "white",
+    cards: "white",
+    cta: "theme-bg-white-green-gradient",
+    faq: "white",
+    industries: "white",
+    features: "theme-bg-white-green-gradient",
+    blog: "white",
+    process: "white",
+  };
+  return defaults[sectionType] || "white";
+};
+
 // Helper function to convert hex to rgba
 export const hexToRgba = (hex: string, opacity: number = 1): string => {
   if (!hex || !hex.startsWith("#")) {
@@ -19,10 +40,10 @@ export const hexToRgba = (hex: string, opacity: number = 1): string => {
   return `rgba(${r}, ${g}, ${b}, ${opacity})`;
 };
 
-// Check if backgroundColor is a Tailwind gradient class
+// Check if backgroundColor is a Tailwind gradient class or theme class
 export const isGradientClass = (bgColor?: string): boolean => {
   if (!bgColor) return false;
-  return bgColor.startsWith("bg-gradient");
+  return bgColor.startsWith("bg-gradient") || bgColor.startsWith("theme-bg-");
 };
 
 // Get background style and className for sections
@@ -34,7 +55,16 @@ export const getBackgroundStyle = (
     return {};
   }
 
-  // If it's a gradient class, return className
+  // Handle special theme classes
+  if (bgColor === "white") {
+    return { className: "theme-bg-white" };
+  }
+
+  if (bgColor === "theme-bg-white-green-gradient") {
+    return { className: "theme-bg-white-green-gradient" };
+  }
+
+  // If it's a gradient class or theme class, return className
   if (isGradientClass(bgColor)) {
     return { className: bgColor };
   }
@@ -46,4 +76,3 @@ export const getBackgroundStyle = (
     },
   };
 };
-
