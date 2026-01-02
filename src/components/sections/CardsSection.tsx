@@ -1,7 +1,7 @@
 "use client";
 
 import { ISection } from "@/models/Section";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import {
   getBackgroundStyle,
   getDefaultBackground,
@@ -23,6 +23,8 @@ export default function CardsSection({ section }: CardsSectionProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const touchStartX = useRef<number | null>(null);
   const touchEndX = useRef<number | null>(null);
+  const autoSlideIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  const isUserInteractingRef = useRef(false);
 
   const itemsToShow = 3;
   const totalItems = items.length;
@@ -40,6 +42,12 @@ export default function CardsSection({ section }: CardsSectionProps) {
   // Touch handlers for mobile swipe
   const handleTouchStart = (e: React.TouchEvent) => {
     touchStartX.current = e.touches[0].clientX;
+    isUserInteractingRef.current = true;
+    // Pause auto-slide when user interacts
+    if (autoSlideIntervalRef.current) {
+      clearInterval(autoSlideIntervalRef.current);
+      autoSlideIntervalRef.current = null;
+    }
   };
 
   const handleTouchMove = (e: React.TouchEvent) => {
@@ -59,6 +67,9 @@ export default function CardsSection({ section }: CardsSectionProps) {
 
     touchStartX.current = null;
     touchEndX.current = null;
+    
+    // Resume auto-slide after 3 seconds of no interaction
+    resumeAutoSlide();
   };
 
   // Get visible items (3 at a time on desktop, 1 on mobile)
@@ -76,6 +87,66 @@ export default function CardsSection({ section }: CardsSectionProps) {
   const getCurrentSlideIndex = () => {
     return Math.floor(currentIndex / mobileItemsToShow);
   };
+
+  // Resume auto-slide helper
+  const resumeAutoSlide = () => {
+    setTimeout(() => {
+      isUserInteractingRef.current = false;
+      // Restart auto-slide
+      if (typeof window !== 'undefined' && window.innerWidth < 768 && totalItems > mobileItemsToShow) {
+        if (autoSlideIntervalRef.current) {
+          clearInterval(autoSlideIntervalRef.current);
+        }
+        autoSlideIntervalRef.current = setInterval(() => {
+          if (!isUserInteractingRef.current) {
+            setCurrentIndex((prev) => (prev + 1) % totalItems);
+          }
+        }, 5000);
+      }
+    }, 3000);
+  };
+
+  // Set up auto-slide on mount and when currentIndex changes (mobile only)
+  useEffect(() => {
+    // Auto-slide function for mobile only
+    const startAutoSlide = () => {
+      // Check if mobile (window width < 768px)
+      if (typeof window !== 'undefined' && window.innerWidth < 768 && totalItems > mobileItemsToShow) {
+        if (autoSlideIntervalRef.current) {
+          clearInterval(autoSlideIntervalRef.current);
+        }
+        autoSlideIntervalRef.current = setInterval(() => {
+          if (!isUserInteractingRef.current) {
+            setCurrentIndex((prev) => (prev + 1) % totalItems);
+          }
+        }, 5000); // 5 seconds
+      }
+    };
+
+    startAutoSlide();
+    
+    // Handle window resize
+    const handleResize = () => {
+      if (window.innerWidth >= 768) {
+        // Clear interval on desktop
+        if (autoSlideIntervalRef.current) {
+          clearInterval(autoSlideIntervalRef.current);
+          autoSlideIntervalRef.current = null;
+        }
+      } else {
+        startAutoSlide();
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      if (autoSlideIntervalRef.current) {
+        clearInterval(autoSlideIntervalRef.current);
+      }
+      window.removeEventListener('resize', handleResize);
+    };
+  }, [currentIndex, totalItems, mobileItemsToShow]);
 
   return (
     <section
@@ -135,11 +206,17 @@ export default function CardsSection({ section }: CardsSectionProps) {
               style={{ touchAction: 'pan-y' }}
             >
               {/* Mobile: Show 1 item at a time */}
-              <div className="md:hidden">
-                {getVisibleItems(true).map(({ item, originalIndex }) => (
+              <div className="md:hidden overflow-hidden">
+                <div 
+                  className="flex transition-transform duration-500 ease-in-out"
+                  style={{
+                    transform: `translateX(-${currentIndex * 100}%)`
+                  }}
+                >
+                {items.map((item, index) => (
                   <div
-                    key={originalIndex}
-                    className="group p-6 theme-bg-white rounded-xl border border-gray-200 shadow-lg transition-all duration-300 mx-auto max-w-sm"
+                    key={index}
+                    className="group p-6 theme-bg-white rounded-xl border border-gray-200 shadow-lg transition-all duration-300 flex-shrink-0 w-full px-4"
                     style={{ borderColor: "rgba(0, 0, 0, 0.1)" }}
                   >
                     {content.showStars !== false && (
@@ -179,6 +256,7 @@ export default function CardsSection({ section }: CardsSectionProps) {
                     </div>
                   </div>
                 ))}
+                </div>
               </div>
               {/* Desktop: Show 3 items */}
               <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 px-8">

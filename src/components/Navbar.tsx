@@ -88,6 +88,7 @@ export default function Navbar({ pages, services, industries }: NavbarProps) {
     <Link
       key={item._id}
       href={`${baseUrl}/${item.slug}`}
+      prefetch={true}
       onClick={handleLinkClick}
       className="group flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 transition-all duration-200 border border-transparent hover:border-gray-200 hover:shadow-sm"
     >
@@ -198,6 +199,7 @@ export default function Navbar({ pages, services, industries }: NavbarProps) {
                     <Link
                       key={item.id}
                       href={`/${item.slug}`}
+                      prefetch={true}
                       className="px-4 py-2 text-sm font-bold text-gray-700 hover:text-gray-900 hover:bg-gray-50 rounded-lg transition-all duration-200 relative group"
                     >
                       {item.title}
@@ -416,7 +418,7 @@ export default function Navbar({ pages, services, industries }: NavbarProps) {
                           setServicesDropdownOpen(!servicesDropdownOpen);
                         }}
                         className="w-full flex items-center justify-between px-4 py-3 text-base font-medium text-gray-700 hover:bg-gray-50 active:bg-gray-100 rounded-lg transition-colors"
-                        style={{ touchAction: 'manipulation' }}
+                        style={{ touchAction: "manipulation" }}
                       >
                         <span>Services</span>
                         <svg
@@ -455,7 +457,10 @@ export default function Navbar({ pages, services, industries }: NavbarProps) {
                                 router.push(`/services/${service.slug}`);
                               }}
                               className="block w-full text-left px-4 py-2 text-sm text-gray-600 hover:bg-gray-50 active:bg-gray-100 rounded-lg transition-colors cursor-pointer relative z-10"
-                              style={{ touchAction: 'manipulation', WebkitTapHighlightColor: 'transparent' }}
+                              style={{
+                                touchAction: "manipulation",
+                                WebkitTapHighlightColor: "transparent",
+                              }}
                             >
                               {service.title}
                             </button>
@@ -479,7 +484,7 @@ export default function Navbar({ pages, services, industries }: NavbarProps) {
                           setIndustriesDropdownOpen(!industriesDropdownOpen);
                         }}
                         className="w-full flex items-center justify-between px-4 py-3 text-base font-medium text-gray-700 hover:bg-gray-50 active:bg-gray-100 rounded-lg transition-colors"
-                        style={{ touchAction: 'manipulation' }}
+                        style={{ touchAction: "manipulation" }}
                       >
                         <span>Industries</span>
                         <svg
@@ -518,7 +523,10 @@ export default function Navbar({ pages, services, industries }: NavbarProps) {
                                 router.push(`/industries/${industry.slug}`);
                               }}
                               className="block w-full text-left px-4 py-2 text-sm text-gray-600 hover:bg-gray-50 active:bg-gray-100 rounded-lg transition-colors cursor-pointer relative z-10"
-                              style={{ touchAction: 'manipulation', WebkitTapHighlightColor: 'transparent' }}
+                              style={{
+                                touchAction: "manipulation",
+                                WebkitTapHighlightColor: "transparent",
+                              }}
                             >
                               {industry.title}
                             </button>

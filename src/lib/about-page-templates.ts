@@ -94,6 +94,12 @@ export const aboutPageTemplate: PageTemplate = {
             description:
               "Years of expertise in delivering innovative IT solutions",
           },
+          {
+            number: "200+",
+            title: "Team Members",
+            description:
+              "A dedicated team of experts committed to your success",
+          },
         ],
         backgroundColor: "white",
       },
@@ -201,7 +207,7 @@ export const aboutPageTemplate: PageTemplate = {
           },
           {
             name: "Technology",
-            icon: "https://cloud.appwrite.io/v1/storage/buckets/694cc45b003184dc8584/files/69521993003cd43d55d4/view?project=694cc43b00225b94d30d",
+            icon: "https://cloud.appwrite.io/v1/storage/buckets/694cc45b003184dc8584/files/695798080010b92e9830/view?project=694cc43b00225b94d30d",
           },
           {
             name: "Technology",

@@ -1,26 +1,42 @@
 import connectDB from "@/lib/mongodb";
-import Page from "@/models/Page";
+import Service from "@/models/Service";
+import Industry from "@/models/Industry";
 import Footer from "./Footer";
+
+// Force dynamic rendering to always fetch fresh data from MongoDB
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 export default async function FooterWrapper() {
   await connectDB();
 
-  // Try to get footer data from a "footer" page or use defaults
-  // For now, we'll use defaults. Later this can be made dynamic through admin panel
-  const footerPage = await Page.findOne({ slug: "footer" }).lean();
+  // Fetch all published services, sorted by order
+  const services = await Service.find({ isPublished: true })
+    .sort({ order: 1 })
+    .select("title slug order")
+    .lean();
 
-  // If footer page exists, extract data from it
-  // Otherwise use sensible defaults for IT company
-  const footerData = footerPage
-    ? {
-        companyName: footerPage.title || "IT Solutions",
-        companyDescription: footerPage.content || undefined,
-        email: footerPage.seoDescription || undefined, // Reusing fields for now
-        phone: footerPage.seoKeywords || undefined,
-        address: footerPage.ogDescription || undefined,
-      }
-    : undefined;
+  // Fetch all published industries, sorted by order
+  const industries = await Industry.find({ isPublished: true })
+    .sort({ order: 1 })
+    .select("title slug order")
+    .lean();
 
-  return <Footer {...footerData} />;
+  // Serialize ObjectIds to strings
+  const serializedServices = services.map((service) => ({
+    title: service.title,
+    href: `/services/${service.slug}`,
+  }));
+
+  const serializedIndustries = industries.map((industry) => ({
+    title: industry.title,
+    href: `/industries/${industry.slug}`,
+  }));
+
+  return (
+    <Footer
+      services={serializedServices}
+      industries={serializedIndustries}
+    />
+  );
 }
-

@@ -112,7 +112,7 @@ export function getEcommerceTemplate(title: string): IndustryContentTemplate {
       },
       {
         name: "Technology",
-        icon: "https://cloud.appwrite.io/v1/storage/buckets/694cc45b003184dc8584/files/69521993003cd43d55d4/view?project=694cc43b00225b94d30d",
+        icon: "https://cloud.appwrite.io/v1/storage/buckets/694cc45b003184dc8584/files/695798080010b92e9830/view?project=694cc43b00225b94d30d",
       },
       {
         name: "Technology",

@@ -1,49 +1,58 @@
-import { notFound } from "next/navigation";
+import Link from "next/link";
 import connectDB from "@/lib/mongodb";
 import Page from "@/models/Page";
 import Section from "@/models/Section";
 import SectionRenderer from "@/components/sections/SectionRenderer";
 
+// Force dynamic rendering to always fetch fresh data from MongoDB
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export default async function Home() {
   await connectDB();
 
   // Look for a page with slug "home" or empty string
+  // Only select fields we need for better performance
   let page = await Page.findOne({
     $or: [{ slug: "home" }, { slug: "" }],
     isPublished: true,
-  }).lean();
+  })
+    .select("_id title slug content")
+    .lean();
 
   // If no home page exists, try to create it or show a message
   if (!page) {
     // Check if there's an unpublished home page
     page = await Page.findOne({
       $or: [{ slug: "home" }, { slug: "" }],
-    }).lean();
+    })
+      .select("_id title slug content")
+      .lean();
 
     if (!page) {
       // No home page at all - redirect to admin or show setup message
-  return (
+      return (
         <div className="min-h-screen bg-white dark:bg-gray-900 flex items-center justify-center">
           <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
+            <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
               Welcome to Your IT Company Website
-          </h1>
-          <p className="text-xl text-gray-600 dark:text-gray-300 mb-8">
-              Your homepage hasn't been set up yet. Please initialize it from
-              the admin panel.
-          </p>
-            <a
+            </h1>
+            <p className="text-xl text-gray-600 dark:text-gray-300 mb-8">
+              Your homepage hasn&apos;t been set up yet. Please initialize it
+              from the admin panel.
+            </p>
+            <Link
               href="/api/init-homepage"
               className="inline-block bg-blue-600 text-white px-6 py-3 rounded-md hover:bg-blue-700 transition-colors mr-4"
             >
               Initialize Homepage
-            </a>
-            <a
+            </Link>
+            <Link
               href="/admin"
               className="inline-block bg-gray-600 text-white px-6 py-3 rounded-md hover:bg-gray-700 transition-colors"
             >
               Go to Admin Panel
-            </a>
+            </Link>
           </div>
         </div>
       );
@@ -51,7 +60,12 @@ export default async function Home() {
   }
 
   // Get sections for the homepage
-  const sections = await Section.find({ pageId: page._id, isActive: true })
+  // Only select fields we need for better performance
+  const sections = await Section.find({
+    pageId: page._id,
+    isActive: true,
+  })
+    .select("_id pageId serviceId type content order isActive")
     .sort({ order: 1 })
     .lean();
 
@@ -84,10 +98,13 @@ export default async function Home() {
               {page.title}
             </h1>
             <div className="prose prose-lg dark:prose-invert max-w-none text-gray-700 dark:text-gray-300">
-              <p>No sections yet. Add sections from the admin panel to build your homepage.</p>
+              <p>
+                No sections yet. Add sections from the admin panel to build your
+                homepage.
+              </p>
             </div>
           </article>
-      </main>
+        </main>
       )}
     </div>
   );

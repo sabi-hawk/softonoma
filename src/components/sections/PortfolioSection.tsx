@@ -2,8 +2,7 @@
 
 import Image from "next/image";
 import { ISection } from "@/models/Section";
-import { useState, useRef } from "react";
-import Link from "next/link";
+import { useState, useRef, useEffect } from "react";
 import {
   getBackgroundStyle,
   getDefaultBackground,
@@ -31,6 +30,8 @@ export default function PortfolioSection({ section }: PortfolioSectionProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const touchStartX = useRef<number | null>(null);
   const touchEndX = useRef<number | null>(null);
+  const autoSlideIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  const isUserInteractingRef = useRef(false);
 
   const itemsToShow = 3;
   const totalItems = projects.length;
@@ -48,6 +49,12 @@ export default function PortfolioSection({ section }: PortfolioSectionProps) {
   // Touch handlers for mobile swipe
   const handleTouchStart = (e: React.TouchEvent) => {
     touchStartX.current = e.touches[0].clientX;
+    isUserInteractingRef.current = true;
+    // Pause auto-slide when user interacts
+    if (autoSlideIntervalRef.current) {
+      clearInterval(autoSlideIntervalRef.current);
+      autoSlideIntervalRef.current = null;
+    }
   };
 
   const handleTouchMove = (e: React.TouchEvent) => {
@@ -67,6 +74,9 @@ export default function PortfolioSection({ section }: PortfolioSectionProps) {
 
     touchStartX.current = null;
     touchEndX.current = null;
+
+    // Resume auto-slide after 3 seconds of no interaction
+    resumeAutoSlide();
   };
 
   // Get visible items (3 at a time on desktop, 1 on mobile)
@@ -84,6 +94,74 @@ export default function PortfolioSection({ section }: PortfolioSectionProps) {
   const getCurrentSlideIndex = () => {
     return Math.floor(currentIndex / mobileItemsToShow);
   };
+
+  // Resume auto-slide helper
+  const resumeAutoSlide = () => {
+    setTimeout(() => {
+      isUserInteractingRef.current = false;
+      // Restart auto-slide
+      if (
+        typeof window !== "undefined" &&
+        window.innerWidth < 768 &&
+        totalItems > mobileItemsToShow
+      ) {
+        if (autoSlideIntervalRef.current) {
+          clearInterval(autoSlideIntervalRef.current);
+        }
+        autoSlideIntervalRef.current = setInterval(() => {
+          if (!isUserInteractingRef.current) {
+            setCurrentIndex((prev) => (prev + 1) % totalItems);
+          }
+        }, 5000);
+      }
+    }, 3000);
+  };
+
+  // Set up auto-slide on mount and when currentIndex changes (mobile only)
+  useEffect(() => {
+    // Auto-slide function for mobile only
+    const startAutoSlide = () => {
+      // Check if mobile (window width < 768px)
+      if (
+        typeof window !== "undefined" &&
+        window.innerWidth < 768 &&
+        totalItems > mobileItemsToShow
+      ) {
+        if (autoSlideIntervalRef.current) {
+          clearInterval(autoSlideIntervalRef.current);
+        }
+        autoSlideIntervalRef.current = setInterval(() => {
+          if (!isUserInteractingRef.current) {
+            setCurrentIndex((prev) => (prev + 1) % totalItems);
+          }
+        }, 5000); // 5 seconds
+      }
+    };
+
+    startAutoSlide();
+
+    // Handle window resize
+    const handleResize = () => {
+      if (window.innerWidth >= 768) {
+        // Clear interval on desktop
+        if (autoSlideIntervalRef.current) {
+          clearInterval(autoSlideIntervalRef.current);
+          autoSlideIntervalRef.current = null;
+        }
+      } else {
+        startAutoSlide();
+      }
+    };
+
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      if (autoSlideIntervalRef.current) {
+        clearInterval(autoSlideIntervalRef.current);
+      }
+      window.removeEventListener("resize", handleResize);
+    };
+  }, [currentIndex, totalItems, mobileItemsToShow]);
 
   return (
     <section
@@ -141,102 +219,112 @@ export default function PortfolioSection({ section }: PortfolioSectionProps) {
               onTouchStart={handleTouchStart}
               onTouchMove={handleTouchMove}
               onTouchEnd={handleTouchEnd}
-              style={{ touchAction: 'pan-y' }}
+              style={{ touchAction: "pan-y" }}
             >
               {/* Mobile: Show 1 item at a time */}
-              <div className="md:hidden">
-                {getVisibleItems(true).map(({ item: project, originalIndex }) => (
-                  <div
-                    key={originalIndex}
-                    className="group relative theme-bg-white rounded-xl overflow-hidden shadow-lg transition-all duration-300 mx-auto max-w-sm"
-                  >
-                    <div className="relative h-64 overflow-hidden theme-bg-primary-mid">
-                      {isImageUrl(project.image) && project.image ? (
-                        <Image
-                          src={project.image}
-                          alt={project.title || "Project"}
-                          fill
-                          className="object-cover transition-transform duration-500"
-                          unoptimized
-                        />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center">
-                          <div className="theme-text-white text-6xl">
-                            {project.image || "💼"}
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                    <div className="p-6">
-                      {project.category && (
-                        <span
-                          className="inline-block px-3 py-1 text-xs font-semibold theme-primary-mid rounded-full mb-3"
-                          style={{ backgroundColor: "rgba(121, 178, 70, 0.1)" }}
-                        >
-                          {project.category}
-                        </span>
-                      )}
-                      {project.title && (
-                        <h3 className="text-xl font-bold theme-text-black mb-3">
-                          {project.title}
-                        </h3>
-                      )}
-                      {project.description && (
-                        <p
-                          className="theme-text-black mb-4 line-clamp-3"
-                          style={{ opacity: 0.8 }}
-                        >
-                          {project.description}
-                        </p>
-                      )}
-                      {Array.isArray(project.technologies) &&
-                        project.technologies.length > 0 && (
-                          <div className="flex flex-wrap gap-2">
-                            {project.technologies.map(
-                              (tech: string, techIndex: number) => (
-                                <span
-                                  key={techIndex}
-                                  className="px-2 py-1 text-xs font-medium theme-text-black rounded"
-                                  style={{
-                                    backgroundColor: "rgba(0, 0, 0, 0.05)",
-                                  }}
-                                >
-                                  {tech}
-                                </span>
-                              )
-                            )}
+              <div className="md:hidden overflow-hidden">
+                <div
+                  className="flex transition-transform duration-500 ease-in-out"
+                  style={{
+                    transform: `translateX(-${currentIndex * 100}%)`,
+                  }}
+                >
+                  {projects.map((project, index) => (
+                    <div
+                      key={index}
+                      className="group relative theme-bg-white rounded-xl overflow-hidden shadow-lg transition-all duration-300 shrink-0 w-full px-4"
+                    >
+                      <div className="relative h-64 overflow-hidden theme-bg-primary-mid">
+                        {isImageUrl(project.image) && project.image ? (
+                          <Image
+                            src={project.image}
+                            alt={project.title || "Project"}
+                            fill
+                            className="object-cover transition-transform duration-500"
+                            unoptimized
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center">
+                            <div className="theme-text-white text-6xl">
+                              {project.image || "💼"}
+                            </div>
                           </div>
                         )}
+                      </div>
+                      <div className="p-6">
+                        {project.category && (
+                          <span
+                            className="inline-block px-3 py-1 text-xs font-semibold theme-primary-mid rounded-full mb-3"
+                            style={{
+                              backgroundColor: "rgba(121, 178, 70, 0.1)",
+                            }}
+                          >
+                            {project.category}
+                          </span>
+                        )}
+                        {project.title && (
+                          <h3 className="text-xl font-bold theme-text-black mb-3">
+                            {project.title}
+                          </h3>
+                        )}
+                        {project.description && (
+                          <p
+                            className="theme-text-black mb-4 line-clamp-3"
+                            style={{ opacity: 0.8 }}
+                          >
+                            {project.description}
+                          </p>
+                        )}
+                        {Array.isArray(project.technologies) &&
+                          project.technologies.length > 0 && (
+                            <div className="flex flex-wrap gap-2">
+                              {project.technologies.map(
+                                (tech: string, techIndex: number) => (
+                                  <span
+                                    key={techIndex}
+                                    className="px-2 py-1 text-xs font-medium theme-text-black rounded"
+                                    style={{
+                                      backgroundColor: "rgba(0, 0, 0, 0.05)",
+                                    }}
+                                  >
+                                    {tech}
+                                  </span>
+                                )
+                              )}
+                            </div>
+                          )}
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
               {/* Desktop: Show 3 items */}
               <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-3 gap-8 px-8">
-                {getVisibleItems(false).map(({ item: project, originalIndex }) => (
-                <div
-                  key={originalIndex}
-                  className="group relative theme-bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2"
-                >
-                  {/* Project Image */}
-                  <div className="relative h-64 overflow-hidden theme-bg-primary-mid">
-                    {isImageUrl(project.image) && project.image ? (
-                      <Image
-                        src={project.image}
-                        alt={project.title || "Project"}
-                        fill
-                        className="object-cover group-hover:scale-110 transition-transform duration-500"
-                        unoptimized
-                      />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center">
-                        <div className="theme-text-white text-6xl animate-float">
-                          {project.image || "💼"}
-                        </div>
-                      </div>
-                    )}
-                    {/* Overlay on hover */}
-                    {/* <div className=" absolute inset-0 bg-linear-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-6">
+                {getVisibleItems(false).map(
+                  ({ item: project, originalIndex }) => (
+                    <div
+                      key={originalIndex}
+                      className="group relative theme-bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2"
+                    >
+                      {/* Project Image */}
+                      <div className="relative h-64 overflow-hidden theme-bg-primary-mid">
+                        {isImageUrl(project.image) && project.image ? (
+                          <Image
+                            src={project.image}
+                            alt={project.title || "Project"}
+                            fill
+                            className="object-cover group-hover:scale-110 transition-transform duration-500"
+                            unoptimized
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center">
+                            <div className="theme-text-white text-6xl animate-float">
+                              {project.image || "💼"}
+                            </div>
+                          </div>
+                        )}
+                        {/* Overlay on hover */}
+                        {/* <div className=" absolute inset-0 bg-linear-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-6">
                       {project.link && (
                         <Link
                           href={project.link}
@@ -246,52 +334,55 @@ export default function PortfolioSection({ section }: PortfolioSectionProps) {
                         </Link>
                       )}
                     </div> */}
-                  </div>
+                      </div>
 
-                  {/* Project Content */}
-                  <div className="p-6">
-                    {project.category && (
-                      <span
-                        className="inline-block px-3 py-1 text-xs font-semibold theme-primary-mid rounded-full mb-3"
-                        style={{ backgroundColor: "rgba(121, 178, 70, 0.1)" }}
-                      >
-                        {project.category}
-                      </span>
-                    )}
-                    {project.title && (
-                      <h3 className="text-xl font-bold theme-text-black mb-3 theme-hover-primary-mid transition-colors">
-                        {project.title}
-                      </h3>
-                    )}
-                    {project.description && (
-                      <p
-                        className="theme-text-black mb-4 line-clamp-3"
-                        style={{ opacity: 0.8 }}
-                      >
-                        {project.description}
-                      </p>
-                    )}
-                    {Array.isArray(project.technologies) &&
-                      project.technologies.length > 0 && (
-                        <div className="flex flex-wrap gap-2">
-                          {project.technologies.map(
-                            (tech: string, techIndex: number) => (
-                              <span
-                                key={techIndex}
-                                className="px-2 py-1 text-xs font-medium theme-text-black rounded"
-                                style={{
-                                  backgroundColor: "rgba(0, 0, 0, 0.05)",
-                                }}
-                              >
-                                {tech}
-                              </span>
-                            )
+                      {/* Project Content */}
+                      <div className="p-6">
+                        {project.category && (
+                          <span
+                            className="inline-block px-3 py-1 text-xs font-semibold theme-primary-mid rounded-full mb-3"
+                            style={{
+                              backgroundColor: "rgba(121, 178, 70, 0.1)",
+                            }}
+                          >
+                            {project.category}
+                          </span>
+                        )}
+                        {project.title && (
+                          <h3 className="text-xl font-bold theme-text-black mb-3 theme-hover-primary-mid transition-colors">
+                            {project.title}
+                          </h3>
+                        )}
+                        {project.description && (
+                          <p
+                            className="theme-text-black mb-4 line-clamp-3"
+                            style={{ opacity: 0.8 }}
+                          >
+                            {project.description}
+                          </p>
+                        )}
+                        {Array.isArray(project.technologies) &&
+                          project.technologies.length > 0 && (
+                            <div className="flex flex-wrap gap-2">
+                              {project.technologies.map(
+                                (tech: string, techIndex: number) => (
+                                  <span
+                                    key={techIndex}
+                                    className="px-2 py-1 text-xs font-medium theme-text-black rounded"
+                                    style={{
+                                      backgroundColor: "rgba(0, 0, 0, 0.05)",
+                                    }}
+                                  >
+                                    {tech}
+                                  </span>
+                                )
+                              )}
+                            </div>
                           )}
-                        </div>
-                      )}
-                  </div>
-                </div>
-                ))}
+                      </div>
+                    </div>
+                  )
+                )}
               </div>
             </div>
 
@@ -328,8 +419,8 @@ export default function PortfolioSection({ section }: PortfolioSectionProps) {
                     onClick={() => setCurrentIndex(index * mobileItemsToShow)}
                     className={`w-2 h-2 rounded-full transition-all ${
                       getCurrentSlideIndex() === index
-                        ? 'bg-[#79b246] w-8'
-                        : 'bg-gray-300'
+                        ? "bg-[#79b246] w-8"
+                        : "bg-gray-300"
                     }`}
                     aria-label={`Go to slide ${index + 1}`}
                   />

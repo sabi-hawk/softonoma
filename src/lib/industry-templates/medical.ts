@@ -61,7 +61,7 @@ export function getMedicalTemplate(title: string): IndustryContentTemplate {
       },
     ],
     technologies: [
-      { name: "Technology", icon: "https://cloud.appwrite.io/v1/storage/buckets/694cc45b003184dc8584/files/69521993003cd43d55d4/view?project=694cc43b00225b94d30d" },
+      { name: "Technology", icon: "https://cloud.appwrite.io/v1/storage/buckets/694cc45b003184dc8584/files/695798080010b92e9830/view?project=694cc43b00225b94d30d" },
       { name: "Technology", icon: "https://cloud.appwrite.io/v1/storage/buckets/694cc45b003184dc8584/files/695219a5003be273ee49/view?project=694cc43b00225b94d30d" },
       { name: "Technology", icon: "https://cloud.appwrite.io/v1/storage/buckets/694cc45b003184dc8584/files/695219b20015c62ac492/view?project=694cc43b00225b94d30d" },
       { name: "Technology", icon: "https://cloud.appwrite.io/v1/storage/buckets/694cc45b003184dc8584/files/695219bd0033f3c61edc/view?project=694cc43b00225b94d30d" },

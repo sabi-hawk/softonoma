@@ -64,7 +64,7 @@ export function getManufacturingTemplate(title: string): IndustryContentTemplate
       { name: "Technology", icon: "https://cloud.appwrite.io/v1/storage/buckets/694cc45b003184dc8584/files/695219b20015c62ac492/view?project=694cc43b00225b94d30d" },
       { name: "Technology", icon: "https://cloud.appwrite.io/v1/storage/buckets/694cc45b003184dc8584/files/695219900007059ac2cb/view?project=694cc43b00225b94d30d" },
       { name: "Technology", icon: "https://cloud.appwrite.io/v1/storage/buckets/694cc45b003184dc8584/files/695219bd0033f3c61edc/view?project=694cc43b00225b94d30d" },
-      { name: "Technology", icon: "https://cloud.appwrite.io/v1/storage/buckets/694cc45b003184dc8584/files/69521993003cd43d55d4/view?project=694cc43b00225b94d30d" },
+      { name: "Technology", icon: "https://cloud.appwrite.io/v1/storage/buckets/694cc45b003184dc8584/files/695798080010b92e9830/view?project=694cc43b00225b94d30d" },
       { name: "Technology", icon: "https://cloud.appwrite.io/v1/storage/buckets/694cc45b003184dc8584/files/6952695c003e40a1102c/view?project=694cc43b00225b94d30d" },
       { name: "Technology", icon: "https://cloud.appwrite.io/v1/storage/buckets/694cc45b003184dc8584/files/6952199a00375ca93a4b/view?project=694cc43b00225b94d30d" },
       { name: "Technology", icon: "https://cloud.appwrite.io/v1/storage/buckets/694cc45b003184dc8584/files/69526962002d4cdff6c9/view?project=694cc43b00225b94d30d" },

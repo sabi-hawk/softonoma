@@ -4,6 +4,10 @@ import Service from "@/models/Service";
 import Industry from "@/models/Industry";
 import Navbar from "./Navbar";
 
+// Force dynamic rendering to always fetch fresh navigation data from MongoDB
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 export default async function NavbarWrapper() {
   await connectDB();
 

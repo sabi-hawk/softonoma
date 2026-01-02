@@ -63,7 +63,7 @@ export function getRealEstateTemplate(title: string): IndustryContentTemplate {
     technologies: [
       { name: "Technology", icon: "https://cloud.appwrite.io/v1/storage/buckets/694cc45b003184dc8584/files/695219ab0019b9847999/view?project=694cc43b00225b94d30d" },
       { name: "Technology", icon: "https://cloud.appwrite.io/v1/storage/buckets/694cc45b003184dc8584/files/695269be003360bed809/view?project=694cc43b00225b94d30d" },
-      { name: "Technology", icon: "https://cloud.appwrite.io/v1/storage/buckets/694cc45b003184dc8584/files/69521993003cd43d55d4/view?project=694cc43b00225b94d30d" },
+      { name: "Technology", icon: "https://cloud.appwrite.io/v1/storage/buckets/694cc45b003184dc8584/files/695798080010b92e9830/view?project=694cc43b00225b94d30d" },
       { name: "Technology", icon: "https://cloud.appwrite.io/v1/storage/buckets/694cc45b003184dc8584/files/695219900007059ac2cb/view?project=694cc43b00225b94d30d" },
       { name: "Technology", icon: "https://cloud.appwrite.io/v1/storage/buckets/694cc45b003184dc8584/files/69526962002d4cdff6c9/view?project=694cc43b00225b94d30d" },
       { name: "Technology", icon: "https://cloud.appwrite.io/v1/storage/buckets/694cc45b003184dc8584/files/6952199a00375ca93a4b/view?project=694cc43b00225b94d30d" },

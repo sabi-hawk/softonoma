@@ -1,7 +1,7 @@
 "use client";
 
 import { ISection } from "@/models/Section";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { getBackgroundStyle, getDefaultBackground } from "@/lib/section-helpers";
 
@@ -23,6 +23,8 @@ export default function BlogSection({ section }: BlogSectionProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const touchStartX = useRef<number | null>(null);
   const touchEndX = useRef<number | null>(null);
+  const autoSlideIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  const isUserInteractingRef = useRef(false);
 
   const itemsToShow = 3;
   const totalItems = posts.length;
@@ -40,6 +42,12 @@ export default function BlogSection({ section }: BlogSectionProps) {
   // Touch handlers for mobile swipe
   const handleTouchStart = (e: React.TouchEvent) => {
     touchStartX.current = e.touches[0].clientX;
+    isUserInteractingRef.current = true;
+    // Pause auto-slide when user interacts
+    if (autoSlideIntervalRef.current) {
+      clearInterval(autoSlideIntervalRef.current);
+      autoSlideIntervalRef.current = null;
+    }
   };
 
   const handleTouchMove = (e: React.TouchEvent) => {
@@ -59,6 +67,9 @@ export default function BlogSection({ section }: BlogSectionProps) {
 
     touchStartX.current = null;
     touchEndX.current = null;
+    
+    // Resume auto-slide after 3 seconds of no interaction
+    resumeAutoSlide();
   };
 
   // Get visible items (3 at a time on desktop, 1 on mobile)
@@ -76,6 +87,66 @@ export default function BlogSection({ section }: BlogSectionProps) {
   const getCurrentSlideIndex = () => {
     return Math.floor(currentIndex / mobileItemsToShow);
   };
+
+  // Resume auto-slide helper
+  const resumeAutoSlide = () => {
+    setTimeout(() => {
+      isUserInteractingRef.current = false;
+      // Restart auto-slide
+      if (typeof window !== 'undefined' && window.innerWidth < 768 && totalItems > mobileItemsToShow) {
+        if (autoSlideIntervalRef.current) {
+          clearInterval(autoSlideIntervalRef.current);
+        }
+        autoSlideIntervalRef.current = setInterval(() => {
+          if (!isUserInteractingRef.current) {
+            setCurrentIndex((prev) => (prev + 1) % totalItems);
+          }
+        }, 5000);
+      }
+    }, 3000);
+  };
+
+  // Set up auto-slide on mount and when currentIndex changes (mobile only)
+  useEffect(() => {
+    // Auto-slide function for mobile only
+    const startAutoSlide = () => {
+      // Check if mobile (window width < 768px)
+      if (typeof window !== 'undefined' && window.innerWidth < 768 && totalItems > mobileItemsToShow) {
+        if (autoSlideIntervalRef.current) {
+          clearInterval(autoSlideIntervalRef.current);
+        }
+        autoSlideIntervalRef.current = setInterval(() => {
+          if (!isUserInteractingRef.current) {
+            setCurrentIndex((prev) => (prev + 1) % totalItems);
+          }
+        }, 5000); // 5 seconds
+      }
+    };
+
+    startAutoSlide();
+    
+    // Handle window resize
+    const handleResize = () => {
+      if (window.innerWidth >= 768) {
+        // Clear interval on desktop
+        if (autoSlideIntervalRef.current) {
+          clearInterval(autoSlideIntervalRef.current);
+          autoSlideIntervalRef.current = null;
+        }
+      } else {
+        startAutoSlide();
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      if (autoSlideIntervalRef.current) {
+        clearInterval(autoSlideIntervalRef.current);
+      }
+      window.removeEventListener('resize', handleResize);
+    };
+  }, [currentIndex, totalItems, mobileItemsToShow]);
 
   return (
     <section className={`py-12 sm:py-16 md:py-24 px-4 sm:px-6 lg:px-8 ${background.className || ""}`} style={background.style}>
@@ -131,11 +202,17 @@ export default function BlogSection({ section }: BlogSectionProps) {
               style={{ touchAction: 'pan-y' }}
             >
               {/* Mobile: Show 1 item at a time */}
-              <div className="md:hidden">
-                {getVisibleItems(true).map(({ item: post, originalIndex }) => (
+              <div className="md:hidden overflow-hidden">
+                <div 
+                  className="flex transition-transform duration-500 ease-in-out"
+                  style={{
+                    transform: `translateX(-${currentIndex * 100}%)`
+                  }}
+                >
+                {posts.map((post, index) => (
                   <article
-                    key={originalIndex}
-                    className="group theme-bg-white rounded-xl overflow-hidden shadow-lg transition-all duration-300 mx-auto max-w-sm"
+                    key={index}
+                    className="group theme-bg-white rounded-xl overflow-hidden shadow-lg transition-all duration-300 flex-shrink-0 w-full px-4"
                   >
                     <div className="relative h-48 overflow-hidden theme-gradient">
                       {isImageUrl(post.image) ? (
@@ -204,6 +281,7 @@ export default function BlogSection({ section }: BlogSectionProps) {
                     </div>
                   </article>
                 ))}
+                </div>
               </div>
               {/* Desktop: Show 3 items */}
               <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-3 gap-8 px-8">

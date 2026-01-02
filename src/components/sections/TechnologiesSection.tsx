@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { ISection } from "@/models/Section";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import {
   getBackgroundStyle,
   getDefaultBackground,
@@ -37,6 +37,8 @@ export default function TechnologiesSection({
   const touchStartX = useRef<number | null>(null);
   const touchEndX = useRef<number | null>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const autoSlideIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  const isUserInteractingRef = useRef(false);
 
   // Mobile carousel settings
   const mobileItemsToShow = 4;
@@ -46,6 +48,12 @@ export default function TechnologiesSection({
   // Touch handlers for mobile swipe
   const handleTouchStart = (e: React.TouchEvent) => {
     touchStartX.current = e.touches[0].clientX;
+    isUserInteractingRef.current = true;
+    // Pause auto-slide when user interacts
+    if (autoSlideIntervalRef.current) {
+      clearInterval(autoSlideIntervalRef.current);
+      autoSlideIntervalRef.current = null;
+    }
   };
 
   const handleTouchMove = (e: React.TouchEvent) => {
@@ -67,6 +75,9 @@ export default function TechnologiesSection({
 
     touchStartX.current = null;
     touchEndX.current = null;
+    
+    // Resume auto-slide after 3 seconds of no interaction
+    resumeAutoSlide();
   };
 
   // Get visible items for mobile carousel
@@ -80,6 +91,66 @@ export default function TechnologiesSection({
   const getCurrentSlideIndex = () => {
     return currentIndex;
   };
+
+  // Resume auto-slide helper
+  const resumeAutoSlide = () => {
+    setTimeout(() => {
+      isUserInteractingRef.current = false;
+      // Restart auto-slide
+      if (typeof window !== 'undefined' && window.innerWidth < 768 && totalSlides > 1) {
+        if (autoSlideIntervalRef.current) {
+          clearInterval(autoSlideIntervalRef.current);
+        }
+        autoSlideIntervalRef.current = setInterval(() => {
+          if (!isUserInteractingRef.current) {
+            setCurrentIndex((prev) => (prev + 1) % totalSlides);
+          }
+        }, 5000);
+      }
+    }, 3000);
+  };
+
+  // Set up auto-slide on mount and when currentIndex changes (mobile only)
+  useEffect(() => {
+    // Auto-slide function for mobile only
+    const startAutoSlide = () => {
+      // Check if mobile (window width < 768px)
+      if (typeof window !== 'undefined' && window.innerWidth < 768 && totalSlides > 1) {
+        if (autoSlideIntervalRef.current) {
+          clearInterval(autoSlideIntervalRef.current);
+        }
+        autoSlideIntervalRef.current = setInterval(() => {
+          if (!isUserInteractingRef.current) {
+            setCurrentIndex((prev) => (prev + 1) % totalSlides);
+          }
+        }, 5000); // 5 seconds
+      }
+    };
+
+    startAutoSlide();
+    
+    // Handle window resize
+    const handleResize = () => {
+      if (window.innerWidth >= 768) {
+        // Clear interval on desktop
+        if (autoSlideIntervalRef.current) {
+          clearInterval(autoSlideIntervalRef.current);
+          autoSlideIntervalRef.current = null;
+        }
+      } else {
+        startAutoSlide();
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      if (autoSlideIntervalRef.current) {
+        clearInterval(autoSlideIntervalRef.current);
+      }
+      window.removeEventListener('resize', handleResize);
+    };
+  }, [currentIndex, totalSlides]);
 
   // Split title to show first part in theme color and rest in white
   const getTitleParts = (title: string) => {
@@ -165,7 +236,7 @@ export default function TechnologiesSection({
                 style={{ touchAction: 'pan-y' }}
               >
                 <div 
-                  className="flex transition-transform duration-300 ease-in-out"
+                  className="flex transition-transform duration-500 ease-in-out"
                   style={{ 
                     transform: `translateX(-${currentIndex * 100}%)`
                   }}

@@ -516,6 +516,27 @@ export default function IndustryTemplateEditor({
                 type="image"
                 folder="industry-overview"
               />
+              <div>
+                <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
+                  Background Color
+                </label>
+                <select
+                  value={(data.overview.backgroundColor as string) || ""}
+                  onChange={(e) =>
+                    updateField("overview", "backgroundColor", e.target.value)
+                  }
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                >
+                  <option value="">Use Default</option>
+                  <option value="white">White</option>
+                  <option value="theme-bg-white-green-gradient">
+                    White-Green Gradient
+                  </option>
+                </select>
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                  Select background color for this section.
+                </p>
+              </div>
             </div>
           )}
 
@@ -566,6 +587,33 @@ export default function IndustryTemplateEditor({
                     Add Stat
                   </button>
                 </div>
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
+                  Background Color
+                </label>
+                <select
+                  value={(data.stats?.backgroundColor as string) || ""}
+                  onChange={(e) =>
+                    setData((prev) => ({
+                      ...prev,
+                      stats: {
+                        ...(prev.stats || { items: [] }),
+                        backgroundColor: e.target.value,
+                      },
+                    }))
+                  }
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                >
+                  <option value="">Use Default</option>
+                  <option value="white">White</option>
+                  <option value="theme-bg-white-green-gradient">
+                    White-Green Gradient
+                  </option>
+                </select>
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                  Select background color for this section.
+                </p>
               </div>
               {data.stats?.items.map((stat, index) => (
                 <div
@@ -756,6 +804,34 @@ export default function IndustryTemplateEditor({
                       className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                       rows={2}
                     />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
+                      Background Color
+                    </label>
+                    <select
+                      value={(data.subServices.backgroundColor as string) || ""}
+                      onChange={(e) =>
+                        setData((prev) => ({
+                          ...prev,
+                          subServices: {
+                            ...prev.subServices!,
+                            backgroundColor: e.target.value,
+                          },
+                        }))
+                      }
+                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                    >
+                      <option value="">Use Default</option>
+                      <option value="white">White</option>
+                      <option value="theme-bg-white-green-gradient">
+                        White-Green Gradient
+                      </option>
+                    </select>
+                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                      Select background color for this section. Defaults are set
+                      per section type.
+                    </p>
                   </div>
                   {data.subServices.items.map((item, index) => (
                     <div
@@ -994,6 +1070,33 @@ export default function IndustryTemplateEditor({
                       rows={2}
                     />
                   </div>
+                  <div>
+                    <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
+                      Background Color
+                    </label>
+                    <select
+                      value={(data.partners.backgroundColor as string) || ""}
+                      onChange={(e) =>
+                        setData((prev) => ({
+                          ...prev,
+                          partners: {
+                            ...prev.partners!,
+                            backgroundColor: e.target.value,
+                          },
+                        }))
+                      }
+                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                    >
+                      <option value="">Use Default</option>
+                      <option value="white">White</option>
+                      <option value="theme-bg-white-green-gradient">
+                        White-Green Gradient
+                      </option>
+                    </select>
+                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                      Select background color for this section.
+                    </p>
+                  </div>
                   {data.partners.partners.map((partner, index) => (
                     <div
                       key={index}
@@ -1171,6 +1274,33 @@ export default function IndustryTemplateEditor({
                       className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                       rows={2}
                     />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
+                      Background Color
+                    </label>
+                    <select
+                      value={(data.cards.backgroundColor as string) || ""}
+                      onChange={(e) =>
+                        setData((prev) => ({
+                          ...prev,
+                          cards: {
+                            ...prev.cards!,
+                            backgroundColor: e.target.value,
+                          },
+                        }))
+                      }
+                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                    >
+                      <option value="">Use Default</option>
+                      <option value="white">White</option>
+                      <option value="theme-bg-white-green-gradient">
+                        White-Green Gradient
+                      </option>
+                    </select>
+                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                      Select background color for this section.
+                    </p>
                   </div>
                   <div>
                     <label className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300">
@@ -1433,6 +1563,33 @@ export default function IndustryTemplateEditor({
                       className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                       rows={2}
                     />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
+                      Background Color
+                    </label>
+                    <select
+                      value={(data.portfolio.backgroundColor as string) || ""}
+                      onChange={(e) =>
+                        setData((prev) => ({
+                          ...prev,
+                          portfolio: {
+                            ...prev.portfolio!,
+                            backgroundColor: e.target.value,
+                          },
+                        }))
+                      }
+                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                    >
+                      <option value="">Use Default</option>
+                      <option value="white">White</option>
+                      <option value="theme-bg-white-green-gradient">
+                        White-Green Gradient
+                      </option>
+                    </select>
+                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                      Select background color for this section.
+                    </p>
                   </div>
                   {data.portfolio.projects.map((project, index) => (
                     <div

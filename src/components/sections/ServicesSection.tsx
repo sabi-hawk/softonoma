@@ -1,7 +1,7 @@
 "use client";
 
 import { ISection } from "@/models/Section";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import {
   getBackgroundStyle,
   getDefaultBackground,
@@ -29,6 +29,8 @@ export default function ServicesSection({ section }: ServicesSectionProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const touchStartX = useRef<number | null>(null);
   const touchEndX = useRef<number | null>(null);
+  const autoSlideIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  const isUserInteractingRef = useRef(false);
 
   const itemsToShow = 3;
   const totalItems = services.length;
@@ -46,6 +48,12 @@ export default function ServicesSection({ section }: ServicesSectionProps) {
   // Touch handlers for mobile swipe
   const handleTouchStart = (e: React.TouchEvent) => {
     touchStartX.current = e.touches[0].clientX;
+    isUserInteractingRef.current = true;
+    // Pause auto-slide when user interacts
+    if (autoSlideIntervalRef.current) {
+      clearInterval(autoSlideIntervalRef.current);
+      autoSlideIntervalRef.current = null;
+    }
   };
 
   const handleTouchMove = (e: React.TouchEvent) => {
@@ -67,6 +75,9 @@ export default function ServicesSection({ section }: ServicesSectionProps) {
 
     touchStartX.current = null;
     touchEndX.current = null;
+
+    // Resume auto-slide after 3 seconds of no interaction
+    resumeAutoSlide();
   };
 
   // Get visible items (3 at a time on desktop, 1 on mobile)
@@ -84,6 +95,74 @@ export default function ServicesSection({ section }: ServicesSectionProps) {
   const getCurrentSlideIndex = () => {
     return Math.floor(currentIndex / mobileItemsToShow);
   };
+
+  // Resume auto-slide helper
+  const resumeAutoSlide = () => {
+    setTimeout(() => {
+      isUserInteractingRef.current = false;
+      // Restart auto-slide
+      if (
+        typeof window !== "undefined" &&
+        window.innerWidth < 768 &&
+        totalItems > mobileItemsToShow
+      ) {
+        if (autoSlideIntervalRef.current) {
+          clearInterval(autoSlideIntervalRef.current);
+        }
+        autoSlideIntervalRef.current = setInterval(() => {
+          if (!isUserInteractingRef.current) {
+            setCurrentIndex((prev) => (prev + 1) % totalItems);
+          }
+        }, 5000);
+      }
+    }, 3000);
+  };
+
+  // Set up auto-slide on mount and when currentIndex changes (mobile only)
+  useEffect(() => {
+    // Auto-slide function for mobile only
+    const startAutoSlide = () => {
+      // Check if mobile (window width < 768px)
+      if (
+        typeof window !== "undefined" &&
+        window.innerWidth < 768 &&
+        totalItems > mobileItemsToShow
+      ) {
+        if (autoSlideIntervalRef.current) {
+          clearInterval(autoSlideIntervalRef.current);
+        }
+        autoSlideIntervalRef.current = setInterval(() => {
+          if (!isUserInteractingRef.current) {
+            setCurrentIndex((prev) => (prev + 1) % totalItems);
+          }
+        }, 5000); // 5 seconds
+      }
+    };
+
+    startAutoSlide();
+
+    // Handle window resize
+    const handleResize = () => {
+      if (window.innerWidth >= 768) {
+        // Clear interval on desktop
+        if (autoSlideIntervalRef.current) {
+          clearInterval(autoSlideIntervalRef.current);
+          autoSlideIntervalRef.current = null;
+        }
+      } else {
+        startAutoSlide();
+      }
+    };
+
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      if (autoSlideIntervalRef.current) {
+        clearInterval(autoSlideIntervalRef.current);
+      }
+      window.removeEventListener("resize", handleResize);
+    };
+  }, [currentIndex, totalItems, mobileItemsToShow]);
 
   return (
     <section
@@ -141,98 +220,107 @@ export default function ServicesSection({ section }: ServicesSectionProps) {
               onTouchStart={handleTouchStart}
               onTouchMove={handleTouchMove}
               onTouchEnd={handleTouchEnd}
-              style={{ touchAction: 'pan-y' }}
+              style={{ touchAction: "pan-y" }}
             >
               {/* Mobile: Show 1 item at a time */}
-              <div className="md:hidden">
-                {getVisibleItems(true).map(({ item: service, originalIndex }) => (
-                  <div
-                    key={originalIndex}
-                    className="group relative p-6 rounded-xl theme-bg-white border border-gray-200 transition-all duration-300 overflow-hidden mx-auto max-w-sm"
-                    style={{ borderColor: "rgba(0, 0, 0, 0.1)" }}
-                  >
-                    <div className="relative z-10">
-                      {service.icon && (
-                        <div className="w-16 h-16 mb-6 rounded-xl bg-gray-100 flex items-center justify-center text-3xl transform transition-all duration-300 shadow-sm border border-gray-200">
-                          {isIconUrl(service.icon) ? (
-                            <img
-                              src={service.icon}
-                              alt={service.title || "Icon"}
-                              className="w-10 h-10 object-contain"
-                              onError={(e) => {
-                                e.currentTarget.style.display = "none";
-                              }}
-                            />
-                          ) : (
-                            <span className="theme-text-black text-3xl">
-                              {service.icon}
-                            </span>
-                          )}
-                        </div>
-                      )}
-                      {service.title && (
-                        <h3 className="text-xl font-bold theme-text-black mb-3">
-                          {service.title}
-                        </h3>
-                      )}
-                      {service.description && (
-                        <p
-                          className="theme-text-black leading-relaxed text-sm"
-                          style={{ opacity: 0.8 }}
-                        >
-                          {service.description}
-                        </p>
-                      )}
+              <div className="md:hidden overflow-hidden">
+                <div
+                  className="flex transition-transform duration-500 ease-in-out"
+                  style={{
+                    transform: `translateX(-${currentIndex * 100}%)`,
+                  }}
+                >
+                  {services.map((service, index) => (
+                    <div
+                      key={index}
+                      className="group relative p-6 rounded-xl theme-bg-white border border-gray-200 transition-all duration-300 overflow-hidden shrink-0 w-full px-4"
+                      style={{ borderColor: "rgba(0, 0, 0, 0.1)" }}
+                    >
+                      <div className="relative z-10">
+                        {service.icon && (
+                          <div className="w-16 h-16 mb-6 rounded-xl bg-gray-100 flex items-center justify-center text-3xl transform transition-all duration-300 shadow-sm border border-gray-200">
+                            {isIconUrl(service.icon) ? (
+                              <img
+                                src={service.icon}
+                                alt={service.title || "Icon"}
+                                className="w-10 h-10 object-contain"
+                                onError={(e) => {
+                                  e.currentTarget.style.display = "none";
+                                }}
+                              />
+                            ) : (
+                              <span className="theme-text-black text-3xl">
+                                {service.icon}
+                              </span>
+                            )}
+                          </div>
+                        )}
+                        {service.title && (
+                          <h3 className="text-xl font-bold theme-text-black mb-3">
+                            {service.title}
+                          </h3>
+                        )}
+                        {service.description && (
+                          <p
+                            className="theme-text-black leading-relaxed text-sm"
+                            style={{ opacity: 0.8 }}
+                          >
+                            {service.description}
+                          </p>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
               {/* Desktop: Show 3 items */}
               <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-3 gap-6 px-8">
-                {getVisibleItems(false).map(({ item: service, originalIndex }) => (
-                  <div
-                    key={originalIndex}
-                    className="group relative p-8 rounded-xl theme-bg-white border border-gray-200 transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 overflow-hidden"
-                    style={{ borderColor: "rgba(0, 0, 0, 0.1)" }}
-                  >
-                    {/* Gradient overlay on hover */}
-                    <div className="absolute inset-0 opacity-0 group-hover:opacity-10 theme-gradient transition-all duration-300"></div>
+                {getVisibleItems(false).map(
+                  ({ item: service, originalIndex }) => (
+                    <div
+                      key={originalIndex}
+                      className="group relative p-8 rounded-xl theme-bg-white border border-gray-200 transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 overflow-hidden"
+                      style={{ borderColor: "rgba(0, 0, 0, 0.1)" }}
+                    >
+                      {/* Gradient overlay on hover */}
+                      <div className="absolute inset-0 opacity-0 group-hover:opacity-10 theme-gradient transition-all duration-300"></div>
 
-                    <div className="relative z-10">
-                      {service.icon && (
-                        <div className="w-16 h-16 mb-6 rounded-xl bg-gray-100 flex items-center justify-center text-3xl transform group-hover:scale-110 transition-all duration-300 shadow-sm border border-gray-200">
-                          {isIconUrl(service.icon) ? (
-                            <img
-                              src={service.icon}
-                              alt={service.title || "Icon"}
-                              className="w-10 h-10 object-contain"
-                              onError={(e) => {
-                                e.currentTarget.style.display = "none";
-                              }}
-                            />
-                          ) : (
-                            <span className="theme-text-black text-3xl">
-                              {service.icon}
-                            </span>
-                          )}
-                        </div>
-                      )}
-                      {service.title && (
-                        <h3 className="text-xl font-bold theme-text-black mb-3 theme-hover-primary transition-colors">
-                          {service.title}
-                        </h3>
-                      )}
-                      {service.description && (
-                        <p
-                          className="theme-text-black leading-relaxed text-sm"
-                          style={{ opacity: 0.8 }}
-                        >
-                          {service.description}
-                        </p>
-                      )}
+                      <div className="relative z-10">
+                        {service.icon && (
+                          <div className="w-16 h-16 mb-6 rounded-xl bg-gray-100 flex items-center justify-center text-3xl transform group-hover:scale-110 transition-all duration-300 shadow-sm border border-gray-200">
+                            {isIconUrl(service.icon) ? (
+                              <img
+                                src={service.icon}
+                                alt={service.title || "Icon"}
+                                className="w-10 h-10 object-contain"
+                                onError={(e) => {
+                                  e.currentTarget.style.display = "none";
+                                }}
+                              />
+                            ) : (
+                              <span className="theme-text-black text-3xl">
+                                {service.icon}
+                              </span>
+                            )}
+                          </div>
+                        )}
+                        {service.title && (
+                          <h3 className="text-xl font-bold theme-text-black mb-3 theme-hover-primary transition-colors">
+                            {service.title}
+                          </h3>
+                        )}
+                        {service.description && (
+                          <p
+                            className="theme-text-black leading-relaxed text-sm"
+                            style={{ opacity: 0.8 }}
+                          >
+                            {service.description}
+                          </p>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  )
+                )}
               </div>
             </div>
 
@@ -269,8 +357,8 @@ export default function ServicesSection({ section }: ServicesSectionProps) {
                     onClick={() => setCurrentIndex(index * mobileItemsToShow)}
                     className={`w-2 h-2 rounded-full transition-all ${
                       getCurrentSlideIndex() === index
-                        ? 'bg-[#79b246] w-8'
-                        : 'bg-gray-300'
+                        ? "bg-[#79b246] w-8"
+                        : "bg-gray-300"
                     }`}
                     aria-label={`Go to slide ${index + 1}`}
                   />

@@ -25,8 +25,11 @@ export default function ContactPage({
     email: "",
     message: "",
   });
-  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState<{
+    type: "success" | "error" | null;
+    message: string;
+  }>({ type: null, message: "" });
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -35,37 +38,48 @@ export default function ContactPage({
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) {
-      setSelectedFiles(Array.from(e.target.files));
-    }
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-    
+    setSubmitStatus({ type: null, message: "" });
+
     try {
-      // TODO: Implement actual form submission API call
-      // const response = await fetch('/api/contact', { ... });
-      // For now, simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      
-      // Reset form on success
-      setFormData({
-        name: "",
-        businessPhone: "",
-        companyName: "",
-        email: "",
-        message: "",
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
       });
-      setSelectedFiles([]);
-      
-      // Show success message (replace alert with proper notification system)
-      alert("Message sent successfully!");
+
+      const data = await response.json();
+
+      if (data.success) {
+        // Reset form on success
+        setFormData({
+          name: "",
+          businessPhone: "",
+          companyName: "",
+          email: "",
+          message: "",
+        });
+
+        setSubmitStatus({
+          type: "success",
+          message: "Message sent successfully! We'll get back to you soon.",
+        });
+      } else {
+        setSubmitStatus({
+          type: "error",
+          message: data.error || "Failed to send message. Please try again.",
+        });
+      }
     } catch (error) {
       console.error("Error submitting form:", error);
-      alert("Failed to send message. Please try again.");
+      setSubmitStatus({
+        type: "error",
+        message: "Failed to send message. Please try again later.",
+      });
     } finally {
       setIsSubmitting(false);
     }
@@ -74,29 +88,45 @@ export default function ContactPage({
   return (
     <div className="min-h-screen theme-bg-white">
       {/* Professional Hero Section */}
-      <section className="relative py-16 md:py-24 px-4 sm:px-6 lg:px-8 overflow-hidden">
-        <div className="absolute inset-0 theme-bg-white-green-gradient opacity-50"></div>
-        <div className="relative max-w-7xl mx-auto text-center">
-          <div className="inline-block mb-4">
-            <span className="text-sm font-semibold theme-primary-mid uppercase tracking-wider px-4 py-2 bg-white/80 rounded-full shadow-sm">
+      <section className="relative py-20 md:py-32 px-4 sm:px-6 lg:px-8 overflow-hidden theme-bg-black">
+        {/* Background Pattern - Same as Footer */}
+        <div className="absolute inset-0 opacity-5">
+          <div
+            className="absolute inset-0"
+            style={{
+              backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+            }}
+          ></div>
+        </div>
+
+        {/* Subtle Accent Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-br from-[#79b246]/10 via-transparent to-[#79b246]/5"></div>
+
+        {/* Content */}
+        <div className="relative max-w-7xl mx-auto text-center z-10">
+          <div className="inline-block mb-6 animate-fade-in">
+            <span className="text-sm font-semibold text-[#79b246] uppercase tracking-wider px-6 py-3 bg-slate-800/50 backdrop-blur-sm rounded-full shadow-lg border">
               Get in Touch
             </span>
           </div>
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold theme-text-black mb-6 leading-tight">
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight animate-fade-in delay-75">
             {title.split(" ").map((word, index) =>
               word.toLowerCase() === "message" ? (
-                <span key={index} className="theme-primary-mid">
+                <span key={index} className="text-[#79b246]">
                   {" "}
                   {word}
                 </span>
               ) : (
-                <span key={index}> {word}</span>
+                <span key={index} className="text-white">
+                  {" "}
+                  {word}
+                </span>
               )
             )}
           </h1>
-          <p className="text-lg md:text-xl text-gray-600 max-w-2xl mx-auto">
-            Have a project in mind? Let's discuss how we can help transform your
-            business with innovative technology solutions.
+          <p className="text-lg md:text-xl text-slate-300 max-w-2xl mx-auto animate-fade-in delay-150">
+            Have a project in mind? Let&apos;s discuss how we can help transform
+            your business with innovative technology solutions.
           </p>
         </div>
       </section>
@@ -122,7 +152,9 @@ export default function ContactPage({
                   />
                 </svg>
               </div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">Email</h3>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                Email
+              </h3>
               <a
                 href="mailto:contact@softonoma.com"
                 className="text-gray-600 hover:theme-primary-mid transition-colors"
@@ -148,7 +180,9 @@ export default function ContactPage({
                   />
                 </svg>
               </div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">Phone</h3>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                Phone
+              </h3>
               <a
                 href="tel:+1234567890"
                 className="text-gray-600 hover:theme-primary-mid transition-colors"
@@ -194,8 +228,8 @@ export default function ContactPage({
                   Send us a message
                 </h2>
                 <p className="text-gray-600 mb-8">
-                  Fill out the form below and we'll get back to you within 24
-                  hours.
+                  Fill out the form below and we&apos;ll get back to you within
+                  24 hours.
                 </p>
                 <form onSubmit={handleSubmit} className="space-y-6">
                   {/* Name */}
@@ -363,44 +397,55 @@ export default function ContactPage({
                       placeholder="Tell us about your project requirements..."
                       required
                       rows={6}
-                        className="w-full px-4 py-3.5 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#79b246] focus:ring-opacity-30 focus:border-[#79b246] transition-all resize-y bg-gray-50 focus:bg-white"
+                      className="w-full px-4 py-3.5 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#79b246] focus:ring-opacity-30 focus:border-[#79b246] transition-all resize-y bg-gray-50 focus:bg-white"
                     />
                   </div>
 
-                  {/* File Upload */}
-                  <div>
-                    <input
-                      type="file"
-                      id="fileInput"
-                      multiple
-                      onChange={handleFileSelect}
-                      className="hidden"
-                    />
-                    <label
-                      htmlFor="fileInput"
-                      className="flex items-center justify-center gap-3 w-full px-4 py-3.5 rounded-lg border-2 border-gray-300 border-dashed text-gray-600 cursor-pointer hover:border-gray-400 hover:bg-gray-50 transition-all bg-gray-50"
+                  {/* Status Message */}
+                  {submitStatus.type && (
+                    <div
+                      className={`p-4 rounded-lg ${
+                        submitStatus.type === "success"
+                          ? "bg-green-50 border border-green-200 text-green-800"
+                          : "bg-red-50 border border-red-200 text-red-800"
+                      }`}
                     >
-                      <svg
-                        className="w-5 h-5"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
-                        />
-                      </svg>
-                      <span className="font-medium">Select Files</span>
-                    </label>
-                    {selectedFiles.length > 0 && (
-                      <p className="mt-2 text-sm text-gray-500">
-                        {selectedFiles.length} file(s) selected
-                      </p>
-                    )}
-                  </div>
+                      <div className="flex items-center gap-2">
+                        {submitStatus.type === "success" ? (
+                          <svg
+                            className="w-5 h-5"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M5 13l4 4L19 7"
+                            />
+                          </svg>
+                        ) : (
+                          <svg
+                            className="w-5 h-5"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M6 18L18 6M6 6l12 12"
+                            />
+                          </svg>
+                        )}
+                        <p className="text-sm font-medium">
+                          {submitStatus.message}
+                        </p>
+                      </div>
+                    </div>
+                  )}
 
                   {/* Submit Button */}
                   <button
@@ -453,10 +498,7 @@ export default function ContactPage({
                 </p>
                 <ul className="space-y-5">
                   {advantages.map((advantage, index) => (
-                    <li
-                      key={index}
-                      className="flex items-start gap-4 group"
-                    >
+                    <li key={index} className="flex items-start gap-4 group">
                       <div className="shrink-0 w-10 h-10 rounded-xl flex items-center justify-center mt-0.5 bg-white border-2 border-gray-200 group-hover:border-opacity-100 group-hover:theme-bg-primary-mid transition-all duration-300 shadow-sm">
                         <svg
                           className="w-5 h-5 text-gray-600 group-hover:text-white transition-colors duration-300"
@@ -500,7 +542,7 @@ export default function ContactPage({
                         24/7 Support Available
                       </p>
                       <p className="text-sm text-gray-600">
-                        We're here to help whenever you need us
+                        We&apos;re here to help whenever you need us
                       </p>
                     </div>
                   </div>

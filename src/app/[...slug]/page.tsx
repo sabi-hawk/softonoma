@@ -10,6 +10,10 @@ interface PageProps {
   params: Promise<{ slug: string[] }>;
 }
 
+// Force dynamic rendering to always fetch fresh data from MongoDB
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export default async function DynamicPage({ params }: PageProps) {
   await connectDB();
 
@@ -17,7 +21,10 @@ export default async function DynamicPage({ params }: PageProps) {
   const pageSlug = slug.join("/");
 
   // Get page content - allow both published and unpublished pages to be viewed
-  const page = await Page.findOne({ slug: pageSlug }).lean();
+  // Only select fields we need for better performance
+  const page = await Page.findOne({ slug: pageSlug })
+    .select("_id title slug content templateType")
+    .lean();
 
   // If page not found, return 404
   if (!page) {
@@ -30,7 +37,12 @@ export default async function DynamicPage({ params }: PageProps) {
   }
 
   // All other pages use sections approach - get sections
-  const sections = await Section.find({ pageId: page._id, isActive: true })
+  // Fetch sections in parallel with page data for better performance
+  const sections = await Section.find({
+    pageId: page._id,
+    isActive: true,
+  })
+    .select("_id pageId serviceId type content order isActive")
     .sort({ order: 1 })
     .lean();
 

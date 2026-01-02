@@ -22,6 +22,10 @@ interface FooterProps {
     title: string;
     href: string;
   }>;
+  industries?: Array<{
+    title: string;
+    href: string;
+  }>;
   copyrightText?: string;
 }
 
@@ -34,38 +38,61 @@ export default function Footer({
   socialLinks = {},
   quickLinks = [],
   services = [],
+  industries = [],
   copyrightText,
 }: FooterProps) {
   const currentYear = new Date().getFullYear();
   const defaultCopyright = `© ${currentYear} ${companyName}. All rights reserved.`;
 
+  // Limit services and industries to show (for better layout)
+  const displayedServices = services.slice(0, 4);
+  const displayedIndustries = industries.slice(0, 5);
+
   return (
-    <footer className="theme-bg-black theme-text-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+    <footer className="theme-bg-black theme-text-white relative overflow-hidden">
+      {/* Background Pattern */}
+      <div className="absolute inset-0 opacity-5">
+        <div
+          className="absolute inset-0"
+          style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+          }}
+        ></div>
+      </div>
+
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-12">
         {/* Main Footer Content */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-6 sm:gap-8 lg:gap-12 mb-8 sm:mb-12 lg:mb-16">
           {/* Company Info */}
-          <div className="lg:col-span-2">
-            <h3 className="text-3xl font-bold mb-6 text-white">
-              {companyName}
-            </h3>
-            <p className="text-gray-300 text-base mb-8 leading-relaxed max-w-md">
+          <div className="sm:col-span-2 lg:col-span-2 xl:col-span-2">
+            <div className="mb-4 sm:mb-6">
+              <h3 className="text-xl sm:text-2xl lg:text-3xl font-bold mb-2 sm:mb-4 text-white">
+                {companyName}
+              </h3>
+              <div
+                className="w-12 sm:w-16 h-0.5 sm:h-1 rounded-full"
+                style={{
+                  background: "linear-gradient(to right, #79b246, transparent)",
+                }}
+              ></div>
+            </div>
+            <p className="text-gray-300 text-xs sm:text-sm lg:text-base mb-4 sm:mb-8 leading-relaxed max-w-md">
               {companyDescription}
             </p>
 
             {/* Contact Information */}
-            <div className="space-y-4 mb-8">
+            <div className="space-y-2 sm:space-y-3 lg:space-y-4 mb-4 sm:mb-8">
               {email && (
                 <a
                   href={`mailto:${email}`}
-                  className="flex items-center gap-3 group"
+                  className="flex items-center gap-2 sm:gap-3 group transition-all hover:translate-x-1"
                 >
                   <div
-                    className="w-10 h-10 rounded-lg flex items-center justify-center transition-all group-hover:scale-105"
+                    className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg flex items-center justify-center transition-all group-hover:scale-110 group-hover:shadow-lg shrink-0"
                     style={{ backgroundColor: "rgba(121, 178, 70, 0.15)" }}
                   >
                     <svg
-                      className="w-5 h-5 shrink-0"
+                      className="w-4 h-4 sm:w-5 sm:h-5"
                       style={{ color: "#79b246" }}
                       fill="none"
                       stroke="currentColor"
@@ -79,7 +106,7 @@ export default function Footer({
                       />
                     </svg>
                   </div>
-                  <span className="text-gray-300 group-hover:text-white transition-colors">
+                  <span className="text-gray-300 group-hover:text-white transition-colors text-xs sm:text-sm lg:text-base break-all">
                     {email}
                   </span>
                 </a>
@@ -87,14 +114,14 @@ export default function Footer({
               {phone && (
                 <a
                   href={`tel:${phone}`}
-                  className="flex items-center gap-3 group"
+                  className="flex items-center gap-2 sm:gap-3 group transition-all hover:translate-x-1"
                 >
                   <div
-                    className="w-10 h-10 rounded-lg flex items-center justify-center transition-all group-hover:scale-105"
+                    className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg flex items-center justify-center transition-all group-hover:scale-110 group-hover:shadow-lg shrink-0"
                     style={{ backgroundColor: "rgba(121, 178, 70, 0.15)" }}
                   >
                     <svg
-                      className="w-5 h-5 shrink-0"
+                      className="w-4 h-4 sm:w-5 sm:h-5"
                       style={{ color: "#79b246" }}
                       fill="none"
                       stroke="currentColor"
@@ -108,19 +135,19 @@ export default function Footer({
                       />
                     </svg>
                   </div>
-                  <span className="text-gray-300 group-hover:text-white transition-colors">
+                  <span className="text-gray-300 group-hover:text-white transition-colors text-xs sm:text-sm lg:text-base">
                     {phone}
                   </span>
                 </a>
               )}
               {address && (
-                <div className="flex items-start gap-3">
+                <div className="flex items-center gap-2 sm:gap-3">
                   <div
-                    className="w-10 h-10 rounded-lg flex items-center justify-center shrink-0 mt-0.5"
+                    className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg flex items-center justify-center shrink-0 transition-all"
                     style={{ backgroundColor: "rgba(121, 178, 70, 0.15)" }}
                   >
                     <svg
-                      className="w-5 h-5 shrink-0"
+                      className="w-4 h-4 sm:w-5 sm:h-5"
                       style={{ color: "#79b246" }}
                       fill="none"
                       stroke="currentColor"
@@ -140,7 +167,9 @@ export default function Footer({
                       />
                     </svg>
                   </div>
-                  <p className="text-gray-300 leading-relaxed">{address}</p>
+                  <p className="text-gray-300 leading-relaxed text-xs sm:text-sm lg:text-base">
+                    {address}
+                  </p>
                 </div>
               )}
             </div>
@@ -150,9 +179,11 @@ export default function Footer({
               socialLinks.twitter ||
               socialLinks.linkedin ||
               socialLinks.github) && (
-              <div className="flex items-center gap-4">
-                <span className="text-sm text-gray-400">Follow us:</span>
-                <div className="flex items-center gap-3">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4">
+                <span className="text-xs sm:text-sm text-gray-400">
+                  Follow us:
+                </span>
+                <div className="flex items-center gap-2 sm:gap-3">
                   {socialLinks.linkedin && (
                     <a
                       href={socialLinks.linkedin}
@@ -249,17 +280,32 @@ export default function Footer({
           {/* Quick Links */}
           {quickLinks.length > 0 && (
             <div>
-              <h4 className="text-white text-lg font-semibold mb-6">
+              <h4 className="text-white text-sm sm:text-base lg:text-lg font-semibold mb-3 sm:mb-4 lg:mb-6 pb-2 border-b border-gray-700 flex items-center gap-2">
+                <svg
+                  className="w-4 h-4 sm:w-5 sm:h-5"
+                  style={{ color: "#79b246" }}
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"
+                  />
+                </svg>
                 Quick Links
               </h4>
-              <ul className="space-y-3">
+              <ul className="space-y-2 sm:space-y-2.5 lg:space-y-3">
                 {quickLinks.map((link, index) => (
                   <li key={index}>
                     <Link
                       href={link.href}
-                      className="text-gray-300 hover:text-white transition-colors block text-sm"
+                      className="text-gray-300 hover:text-[#79b246] transition-colors text-xs sm:text-sm lg:text-base group flex items-center gap-2 sm:gap-3"
                     >
-                      {link.title}
+                      <div className="w-1 h-1 sm:w-1.5 sm:h-1.5 rounded-full bg-[#79b246] opacity-0 group-hover:opacity-100 transition-opacity shrink-0"></div>
+                      <span>{link.title}</span>
                     </Link>
                   </li>
                 ))}
@@ -267,20 +313,71 @@ export default function Footer({
             </div>
           )}
 
-          {/* Services */}
-          {services.length > 0 && (
-            <div>
-              <h4 className="text-white text-lg font-semibold mb-6">
-                Services
+          {/* Services - Hidden on mobile */}
+          {displayedServices.length > 0 && (
+            <div className="hidden sm:block">
+              <h4 className="text-white text-sm sm:text-base lg:text-lg font-semibold mb-3 sm:mb-4 lg:mb-6 pb-2 border-b border-gray-700 flex items-center gap-2">
+                <svg
+                  className="w-4 h-4 sm:w-5 sm:h-5"
+                  style={{ color: "#79b246" }}
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                  />
+                </svg>
+                Our Services
               </h4>
-              <ul className="space-y-3">
-                {services.map((service, index) => (
+              <ul className="space-y-2 sm:space-y-2.5 lg:space-y-3">
+                {displayedServices.map((service, index) => (
                   <li key={index}>
                     <Link
                       href={service.href}
-                      className="text-gray-300 hover:text-white transition-colors block text-sm"
+                      className="text-gray-300 hover:text-[#79b246] transition-colors text-xs sm:text-sm lg:text-base group flex items-center gap-2 sm:gap-3"
                     >
-                      {service.title}
+                      <div className="w-1 h-1 sm:w-1.5 sm:h-1.5 rounded-full bg-[#79b246] opacity-0 group-hover:opacity-100 transition-opacity shrink-0"></div>
+                      <span>{service.title}</span>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {/* Industries - Hidden on mobile */}
+          {displayedIndustries.length > 0 && (
+            <div className="hidden sm:block">
+              <h4 className="text-white text-sm sm:text-base lg:text-lg font-semibold mb-3 sm:mb-4 lg:mb-6 pb-2 border-b border-gray-700 flex items-center gap-2">
+                <svg
+                  className="w-4 h-4 sm:w-5 sm:h-5"
+                  style={{ color: "#79b246" }}
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
+                  />
+                </svg>
+                Industries
+              </h4>
+              <ul className="space-y-2 sm:space-y-2.5 lg:space-y-3">
+                {displayedIndustries.map((industry, index) => (
+                  <li key={index}>
+                    <Link
+                      href={industry.href}
+                      className="text-gray-300 hover:text-[#79b246] transition-colors text-xs sm:text-sm lg:text-base group flex items-center gap-2 sm:gap-3"
+                    >
+                      <div className="w-1 h-1 sm:w-1.5 sm:h-1.5 rounded-full bg-[#79b246] opacity-0 group-hover:opacity-100 transition-opacity shrink-0"></div>
+                      <span>{industry.title}</span>
                     </Link>
                   </li>
                 ))}
@@ -289,19 +386,40 @@ export default function Footer({
           )}
 
           {/* Newsletter */}
-          <div>
-            <h4 className="text-white text-lg font-semibold mb-6">
+          <div className="sm:col-span-2 lg:col-span-1 xl:col-span-2">
+            <h4 className="text-white text-sm sm:text-base lg:text-lg font-semibold mb-3 sm:mb-4 lg:mb-6 pb-2 border-b border-gray-700 flex items-center gap-2">
+              <svg
+                className="w-4 h-4 sm:w-5 sm:h-5"
+                style={{ color: "#79b246" }}
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                />
+              </svg>
               Newsletter
             </h4>
-            <p className="text-gray-300 text-sm mb-6 leading-relaxed">
+            <p className="text-gray-300 text-xs sm:text-sm mb-4 sm:mb-6 leading-relaxed">
               Stay updated with our latest technology insights and industry
               trends.
             </p>
-            <form className="space-y-3">
+            <form
+              className="space-y-2 sm:space-y-3"
+              onSubmit={(e) => {
+                e.preventDefault();
+                // Handle newsletter subscription
+              }}
+            >
               <input
                 type="email"
                 placeholder="Enter your email"
-                className="w-full px-4 py-3 rounded-lg bg-gray-900 border text-white placeholder-gray-400 focus:outline-none focus:ring-2 transition-all"
+                required
+                className="w-full px-3 py-2 sm:px-4 sm:py-3 rounded-lg bg-gray-900 border text-white placeholder-gray-400 focus:outline-none focus:ring-2 transition-all text-xs sm:text-sm lg:text-base"
                 style={{
                   borderColor: "rgba(55, 65, 81, 1)",
                 }}
@@ -317,7 +435,7 @@ export default function Footer({
               />
               <button
                 type="submit"
-                className="w-full px-6 py-3 rounded-lg font-semibold text-white transition-all hover:opacity-90 hover:shadow-lg"
+                className="w-full px-4 py-2 sm:px-6 sm:py-3 rounded-lg font-semibold text-white transition-all hover:opacity-90 hover:shadow-lg hover:scale-[1.02] active:scale-[0.98] text-xs sm:text-sm lg:text-base"
                 style={{ backgroundColor: "#79b246" }}
               >
                 Subscribe
@@ -328,26 +446,34 @@ export default function Footer({
 
         {/* Divider */}
         <div
-          className="border-t pt-8"
+          className="border-t pt-6 sm:pt-8 lg:pt-10"
           style={{ borderColor: "rgba(255, 255, 255, 0.1)" }}
         >
-          {/* Copyright */}
-          <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-            <p className="text-sm text-gray-400">
+          {/* Copyright and Legal Links */}
+          <div className="flex flex-col sm:flex-row justify-between items-center gap-3 sm:gap-4 lg:gap-6">
+            <p className="text-xs sm:text-sm text-gray-400 text-center sm:text-left">
               {copyrightText || defaultCopyright}
             </p>
-            <div className="flex items-center gap-6 text-sm text-gray-400">
+            <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4 lg:gap-6 text-xs sm:text-sm text-gray-400">
               <Link
                 href="/privacy"
-                className="hover:text-white transition-colors"
+                className="hover:text-[#79b246] transition-colors"
               >
                 Privacy Policy
               </Link>
+              <span className="text-gray-600">|</span>
               <Link
                 href="/terms"
-                className="hover:text-white transition-colors"
+                className="hover:text-[#79b246] transition-colors"
               >
                 Terms of Service
+              </Link>
+              <span className="text-gray-600">|</span>
+              <Link
+                href="/sitemap"
+                className="hover:text-[#79b246] transition-colors"
+              >
+                Sitemap
               </Link>
             </div>
           </div>

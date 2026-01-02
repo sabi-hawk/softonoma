@@ -16,6 +16,7 @@ export interface IndustryTemplateData {
       text: string;
     }>;
     image?: string;
+    backgroundColor?: string;
     isActive?: boolean;
   };
   stats?: {
@@ -24,6 +25,7 @@ export interface IndustryTemplateData {
       value: string;
       label: string;
     }>;
+    backgroundColor?: string;
     isActive?: boolean;
   };
   subServices?: {
@@ -36,6 +38,7 @@ export interface IndustryTemplateData {
     }>;
     ctaButtonText?: string;
     ctaButtonLink?: string;
+    backgroundColor?: string;
     isActive?: boolean;
   };
   partners?: {
@@ -45,6 +48,7 @@ export interface IndustryTemplateData {
       name?: string;
       logo?: string;
     }>;
+    backgroundColor?: string;
     isActive?: boolean;
   };
   cards?: {
@@ -57,6 +61,7 @@ export interface IndustryTemplateData {
       role?: string;
       company?: string;
     }>;
+    backgroundColor?: string;
     isActive?: boolean;
   };
   portfolio?: {
@@ -70,6 +75,7 @@ export interface IndustryTemplateData {
       link?: string;
       technologies?: string[];
     }>;
+    backgroundColor?: string;
     isActive?: boolean;
   };
   technologies?: {
@@ -79,6 +85,7 @@ export interface IndustryTemplateData {
       name: string;
       icon?: string;
     }>;
+    backgroundColor?: string;
     isActive?: boolean;
   };
   sectionOrder?: string[]; // Array of section keys to control order
@@ -157,8 +164,46 @@ export const defaultIndustryTemplateData: IndustryTemplateData = {
     title: "Our Partners",
     description: "Trusted by leading companies worldwide",
     partners: [
-      { name: "Partner 1", logo: "🚀" },
-      { name: "Partner 2", logo: "⚡" },
+      {
+        name: "Partner 1",
+        logo: "https://cloud.appwrite.io/v1/storage/buckets/694cc45b003184dc8584/files/6954ba5d003008864d7b/view?project=694cc43b00225b94d30d",
+      },
+      {
+        name: "Partner 2",
+        logo: "https://cloud.appwrite.io/v1/storage/buckets/694cc45b003184dc8584/files/6954ba62001457f024ef/view?project=694cc43b00225b94d30d",
+      },
+      {
+        name: "Partner 3",
+        logo: "https://cloud.appwrite.io/v1/storage/buckets/694cc45b003184dc8584/files/6954ba6700016cac0e12/view?project=694cc43b00225b94d30d",
+      },
+      {
+        name: "Partner 4",
+        logo: "https://cloud.appwrite.io/v1/storage/buckets/694cc45b003184dc8584/files/6954ba6b0032b310923f/view?project=694cc43b00225b94d30d",
+      },
+      {
+        name: "Partner 5",
+        logo: "https://cloud.appwrite.io/v1/storage/buckets/694cc45b003184dc8584/files/6954ba7100113ef921e4/view?project=694cc43b00225b94d30d",
+      },
+      {
+        name: "Partner 6",
+        logo: "https://cloud.appwrite.io/v1/storage/buckets/694cc45b003184dc8584/files/6954ba7c0012eee875af/view?project=694cc43b00225b94d30d",
+      },
+      {
+        name: "Partner 7",
+        logo: "https://cloud.appwrite.io/v1/storage/buckets/694cc45b003184dc8584/files/6954ba760029ccc019e4/view?project=694cc43b00225b94d30d",
+      },
+      {
+        name: "Partner 8",
+        logo: "https://cloud.appwrite.io/v1/storage/buckets/694cc45b003184dc8584/files/6954ba810038059a3274/view?project=694cc43b00225b94d30d",
+      },
+      {
+        name: "Partner 9",
+        logo: "https://cloud.appwrite.io/v1/storage/buckets/694cc45b003184dc8584/files/6954ba900020801ed88d/view?project=694cc43b00225b94d30d",
+      },
+      {
+        name: "Partner 10",
+        logo: "https://cloud.appwrite.io/v1/storage/buckets/694cc45b003184dc8584/files/6954ba94003bdd021354/view?project=694cc43b00225b94d30d",
+      },
     ],
     isActive: true,
   },
