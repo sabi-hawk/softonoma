@@ -48,7 +48,7 @@ export default function StatsSection({ section }: StatsSectionProps) {
                   className="text-center py-4 md:py-0 px-2 md:px-3 lg:px-6 first:pl-0 md:first:pl-0 last:pr-0 md:last:pr-0"
                 >
                   {stat.number && (
-                    <div className="text-3xl sm:text-4xl md:text-3xl lg:text-4xl font-bold theme-primary-mid mb-2 md:mb-3">
+                    <div className="text-3xl sm:text-4xl md:text-3xl lg:text-4xl font-bold theme-primary-mid-dark mb-2 md:mb-3">
                       {stat.number}
                     </div>
                   )}

@@ -1,5 +1,6 @@
 "use client";
 
+import { memo, useMemo } from "react";
 import Link from "next/link";
 
 interface FooterProps {
@@ -29,7 +30,7 @@ interface FooterProps {
   copyrightText?: string;
 }
 
-export default function Footer({
+function Footer({
   companyName = "IT Solutions",
   companyDescription = "Leading IT solutions provider delivering innovative technology services to businesses worldwide.",
   email = "contact@softonoma.com",
@@ -436,7 +437,7 @@ export default function Footer({
               <button
                 type="submit"
                 className="w-full px-4 py-2 sm:px-6 sm:py-3 rounded-lg font-semibold text-white transition-all hover:opacity-90 hover:shadow-lg hover:scale-[1.02] active:scale-[0.98] text-xs sm:text-sm lg:text-base"
-                style={{ backgroundColor: "#79b246" }}
+                style={{ backgroundColor: "#4a6f1c" }}
               >
                 Subscribe
               </button>
@@ -482,3 +483,5 @@ export default function Footer({
     </footer>
   );
 }
+
+export default memo(Footer);

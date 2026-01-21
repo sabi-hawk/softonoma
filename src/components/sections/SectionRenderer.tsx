@@ -1,20 +1,23 @@
 import { ISection } from "@/models/Section";
-import HeroSection from "./HeroSection";
-import ServicesSection from "./ServicesSection";
-import StatsSection from "./StatsSection";
-import IndustriesSection from "./IndustriesSection";
-import AboutSection from "./AboutSection";
-import PartnershipsSection from "./PartnershipsSection";
-import CTASection from "./CTASection";
-import FooterSection from "./FooterSection";
-import FeaturesSection from "./FeaturesSection";
-import CardsSection from "./CardsSection";
-import PortfolioSection from "./PortfolioSection";
-import TechnologiesSection from "./TechnologiesSection";
-import BlogSection from "./BlogSection";
-import ProcessSection from "./ProcessSection";
-import FAQSection from "./FAQSection";
-import PartnersSection from "./PartnersSection";
+import dynamic from "next/dynamic";
+
+// Lazy load section components for better code splitting
+const HeroSection = dynamic(() => import("./HeroSection"));
+const ServicesSection = dynamic(() => import("./ServicesSection"));
+const StatsSection = dynamic(() => import("./StatsSection"));
+const IndustriesSection = dynamic(() => import("./IndustriesSection"));
+const AboutSection = dynamic(() => import("./AboutSection"));
+const PartnershipsSection = dynamic(() => import("./PartnershipsSection"));
+const CTASection = dynamic(() => import("./CTASection"));
+const FooterSection = dynamic(() => import("./FooterSection"));
+const FeaturesSection = dynamic(() => import("./FeaturesSection"));
+const CardsSection = dynamic(() => import("./CardsSection"));
+const PortfolioSection = dynamic(() => import("./PortfolioSection"));
+const TechnologiesSection = dynamic(() => import("./TechnologiesSection"));
+const BlogSection = dynamic(() => import("./BlogSection"));
+const ProcessSection = dynamic(() => import("./ProcessSection"));
+const FAQSection = dynamic(() => import("./FAQSection"));
+const PartnersSection = dynamic(() => import("./PartnersSection"));
 
 interface SectionRendererProps {
   section: ISection;

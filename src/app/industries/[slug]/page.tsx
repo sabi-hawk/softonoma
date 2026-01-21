@@ -8,9 +8,8 @@ interface IndustryPageProps {
   params: Promise<{ slug: string }>;
 }
 
-// Force dynamic rendering to always fetch fresh data from MongoDB
-export const dynamic = 'force-dynamic';
-export const revalidate = 0;
+// Cache industry pages for 60 seconds to improve performance
+export const revalidate = 60;
 
 export default async function IndustryPage({ params }: IndustryPageProps) {
   await connectDB();

@@ -254,9 +254,10 @@ export default function PortfolioSection({ section }: PortfolioSectionProps) {
                       <div className="p-6">
                         {project.category && (
                           <span
-                            className="inline-block px-3 py-1 text-xs font-semibold theme-primary-mid rounded-full mb-3"
+                            className="inline-block px-3 py-1 text-xs font-semibold rounded-full mb-3"
                             style={{
-                              backgroundColor: "rgba(121, 178, 70, 0.1)",
+                              color: "#4a6f1c",
+                              backgroundColor: "rgba(74, 111, 28, 0.1)",
                             }}
                           >
                             {project.category}
@@ -314,7 +315,8 @@ export default function PortfolioSection({ section }: PortfolioSectionProps) {
                             alt={project.title || "Project"}
                             fill
                             className="object-cover group-hover:scale-110 transition-transform duration-500"
-                            unoptimized
+                            loading="lazy"
+                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                           />
                         ) : (
                           <div className="w-full h-full flex items-center justify-center">
@@ -340,9 +342,10 @@ export default function PortfolioSection({ section }: PortfolioSectionProps) {
                       <div className="p-6">
                         {project.category && (
                           <span
-                            className="inline-block px-3 py-1 text-xs font-semibold theme-primary-mid rounded-full mb-3"
+                            className="inline-block px-3 py-1 text-xs font-semibold rounded-full mb-3"
                             style={{
-                              backgroundColor: "rgba(121, 178, 70, 0.1)",
+                              color: "#4a6f1c",
+                              backgroundColor: "rgba(74, 111, 28, 0.1)",
                             }}
                           >
                             {project.category}
@@ -412,17 +415,15 @@ export default function PortfolioSection({ section }: PortfolioSectionProps) {
 
             {/* Dot Indicators - Only visible on mobile */}
             {totalItems > mobileItemsToShow && (
-              <div className="flex justify-center gap-2 mt-8 md:hidden">
+              <div className="flex justify-center gap-1.5 mt-8 md:hidden">
                 {Array.from({ length: totalSlides }).map((_, index) => (
-                  <button
+                  <span
                     key={index}
-                    onClick={() => setCurrentIndex(index * mobileItemsToShow)}
-                    className={`w-2 h-2 rounded-full transition-all ${
+                    className={`w-1.5 h-1.5 rounded-full transition-all ${
                       getCurrentSlideIndex() === index
-                        ? "bg-[#79b246] w-8"
-                        : "bg-gray-300"
+                        ? 'bg-[#79b246]'
+                        : 'bg-gray-400 opacity-40'
                     }`}
-                    aria-label={`Go to slide ${index + 1}`}
                   />
                 ))}
               </div>

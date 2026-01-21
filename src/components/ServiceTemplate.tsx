@@ -241,6 +241,8 @@ export default function ServiceTemplate({
   const [portfolioIndex, setPortfolioIndex] = useState(0);
   const [cardsIndex, setCardsIndex] = useState(0);
   const [techIndex, setTechIndex] = useState(0);
+  const [heroVideoReady, setHeroVideoReady] = useState(false);
+  const heroVideoRef = useRef<HTMLVideoElement>(null);
 
   // Touch handlers for mobile carousels
   const portfolioTouchStartX = useRef<number | null>(null);
@@ -262,6 +264,18 @@ export default function ServiceTemplate({
   const backgroundImage = data.hero.backgroundImage;
   const backgroundVideo = data.hero.backgroundVideo;
   const backgroundOpacity = data.hero.backgroundOpacity ?? 0.3;
+
+  // Delay video loading to ensure image is LCP
+  useEffect(() => {
+    if (backgroundVideo && heroVideoRef.current) {
+      // Delay video loading by 100ms to ensure image is LCP
+      const timer = setTimeout(() => {
+        heroVideoRef.current?.load();
+        setHeroVideoReady(true);
+      }, 100);
+      return () => clearTimeout(timer);
+    }
+  }, [backgroundVideo]);
 
   const toggleFaq = (index: number) => {
     setExpandedFaq(expandedFaq === index ? null : index);
@@ -782,28 +796,44 @@ export default function ServiceTemplate({
       {/* Background Image/Video */}
       {(backgroundImage || backgroundVideo) && (
         <div className="absolute inset-0">
-          {backgroundVideo ? (
+          {/* Always render image first for LCP - even if video exists */}
+          {backgroundImage && (
+            <div className="relative w-full h-full">
+              <Image
+                src={backgroundImage}
+                alt="Hero background"
+                fill
+                priority
+                fetchPriority="high"
+                className="object-cover"
+                style={{ opacity: backgroundOpacity }}
+                sizes="100vw"
+                quality={85}
+              />
+            </div>
+          )}
+          {/* Video loads after image to ensure image is LCP */}
+          {backgroundVideo && (
             <video
+              ref={heroVideoRef}
               autoPlay
               loop
               muted
               playsInline
-              className="w-full h-full object-cover"
-              style={{ opacity: backgroundOpacity }}
+              preload="none"
+              poster={backgroundImage}
+              className="absolute inset-0 w-full h-full object-cover"
+              style={{ 
+                opacity: heroVideoReady ? backgroundOpacity : 0, 
+                zIndex: 1,
+                transition: 'opacity 0.3s ease-in'
+              }}
             >
               <source src={backgroundVideo} type="video/mp4" />
               <source src={backgroundVideo} type="video/webm" />
               Your browser does not support the video tag.
             </video>
-          ) : backgroundImage ? (
-            <div
-              className="w-full h-full bg-cover bg-center bg-no-repeat"
-              style={{
-                backgroundImage: `url(${backgroundImage})`,
-                opacity: backgroundOpacity,
-              }}
-            />
-          ) : null}
+          )}
         </div>
       )}
 
@@ -1323,27 +1353,23 @@ export default function ServiceTemplate({
                           )
                         )}
                       </div>
-                      {/* Dot indicators for mobile */}
-                      {totalTechSlides > 1 && (
-                        <div className="flex justify-center gap-2 mt-4">
-                          {Array.from({ length: totalTechSlides }).map(
-                            (_, idx) => (
-                              <button
-                                key={idx}
-                                onClick={() =>
-                                  setTechIndex(idx * mobileItemsToShowTech)
-                                }
-                                className={`w-2 h-2 rounded-full transition-all ${
-                                  getCurrentTechSlideIndex() === idx
-                                    ? "bg-gray-800 w-6"
-                                    : "bg-gray-300"
-                                }`}
-                                aria-label={`Go to slide ${idx + 1}`}
-                              />
-                            )
-                          )}
-                        </div>
-                      )}
+                        {/* Dot indicators for mobile */}
+                        {totalTechSlides > 1 && (
+                          <div className="flex justify-center gap-1.5 mt-4">
+                            {Array.from({ length: totalTechSlides }).map(
+                              (_, idx) => (
+                                <span
+                                  key={idx}
+                                  className={`w-1.5 h-1.5 rounded-full transition-all ${
+                                    getCurrentTechSlideIndex() === idx
+                                      ? 'bg-gray-800'
+                                      : 'bg-gray-400 opacity-40'
+                                  }`}
+                                />
+                              )
+                            )}
+                          </div>
+                        )}
                     </div>
 
                     {/* Desktop Grid */}
@@ -1615,7 +1641,8 @@ export default function ServiceTemplate({
                                   alt={project.title || "Project"}
                                   fill
                                   className="object-cover group-hover:scale-110 transition-transform duration-500"
-                                  unoptimized
+                                  loading="lazy"
+                                  sizes="(max-width: 768px) 100vw, 33vw"
                                 />
                               ) : (
                                 <div className="w-full h-full flex items-center justify-center">
@@ -1630,9 +1657,10 @@ export default function ServiceTemplate({
                             <div className="p-6">
                               {project.category && (
                                 <span
-                                  className="inline-block px-3 py-1 text-xs font-semibold theme-primary-mid rounded-full mb-3"
+                                  className="inline-block px-3 py-1 text-xs font-semibold rounded-full mb-3"
                                   style={{
-                                    backgroundColor: "rgba(206, 212, 48, 0.1)",
+                                    color: "#4a6f1c",
+                                    backgroundColor: "rgba(74, 111, 28, 0.1)",
                                   }}
                                 >
                                   {project.category}
@@ -1676,20 +1704,16 @@ export default function ServiceTemplate({
                       </div>
                       {/* Dot indicators for mobile */}
                       {totalPortfolioSlides > 1 && (
-                        <div className="flex justify-center gap-2 mt-6">
+                        <div className="flex justify-center gap-1.5 mt-6">
                           {Array.from({ length: totalPortfolioSlides }).map(
                             (_, idx) => (
-                              <button
+                              <span
                                 key={idx}
-                                onClick={() =>
-                                  setPortfolioIndex(idx * mobileItemsToShow)
-                                }
-                                className={`w-2 h-2 rounded-full transition-all ${
+                                className={`w-1.5 h-1.5 rounded-full transition-all ${
                                   getCurrentPortfolioSlideIndex() === idx
-                                    ? "bg-gray-800 w-6"
-                                    : "bg-gray-300"
+                                    ? 'bg-gray-800'
+                                    : 'bg-gray-400 opacity-40'
                                 }`}
-                                aria-label={`Go to slide ${idx + 1}`}
                               />
                             )
                           )}
@@ -1715,7 +1739,8 @@ export default function ServiceTemplate({
                                   alt={project.title || "Project"}
                                   fill
                                   className="object-cover group-hover:scale-110 transition-transform duration-500"
-                                  unoptimized
+                                  loading="lazy"
+                                  sizes="(max-width: 768px) 100vw, 33vw"
                                 />
                               ) : (
                                 <div className="w-full h-full flex items-center justify-center">
@@ -1741,9 +1766,10 @@ export default function ServiceTemplate({
                             <div className="p-6">
                               {project.category && (
                                 <span
-                                  className="inline-block px-3 py-1 text-xs font-semibold theme-primary-mid rounded-full mb-3"
+                                  className="inline-block px-3 py-1 text-xs font-semibold rounded-full mb-3"
                                   style={{
-                                    backgroundColor: "rgba(206, 212, 48, 0.1)",
+                                    color: "#4a6f1c",
+                                    backgroundColor: "rgba(74, 111, 28, 0.1)",
                                   }}
                                 >
                                   {project.category}
@@ -1840,7 +1866,7 @@ export default function ServiceTemplate({
                           {data.partners.title.split(" ")[0]}
                         </span>
                         {data.partners.title.split(" ").length > 1 && (
-                          <span className="theme-primary-mid">
+                          <span className="theme-primary-mid-dark">
                             {" "}
                             {data.partners.title.split(" ").slice(1).join(" ")}
                           </span>
@@ -1982,20 +2008,16 @@ export default function ServiceTemplate({
                       </div>
                       {/* Dot indicators for mobile */}
                       {totalCardsSlides > 1 && (
-                        <div className="flex justify-center gap-2 mt-6">
+                        <div className="flex justify-center gap-1.5 mt-6">
                           {Array.from({ length: totalCardsSlides }).map(
                             (_, idx) => (
-                              <button
+                              <span
                                 key={idx}
-                                onClick={() =>
-                                  setCardsIndex(idx * mobileItemsToShowCards)
-                                }
-                                className={`w-2 h-2 rounded-full transition-all ${
+                                className={`w-1.5 h-1.5 rounded-full transition-all ${
                                   getCurrentCardsSlideIndex() === idx
-                                    ? "bg-gray-800 w-6"
-                                    : "bg-gray-300"
+                                    ? 'bg-gray-800'
+                                    : 'bg-gray-400 opacity-40'
                                 }`}
-                                aria-label={`Go to slide ${idx + 1}`}
                               />
                             )
                           )}

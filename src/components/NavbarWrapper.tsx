@@ -4,27 +4,27 @@ import Service from "@/models/Service";
 import Industry from "@/models/Industry";
 import Navbar from "./Navbar";
 
-// Force dynamic rendering to always fetch fresh navigation data from MongoDB
-export const dynamic = 'force-dynamic';
-export const revalidate = 0;
+// Cache navigation data for 60 seconds to improve performance
+export const revalidate = 60;
 
 export default async function NavbarWrapper() {
   await connectDB();
 
-  // Fetch all published pages, sorted by order
-  const pages = await Page.find({ isPublished: true })
-    .sort({ order: 1 })
-    .lean();
-
-  // Fetch all published services, sorted by order
-  const services = await Service.find({ isPublished: true })
-    .sort({ order: 1 })
-    .lean();
-
-  // Fetch all published industries, sorted by order
-  const industries = await Industry.find({ isPublished: true })
-    .sort({ order: 1 })
-    .lean();
+  // Fetch all data in parallel for better performance
+  const [pages, services, industries] = await Promise.all([
+    Page.find({ isPublished: true })
+      .select("_id title slug order")
+      .sort({ order: 1 })
+      .lean(),
+    Service.find({ isPublished: true })
+      .select("_id title slug order navOrder description icon")
+      .sort({ order: 1 })
+      .lean(),
+    Industry.find({ isPublished: true })
+      .select("_id title slug order navOrder description icon")
+      .sort({ order: 1 })
+      .lean(),
+  ]);
 
   // Serialize ObjectIds to strings for client components
   const serializedPages = pages.map((page) => ({

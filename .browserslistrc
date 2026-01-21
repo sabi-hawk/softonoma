@@ -1,0 +1,22 @@
+# Modern browsers only - ES2020+ support
+# This prevents Next.js from transpiling modern JavaScript features
+
+# Chrome/Edge (last 2 versions)
+last 2 Chrome versions
+last 2 Edge versions
+
+# Firefox (last 2 versions)
+last 2 Firefox versions
+
+# Safari (last 2 versions)
+last 2 Safari versions
+
+# iOS Safari (last 2 versions)
+last 2 iOS versions
+
+# Samsung Internet (last 2 versions)
+last 2 Samsung versions
+
+# Exclude very old browsers
+not dead
+not IE 11

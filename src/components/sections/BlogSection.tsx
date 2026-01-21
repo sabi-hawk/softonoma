@@ -3,6 +3,7 @@
 import { ISection } from "@/models/Section";
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { getBackgroundStyle, getDefaultBackground } from "@/lib/section-helpers";
 
 interface BlogSectionProps {
@@ -293,10 +294,13 @@ export default function BlogSection({ section }: BlogSectionProps) {
                   {/* Post Image */}
                   <div className="relative h-48 overflow-hidden theme-gradient">
                     {isImageUrl(post.image) ? (
-                      <img
+                      <Image
                         src={post.image}
                         alt={post.title || "Blog post"}
-                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                        fill
+                        className="object-cover group-hover:scale-110 transition-transform duration-500"
+                        loading="lazy"
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                       />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center">
@@ -387,23 +391,21 @@ export default function BlogSection({ section }: BlogSectionProps) {
               </button>
             )}
 
-            {/* Dot Indicators - Only visible on mobile */}
-            {totalItems > mobileItemsToShow && (
-              <div className="flex justify-center gap-2 mt-8 md:hidden">
-                {Array.from({ length: totalSlides }).map((_, index) => (
-                  <button
-                    key={index}
-                    onClick={() => setCurrentIndex(index * mobileItemsToShow)}
-                    className={`w-2 h-2 rounded-full transition-all ${
-                      getCurrentSlideIndex() === index
-                        ? 'bg-[#79b246] w-8'
-                        : 'bg-gray-300'
-                    }`}
-                    aria-label={`Go to slide ${index + 1}`}
-                  />
-                ))}
-              </div>
-            )}
+             {/* Dot Indicators - Only visible on mobile */}
+             {totalItems > mobileItemsToShow && (
+               <div className="flex justify-center gap-1.5 mt-8 md:hidden">
+                 {Array.from({ length: totalSlides }).map((_, index) => (
+                   <span
+                     key={index}
+                     className={`w-1.5 h-1.5 rounded-full transition-all ${
+                       getCurrentSlideIndex() === index
+                         ? 'bg-[#79b246]'
+                         : 'bg-gray-400 opacity-40'
+                     }`}
+                   />
+                 ))}
+               </div>
+             )}
           </div>
         )}
 

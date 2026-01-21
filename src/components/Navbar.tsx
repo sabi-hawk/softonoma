@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useState, useEffect } from "react";
+import { useState, useEffect, memo, useMemo, useCallback } from "react";
 
 interface Page {
   _id: string;
@@ -43,7 +43,7 @@ interface NavbarProps {
   industries: Industry[];
 }
 
-export default function Navbar({ pages, services, industries }: NavbarProps) {
+function Navbar({ pages, services, industries }: NavbarProps) {
   const router = useRouter();
   const [servicesDropdownOpen, setServicesDropdownOpen] = useState(false);
   const [industriesDropdownOpen, setIndustriesDropdownOpen] = useState(false);
@@ -69,16 +69,16 @@ export default function Navbar({ pages, services, industries }: NavbarProps) {
   }, []);
 
   // Close dropdown when a link is clicked
-  const handleLinkClick = () => {
+  const handleLinkClick = useCallback(() => {
     setServicesDropdownOpen(false);
     setIndustriesDropdownOpen(false);
-  };
+  }, []);
 
   // Helper to check if icon is a URL (not an emoji)
-  const isIconUrl = (icon?: string): boolean => {
+  const isIconUrl = useCallback((icon?: string): boolean => {
     if (!icon) return false;
     return icon.startsWith("http") || icon.startsWith("/");
-  };
+  }, []);
 
   // Render dropdown item (used for both services and industries)
   const renderDropdownItem = (
@@ -152,30 +152,33 @@ export default function Navbar({ pages, services, industries }: NavbarProps) {
     </Link>
   );
 
-  // Build unified navigation items array
-  const navItems: NavItem[] = [
-    ...pages.map((page) => ({
-      type: "page" as const,
-      id: page._id,
-      title: page.title,
-      slug: page.slug,
-      order: page.order,
-    })),
-    ...(services.length > 0 ? [{ type: "services" as const, services }] : []),
-    ...(industries.length > 0
-      ? [{ type: "industries" as const, industries }]
-      : []),
-  ];
+  // Build unified navigation items array (memoized)
+  const navItems: NavItem[] = useMemo(() => {
+    const items: NavItem[] = [
+      ...pages.map((page) => ({
+        type: "page" as const,
+        id: page._id,
+        title: page.title,
+        slug: page.slug,
+        order: page.order,
+      })),
+      ...(services.length > 0 ? [{ type: "services" as const, services }] : []),
+      ...(industries.length > 0
+        ? [{ type: "industries" as const, industries }]
+        : []),
+    ];
 
-  // Helper to get order for sorting
-  const getNavItemOrder = (item: NavItem): number => {
-    if (item.type === "page") return item.order;
-    if (item.type === "services") return item.services[0]?.navOrder ?? 9999;
-    return item.industries[0]?.navOrder ?? 9999;
-  };
+    // Helper to get order for sorting
+    const getNavItemOrder = (item: NavItem): number => {
+      if (item.type === "page") return item.order;
+      if (item.type === "services") return item.services[0]?.navOrder ?? 9999;
+      return item.industries[0]?.navOrder ?? 9999;
+    };
 
-  // Sort by order/navOrder
-  navItems.sort((a, b) => getNavItemOrder(a) - getNavItemOrder(b));
+    // Sort by order/navOrder
+    items.sort((a, b) => getNavItemOrder(a) - getNavItemOrder(b));
+    return items;
+  }, [pages, services, industries]);
 
   return (
     <nav className="sticky top-0 z-50 theme-bg-white border-b border-gray-200 shadow-sm backdrop-blur-sm bg-white/95">
@@ -341,7 +344,7 @@ export default function Navbar({ pages, services, industries }: NavbarProps) {
           <div className="hidden lg:flex items-center shrink-0">
             <Link
               href="/contact"
-              className="px-6 py-2.5 text-sm font-semibold rounded-lg transition-all duration-200 bg-[#79b246] text-white hover:bg-[#6a9f3d] shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
+              className="px-6 py-2.5 text-sm font-semibold rounded-lg transition-all duration-200 bg-[#4a6f1c] text-white hover:bg-[#3d5a17] shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
             >
               Contact Us
             </Link>
@@ -540,7 +543,7 @@ export default function Navbar({ pages, services, industries }: NavbarProps) {
               <Link
                 href="/contact"
                 onClick={() => setMobileMenuOpen(false)}
-                className="mx-4 mt-4 px-6 py-3 text-sm font-semibold text-center rounded-lg bg-[#79b246] text-white hover:bg-[#6a9f3d] transition-colors"
+                className="mx-4 mt-4 px-6 py-3 text-sm font-semibold text-center rounded-lg bg-[#4a6f1c] text-white hover:bg-[#3d5a17] transition-colors"
               >
                 Contact Us
               </Link>
@@ -551,3 +554,5 @@ export default function Navbar({ pages, services, industries }: NavbarProps) {
     </nav>
   );
 }
+
+export default memo(Navbar);

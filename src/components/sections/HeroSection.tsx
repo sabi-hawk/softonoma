@@ -1,5 +1,9 @@
+"use client";
+
 import { ISection } from "@/models/Section";
 import Link from "next/link";
+import Image from "next/image";
+import { useEffect, useRef, useState } from "react";
 
 interface HeroSectionProps {
   section: ISection;
@@ -7,6 +11,8 @@ interface HeroSectionProps {
 
 export default function HeroSection({ section }: HeroSectionProps) {
   const { content } = section;
+  const [videoReady, setVideoReady] = useState(false);
+  const videoRef = useRef<HTMLVideoElement>(null);
 
   // Get background media and opacity from content
   const backgroundImage = content.backgroundImage as string | undefined;
@@ -14,33 +20,61 @@ export default function HeroSection({ section }: HeroSectionProps) {
   const backgroundOpacity =
     (content.backgroundOpacity as number | undefined) ?? 0.3; // Default 30% opacity
 
+  // Delay video loading to ensure image is LCP
+  useEffect(() => {
+    if (backgroundVideo && videoRef.current) {
+      // Delay video loading by 100ms to ensure image is LCP
+      const timer = setTimeout(() => {
+        videoRef.current?.load();
+        setVideoReady(true);
+      }, 100);
+      return () => clearTimeout(timer);
+    }
+  }, [backgroundVideo]);
+
   return (
     <section className="relative py-16 sm:py-20 md:py-32 lg:py-36 overflow-hidden theme-bg-black">
       {/* Background Image/Video */}
       {(backgroundImage || backgroundVideo) && (
         <div className="absolute inset-0">
-          {backgroundVideo ? (
+          {/* Always render image first for LCP - even if video exists */}
+          {backgroundImage && (
+            <div className="relative w-full h-full">
+              <Image
+                src={backgroundImage}
+                alt="Hero background"
+                fill
+                priority
+                fetchPriority="high"
+                className="object-cover"
+                style={{ opacity: backgroundOpacity }}
+                sizes="100vw"
+                quality={85}
+              />
+            </div>
+          )}
+          {/* Video loads after image to ensure image is LCP */}
+          {backgroundVideo && (
             <video
+              ref={videoRef}
               autoPlay
               loop
               muted
               playsInline
-              className="w-full h-full object-cover"
-              style={{ opacity: backgroundOpacity }}
+              preload="none"
+              poster={backgroundImage}
+              className="absolute inset-0 w-full h-full object-cover"
+              style={{ 
+                opacity: videoReady ? backgroundOpacity : 0, 
+                zIndex: 1,
+                transition: 'opacity 0.3s ease-in'
+              }}
             >
               <source src={backgroundVideo} type="video/mp4" />
               <source src={backgroundVideo} type="video/webm" />
               Your browser does not support the video tag.
             </video>
-          ) : backgroundImage ? (
-            <div
-              className="w-full h-full bg-cover bg-center bg-no-repeat"
-              style={{
-                backgroundImage: `url(${backgroundImage})`,
-                opacity: backgroundOpacity,
-              }}
-            />
-          ) : null}
+          )}
         </div>
       )}
 

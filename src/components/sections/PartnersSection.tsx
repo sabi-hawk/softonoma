@@ -102,7 +102,7 @@ export default function PartnersSection({ section }: PartnersSectionProps) {
                     {titleParts.firstPart}
                   </span>
                   {titleParts.rest && (
-                    <span className="theme-primary-mid">
+                    <span className="theme-primary-mid-dark">
                       {" "}
                       {titleParts.rest}
                     </span>

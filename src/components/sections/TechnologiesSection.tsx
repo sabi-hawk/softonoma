@@ -202,7 +202,7 @@ export default function TechnologiesSection({
                     {titleParts.firstPart}
                   </span>
                   {titleParts.rest && (
-                    <span className="theme-primary-mid">
+                    <span className="theme-primary-mid-dark">
                       {" "}
                       {titleParts.rest}
                     </span>
@@ -308,17 +308,15 @@ export default function TechnologiesSection({
               
               {/* Dot Indicators for Mobile */}
               {totalSlides > 1 && (
-                <div className="flex justify-center gap-2 mt-6">
+                <div className="flex justify-center gap-1.5 mt-6">
                   {Array.from({ length: totalSlides }).map((_, index) => (
-                    <button
+                    <span
                       key={index}
-                      onClick={() => setCurrentIndex(index)}
-                      className={`h-2 rounded-full transition-all ${
+                      className={`w-1.5 h-1.5 rounded-full transition-all ${
                         getCurrentSlideIndex() === index
-                          ? 'bg-[#79b246] w-8'
-                          : 'bg-gray-300 w-2'
+                          ? 'bg-[#79b246]'
+                          : 'bg-gray-400 opacity-40'
                       }`}
-                      aria-label={`Go to slide ${index + 1}`}
                     />
                   ))}
                 </div>

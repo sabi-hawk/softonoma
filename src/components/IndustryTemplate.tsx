@@ -27,6 +27,8 @@ export default function IndustryTemplate({
   const [portfolioIndex, setPortfolioIndex] = useState(0);
   const [cardsIndex, setCardsIndex] = useState(0);
   const [techIndex, setTechIndex] = useState(0);
+  const [heroVideoReady, setHeroVideoReady] = useState(false);
+  const heroVideoRef = useRef<HTMLVideoElement>(null);
 
   // Touch handlers for mobile carousels
   const portfolioTouchStartX = useRef<number | null>(null);
@@ -48,6 +50,18 @@ export default function IndustryTemplate({
   const backgroundImage = data.hero.backgroundImage;
   const backgroundVideo = data.hero.backgroundVideo;
   const backgroundOpacity = data.hero.backgroundOpacity ?? 0.3;
+
+  // Delay video loading to ensure image is LCP
+  useEffect(() => {
+    if (backgroundVideo && heroVideoRef.current) {
+      // Delay video loading by 100ms to ensure image is LCP
+      const timer = setTimeout(() => {
+        heroVideoRef.current?.load();
+        setHeroVideoReady(true);
+      }, 100);
+      return () => clearTimeout(timer);
+    }
+  }, [backgroundVideo]);
 
   const itemsToShowCards = 3;
   const mobileItemsToShowCards = 1;
@@ -573,27 +587,43 @@ export default function IndustryTemplate({
       {/* Background Image/Video */}
       {(backgroundImage || backgroundVideo) && (
         <div className="absolute inset-0">
-          {backgroundVideo ? (
+          {/* Always render image first for LCP - even if video exists */}
+          {backgroundImage && (
+            <div className="relative w-full h-full">
+              <Image
+                src={backgroundImage}
+                alt="Hero background"
+                fill
+                priority
+                fetchPriority="high"
+                className="object-cover"
+                style={{ opacity: backgroundOpacity }}
+                sizes="100vw"
+                quality={85}
+              />
+            </div>
+          )}
+          {/* Video loads after image to ensure image is LCP */}
+          {backgroundVideo && (
             <video
+              ref={heroVideoRef}
               autoPlay
               loop
               muted
               playsInline
-              className="w-full h-full object-cover"
-              style={{ opacity: backgroundOpacity }}
+              preload="none"
+              poster={backgroundImage}
+              className="absolute inset-0 w-full h-full object-cover"
+              style={{ 
+                opacity: heroVideoReady ? backgroundOpacity : 0, 
+                zIndex: 1,
+                transition: 'opacity 0.3s ease-in'
+              }}
             >
               <source src={backgroundVideo} type="video/mp4" />
               <source src={backgroundVideo} type="video/webm" />
             </video>
-          ) : backgroundImage ? (
-            <div
-              className="w-full h-full bg-cover bg-center bg-no-repeat"
-              style={{
-                backgroundImage: `url(${backgroundImage})`,
-                opacity: backgroundOpacity,
-              }}
-            />
-          ) : null}
+          )}
         </div>
       )}
 
@@ -616,7 +646,7 @@ export default function IndustryTemplate({
             {data.hero.title || industryTitle}
           </h1>
           {data.hero.subtitle && (
-            <p className="text-lg sm:text-xl md:text-2xl theme-primary-mid mb-3 sm:mb-4">
+            <p className="text-lg sm:text-xl md:text-2xl theme-primary-mid-dark mb-3 sm:mb-4">
               {data.hero.subtitle}
             </p>
           )}
@@ -905,7 +935,7 @@ export default function IndustryTemplate({
                               {titleParts.firstPart}
                             </span>
                             {titleParts.rest && (
-                              <span className="theme-primary-mid">
+                              <span className="theme-primary-mid-dark">
                                 {" "}
                                 {titleParts.rest}
                               </span>
@@ -1079,20 +1109,16 @@ export default function IndustryTemplate({
                         </div>
                         {/* Dot indicators for mobile */}
                         {totalCardsSlides > 1 && (
-                          <div className="flex justify-center gap-2 mt-6">
+                          <div className="flex justify-center gap-1.5 mt-6">
                             {Array.from({ length: totalCardsSlides }).map(
                               (_, idx) => (
-                                <button
+                                <span
                                   key={idx}
-                                  onClick={() =>
-                                    setCardsIndex(idx * mobileItemsToShowCards)
-                                  }
-                                  className={`w-2 h-2 rounded-full transition-all ${
+                                  className={`w-1.5 h-1.5 rounded-full transition-all ${
                                     getCurrentCardsSlideIndex() === idx
-                                      ? "bg-gray-800 w-6"
-                                      : "bg-gray-300"
+                                      ? 'bg-gray-800'
+                                      : 'bg-gray-400 opacity-40'
                                   }`}
-                                  aria-label={`Go to slide ${idx + 1}`}
                                 />
                               )
                             )}
@@ -1256,7 +1282,8 @@ export default function IndustryTemplate({
                                     alt={project.title}
                                     fill
                                     className="object-cover group-hover:scale-110 transition-transform duration-300"
-                                    unoptimized
+                                    loading="lazy"
+                                    sizes="(max-width: 768px) 100vw, 33vw"
                                   />
                                 </div>
                               )}
@@ -1278,20 +1305,16 @@ export default function IndustryTemplate({
                         </div>
                         {/* Dot indicators for mobile */}
                         {totalPortfolioSlides > 1 && (
-                          <div className="flex justify-center gap-2 mt-6">
-                            {Array.from({ length: totalPortfolioSlides }).map(
+                        <div className="flex justify-center gap-1.5 mt-6">
+                          {Array.from({ length: totalPortfolioSlides }).map(
                               (_, idx) => (
-                                <button
+                                <span
                                   key={idx}
-                                  onClick={() =>
-                                    setPortfolioIndex(idx * mobileItemsToShow)
-                                  }
-                                  className={`w-2 h-2 rounded-full transition-all ${
+                                  className={`w-1.5 h-1.5 rounded-full transition-all ${
                                     getCurrentPortfolioSlideIndex() === idx
-                                      ? "bg-gray-800 w-6"
-                                      : "bg-gray-300"
+                                      ? 'bg-gray-800'
+                                      : 'bg-gray-400 opacity-40'
                                   }`}
-                                  aria-label={`Go to slide ${idx + 1}`}
                                 />
                               )
                             )}
@@ -1316,7 +1339,8 @@ export default function IndustryTemplate({
                                     alt={project.title}
                                     fill
                                     className="object-cover group-hover:scale-110 transition-transform duration-300"
-                                    unoptimized
+                                    loading="lazy"
+                                    sizes="(max-width: 768px) 100vw, 33vw"
                                   />
                                 </div>
                               )}
@@ -1468,7 +1492,7 @@ export default function IndustryTemplate({
                                 {titleParts.firstPart}
                               </span>
                               {titleParts.rest && (
-                                <span className="theme-primary-mid">
+                                <span className="theme-primary-mid-dark">
                                   {" "}
                                   {titleParts.rest}
                                 </span>
@@ -1518,7 +1542,8 @@ export default function IndustryTemplate({
                                       alt={tech.name || "Technology"}
                                       fill
                                       className="object-contain transition-all duration-300 group-hover:scale-105"
-                                      unoptimized
+                                      loading="lazy"
+                                    sizes="(max-width: 768px) 100vw, 33vw"
                                       onError={(e) => {
                                         // Fallback to emoji or name if image fails
                                         const target = e.currentTarget;
@@ -1557,20 +1582,16 @@ export default function IndustryTemplate({
                       </div>
                       {/* Dot indicators for mobile */}
                       {totalTechSlides > 1 && (
-                        <div className="flex justify-center gap-2 mt-4">
+                        <div className="flex justify-center gap-1.5 mt-4">
                           {Array.from({ length: totalTechSlides }).map(
                             (_, idx) => (
-                              <button
+                              <span
                                 key={idx}
-                                onClick={() =>
-                                  setTechIndex(idx * mobileItemsToShowTech)
-                                }
-                                className={`w-2 h-2 rounded-full transition-all ${
+                                className={`w-1.5 h-1.5 rounded-full transition-all ${
                                   getCurrentTechSlideIndex() === idx
-                                    ? "bg-gray-800 w-6"
-                                    : "bg-gray-300"
+                                    ? 'bg-gray-800'
+                                    : 'bg-gray-400 opacity-40'
                                 }`}
-                                aria-label={`Go to slide ${idx + 1}`}
                               />
                             )
                           )}

@@ -4,9 +4,8 @@ import Page from "@/models/Page";
 import Section from "@/models/Section";
 import SectionRenderer from "@/components/sections/SectionRenderer";
 
-// Force dynamic rendering to always fetch fresh data from MongoDB
-export const dynamic = "force-dynamic";
-export const revalidate = 0;
+// Cache homepage for 60 seconds to improve performance
+export const revalidate = 60;
 
 export default async function Home() {
   await connectDB();

@@ -8,9 +8,8 @@ interface ServicePageProps {
   params: Promise<{ slug: string }>;
 }
 
-// Force dynamic rendering to always fetch fresh data from MongoDB
-export const dynamic = "force-dynamic";
-export const revalidate = 0;
+// Cache service pages for 60 seconds to improve performance
+export const revalidate = 60;
 
 export default async function ServicePage({ params }: ServicePageProps) {
   await connectDB();
@@ -24,16 +23,8 @@ export default async function ServicePage({ params }: ServicePageProps) {
     notFound();
   }
 
-  // Debug logging
-  console.log("Service found:", service.title);
-  console.log("Service content:", service.content);
-  console.log("Service content type:", typeof service.content);
-  console.log("Service content length:", service.content?.length || 0);
-
   // Parse template data
   const templateData = parseServiceTemplateData(service.content || "");
-
-  console.log("Parsed template data:", templateData ? "Success" : "Failed");
 
   if (!templateData) {
     return (

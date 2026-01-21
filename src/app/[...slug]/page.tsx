@@ -10,9 +10,8 @@ interface PageProps {
   params: Promise<{ slug: string[] }>;
 }
 
-// Force dynamic rendering to always fetch fresh data from MongoDB
-export const dynamic = "force-dynamic";
-export const revalidate = 0;
+// Cache dynamic pages for 60 seconds to improve performance
+export const revalidate = 60;
 
 export default async function DynamicPage({ params }: PageProps) {
   await connectDB();

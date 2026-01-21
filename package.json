@@ -1,5 +1,5 @@
 {
-  "name": "xyz-test-project",
+  "name": "softonoma",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -8,8 +8,15 @@
     "start": "next start",
     "lint": "eslint"
   },
+  "browserslist": [
+    "last 2 Chrome versions",
+    "last 2 Firefox versions",
+    "last 2 Safari versions",
+    "last 2 Edge versions",
+    "last 2 iOS versions",
+    "last 2 Samsung versions"
+  ],
   "dependencies": {
-    "@types/nodemailer": "^7.0.4",
     "appwrite": "^21.5.0",
     "bcryptjs": "^3.0.3",
     "jsonwebtoken": "^9.0.3",
@@ -24,6 +31,7 @@
     "@types/bcryptjs": "^2.4.6",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^20",
+    "@types/nodemailer": "^7.0.4",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",

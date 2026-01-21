@@ -330,23 +330,21 @@ export default function CardsSection({ section }: CardsSectionProps) {
               </button>
             )}
 
-            {/* Dot Indicators - Only visible on mobile */}
-            {totalItems > mobileItemsToShow && (
-              <div className="flex justify-center gap-2 mt-8 md:hidden">
-                {Array.from({ length: totalSlides }).map((_, index) => (
-                  <button
-                    key={index}
-                    onClick={() => setCurrentIndex(index * mobileItemsToShow)}
-                    className={`w-2 h-2 rounded-full transition-all ${
-                      getCurrentSlideIndex() === index
-                        ? 'bg-[#79b246] w-8'
-                        : 'bg-gray-300'
-                    }`}
-                    aria-label={`Go to slide ${index + 1}`}
-                  />
-                ))}
-              </div>
-            )}
+             {/* Dot Indicators - Only visible on mobile */}
+             {totalItems > mobileItemsToShow && (
+               <div className="flex justify-center gap-1.5 mt-8 md:hidden">
+                 {Array.from({ length: totalSlides }).map((_, index) => (
+                   <span
+                     key={index}
+                     className={`w-1.5 h-1.5 rounded-full transition-all ${
+                       getCurrentSlideIndex() === index
+                         ? 'bg-[#79b246]'
+                         : 'bg-gray-400 opacity-40'
+                     }`}
+                   />
+                 ))}
+               </div>
+             )}
           </div>
         )}
       </div>

@@ -359,17 +359,15 @@ export default function PartnershipsSection({
 
             {/* Dot Indicators - Only visible on mobile */}
             {totalItems > mobileItemsToShow && (
-              <div className="flex justify-center gap-2 mt-8 md:hidden">
+              <div className="flex justify-center gap-1.5 mt-8 md:hidden">
                 {Array.from({ length: totalSlides }).map((_, index) => (
-                  <button
+                  <span
                     key={index}
-                    onClick={() => setCurrentIndex(index * mobileItemsToShow)}
-                    className={`w-2 h-2 rounded-full transition-all ${
+                    className={`w-1.5 h-1.5 rounded-full transition-all ${
                       getCurrentSlideIndex() === index
-                        ? 'bg-[#79b246] w-8'
-                        : 'bg-gray-300'
+                        ? 'bg-[#79b246]'
+                        : 'bg-gray-400 opacity-40'
                     }`}
-                    aria-label={`Go to slide ${index + 1}`}
                   />
                 ))}
               </div>

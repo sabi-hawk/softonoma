@@ -8,6 +8,7 @@
   --color-primary-start: #5c8c24;
   --color-primary-end: #ced430;
   --color-primary-mid: #79b246;
+  --color-primary-mid-dark: #4a6f1c; /* Darker variant for better contrast on white (WCAG AA compliant) */
   --color-primary-gradient: linear-gradient(99.01deg, #5c8c24 -0.67%, #ced430);
   --color-black: #000000;
   --color-white: #ffffff;
@@ -114,6 +115,11 @@ a[class*="inline-block"][class*="px-"][class*="py-"][class*="rounded"] {
 
 .theme-primary-mid {
   color: var(--color-primary-mid);
+}
+
+/* Darker variant for better contrast on white backgrounds */
+.theme-primary-mid-dark {
+  color: var(--color-primary-mid-dark);
 }
 
 .theme-bg-primary-mid {
