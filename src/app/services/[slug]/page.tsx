@@ -3,6 +3,7 @@ import connectDB from "@/lib/mongodb";
 import Service from "@/models/Service";
 import ServiceTemplate from "@/components/ServiceTemplate";
 import { parseServiceTemplateData } from "@/lib/service-template";
+import { getCanonicalUrl } from "@/lib/url-utils";
 
 interface ServicePageProps {
   params: Promise<{ slug: string }>;
@@ -17,7 +18,9 @@ export default async function ServicePage({ params }: ServicePageProps) {
   const { slug } = await params;
 
   // Get service
-  const service = await Service.findOne({ slug, isPublished: true }).lean();
+  const service = await Service.findOne({ slug, isPublished: true })
+    .select("title content description metaHeaderTags")
+    .lean();
 
   if (!service) {
     notFound();
@@ -49,7 +52,13 @@ export default async function ServicePage({ params }: ServicePageProps) {
     );
   }
 
-  return <ServiceTemplate data={templateData} serviceTitle={service.title} />;
+  return (
+    <>
+      <main>
+        <ServiceTemplate data={templateData} serviceTitle={service.title} />
+      </main>
+    </>
+  );
 }
 
 export async function generateMetadata({ params }: ServicePageProps) {
@@ -60,36 +69,65 @@ export async function generateMetadata({ params }: ServicePageProps) {
   if (!service) {
     return {
       title: "Service Not Found",
+      description: "The requested service page could not be found.",
     };
   }
 
   const title = service.seoTitle || service.title;
-  const description = service.seoDescription || service.description || "";
+  
+  // Ensure description is always a non-empty string
+  const seoDesc = (service.seoDescription || "").trim();
+  const serviceDesc = (service.description || "").trim();
+  const defaultDesc = `Explore our ${service.title} services. Professional solutions tailored to your business needs.`;
+  
+  // Build description with proper fallback chain
+  let description = seoDesc || serviceDesc || defaultDesc;
+  
+  // Final safety check - ensure description is never empty
+  if (!description || description.trim().length === 0) {
+    description = defaultDesc;
+  }
+  
+  // Ensure description is properly formatted and within limits
+  const metaDescription = description.trim().substring(0, 160);
+  
+  // Final validation - ensure metaDescription is never empty
+  const finalDescription = metaDescription && metaDescription.length > 0 
+    ? metaDescription 
+    : defaultDesc.substring(0, 160);
+  
   const keywords = service.seoKeywords || "";
   const ogTitle = service.ogTitle || service.seoTitle || service.title;
   const ogDescription =
     service.ogDescription ||
     service.seoDescription ||
     service.description ||
-    "";
+    finalDescription;
   const ogImage = service.ogImage || "";
+  const canonicalUrl = getCanonicalUrl(`/services/${slug}`);
+  const allowIndexing = service.allowIndexing !== undefined ? service.allowIndexing : true;
 
   return {
-    title,
-    description,
+    title: title || "Service",
+    description: finalDescription,
     keywords: keywords
       ? keywords.split(",").map((k: string) => k.trim())
       : undefined,
+    robots: allowIndexing ? undefined : { index: false, follow: false },
+    alternates: {
+      canonical: canonicalUrl,
+    },
     openGraph: {
-      title: ogTitle,
-      description: ogDescription,
+      title: ogTitle || service.title,
+      description: (ogDescription || finalDescription).substring(0, 160),
       images: ogImage ? [{ url: ogImage }] : undefined,
       type: "website",
+      url: canonicalUrl,
     },
     twitter: {
       card: "summary_large_image",
-      title: ogTitle,
-      description: ogDescription,
+      title: ogTitle || service.title,
+      description: (ogDescription || finalDescription).substring(0, 160),
       images: ogImage ? [ogImage] : undefined,
     },
   };

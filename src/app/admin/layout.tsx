@@ -3,6 +3,9 @@ import { cookies } from "next/headers";
 import jwt from "jsonwebtoken";
 import { headers } from "next/headers";
 
+// Force dynamic rendering to prevent build-time prerendering
+export const dynamic = 'force-dynamic';
+
 export default async function AdminLayout({
   children,
 }: {

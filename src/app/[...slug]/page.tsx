@@ -5,6 +5,7 @@ import Section from "@/models/Section";
 import SectionRenderer from "@/components/sections/SectionRenderer";
 import ContactPage from "@/components/ContactPage";
 import { isContactPage } from "@/lib/about-page-templates";
+import { getCanonicalUrl } from "@/lib/url-utils";
 
 interface PageProps {
   params: Promise<{ slug: string[] }>;
@@ -22,7 +23,7 @@ export default async function DynamicPage({ params }: PageProps) {
   // Get page content - allow both published and unpublished pages to be viewed
   // Only select fields we need for better performance
   const page = await Page.findOne({ slug: pageSlug })
-    .select("_id title slug content templateType")
+    .select("_id title slug content templateType metaHeaderTags")
     .lean();
 
   // If page not found, return 404
@@ -54,7 +55,8 @@ export default async function DynamicPage({ params }: PageProps) {
   }));
 
   return (
-    <div className="min-h-screen">
+    <>
+      <main className="min-h-screen">
       {/* Render sections if they exist */}
       {serializedSections && serializedSections.length > 0 ? (
         <div>
@@ -69,7 +71,7 @@ export default async function DynamicPage({ params }: PageProps) {
         </div>
       ) : (
         /* Fallback to traditional content if no sections */
-        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <article>
             <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-6">
               {page.title}
@@ -81,9 +83,10 @@ export default async function DynamicPage({ params }: PageProps) {
               }}
             />
           </article>
-        </main>
+        </div>
       )}
-    </div>
+        </main>
+    </>
   );
 }
 
@@ -101,23 +104,30 @@ export async function generateMetadata({ params }: PageProps) {
   }
 
   const title = page.seoTitle || page.title;
-  const description = page.seoDescription || "";
+  const description = page.seoDescription || page.content?.substring(0, 160).replace(/<[^>]*>/g, "") || `Learn more about ${page.title}`;
   const keywords = page.seoKeywords || "";
   const ogTitle = page.ogTitle || page.seoTitle || page.title;
-  const ogDescription = page.ogDescription || page.seoDescription || "";
+  const ogDescription = page.ogDescription || page.seoDescription || description;
   const ogImage = page.ogImage || "";
+  const canonicalUrl = getCanonicalUrl(`/${pageSlug}`);
+  const allowIndexing = page.allowIndexing !== undefined ? page.allowIndexing : true;
 
   return {
     title,
-    description,
+    description: description.substring(0, 160),
     keywords: keywords
       ? keywords.split(",").map((k: string) => k.trim())
       : undefined,
+    robots: allowIndexing ? undefined : { index: false, follow: false },
+    alternates: {
+      canonical: canonicalUrl,
+    },
     openGraph: {
       title: ogTitle,
       description: ogDescription,
       images: ogImage ? [{ url: ogImage }] : undefined,
       type: "website",
+      url: canonicalUrl,
     },
     twitter: {
       card: "summary_large_image",

@@ -4,6 +4,16 @@ const nextConfig: NextConfig = {
   // Enable compression
   compress: true,
   
+  // Rewrites for SEO-friendly URLs
+  async rewrites() {
+    return [
+      {
+        source: '/sitemap.xml',
+        destination: '/sitemap',
+      },
+    ];
+  },
+  
   // Optimize images
   images: {
     formats: ['image/avif', 'image/webp'],

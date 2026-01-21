@@ -86,7 +86,7 @@ export default function ContactPage({
   };
 
   return (
-    <div className="min-h-screen theme-bg-white">
+    <main className="min-h-screen theme-bg-white">
       {/* Professional Hero Section */}
       <section className="relative py-20 md:py-32 px-4 sm:px-6 lg:px-8 overflow-hidden theme-bg-black">
         {/* Background Pattern - Same as Footer */}
@@ -552,6 +552,6 @@ export default function ContactPage({
           </div>
         </div>
       </section>
-    </div>
+    </main>
   );
 }

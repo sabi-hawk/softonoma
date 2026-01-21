@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import Loader from "@/components/admin/Loader";
 import IconUpload from "@/components/admin/IconUpload";
+import FileUpload from "@/components/admin/FileUpload";
 
 interface Industry {
   _id: string;
@@ -19,6 +20,8 @@ interface Industry {
   ogImage?: string;
   ogTitle?: string;
   ogDescription?: string;
+  metaHeaderTags?: string;
+  allowIndexing?: boolean;
 }
 
 export default function IndustriesAdmin() {
@@ -38,11 +41,14 @@ export default function IndustriesAdmin() {
     ogImage: "",
     ogTitle: "",
     ogDescription: "",
+    metaHeaderTags: "",
+    allowIndexing: true,
   });
 
   useEffect(() => {
     fetchData();
   }, []);
+
 
   const fetchData = async () => {
     try {
@@ -64,13 +70,18 @@ export default function IndustriesAdmin() {
         : "/api/industries";
       const method = editingIndustry ? "PUT" : "POST";
 
+      // Auto-populate OG Title and OG Description from Meta Title and Meta Description
+      const submitData = {
+        ...industryForm,
+        ogTitle: industryForm.seoTitle || "",
+        ogDescription: industryForm.seoDescription || "",
+        order: editingIndustry ? editingIndustry.order : industries.length,
+      };
+
       const res = await fetch(url, {
         method,
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          ...industryForm,
-          order: editingIndustry ? editingIndustry.order : industries.length,
-        }),
+        body: JSON.stringify(submitData),
       });
 
       const data = await res.json();
@@ -90,6 +101,8 @@ export default function IndustriesAdmin() {
           ogImage: "",
           ogTitle: "",
           ogDescription: "",
+          metaHeaderTags: "",
+          allowIndexing: true,
         });
       } else {
         alert(data.error || "Error saving industry");
@@ -170,6 +183,8 @@ export default function IndustriesAdmin() {
       ogImage: industry.ogImage || "",
       ogTitle: industry.ogTitle || "",
       ogDescription: industry.ogDescription || "",
+      metaHeaderTags: industry.metaHeaderTags || "",
+      allowIndexing: industry.allowIndexing !== undefined ? industry.allowIndexing : true,
     });
     setShowIndustryForm(true);
   };
@@ -213,6 +228,8 @@ export default function IndustriesAdmin() {
                 ogImage: "",
                 ogTitle: "",
                 ogDescription: "",
+                metaHeaderTags: "",
+                allowIndexing: true,
               });
               setShowIndustryForm(true);
             }}
@@ -351,56 +368,56 @@ export default function IndustriesAdmin() {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium mb-1">
-                      OG Image URL
-                    </label>
-                    <input
-                      type="text"
-                      value={industryForm.ogImage}
-                      onChange={(e) =>
+                    <FileUpload
+                      label="OG Image"
+                      value={industryForm.ogImage || ""}
+                      onChange={(url) =>
                         setIndustryForm({
                           ...industryForm,
-                          ogImage: e.target.value,
+                          ogImage: url,
                         })
                       }
-                      className="w-full px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600"
+                      type="image"
+                      folder="og-images"
                     />
+                    <p className="text-xs text-gray-500 mt-1">
+                      Image shown when sharing on social media (1200x630px
+                      recommended)
+                    </p>
                   </div>
-                  <div>
-                    <label className="block text-sm font-medium mb-1">
-                      OG Title
-                    </label>
-                    <input
-                      type="text"
-                      value={industryForm.ogTitle}
-                      onChange={(e) =>
-                        setIndustryForm({
-                          ...industryForm,
-                          ogTitle: e.target.value,
-                        })
-                      }
-                      className="w-full px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium mb-1">
-                      OG Description
-                    </label>
-                    <textarea
-                      value={industryForm.ogDescription}
-                      onChange={(e) =>
-                        setIndustryForm({
-                          ...industryForm,
-                          ogDescription: e.target.value,
-                        })
-                      }
-                      rows={2}
-                      className="w-full px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600"
-                    />
-                  </div>
+                  <p className="text-xs text-gray-500 mt-2">
+                    Note: OG Title and OG Description are automatically set from Meta Title and Meta Description
+                  </p>
                 </div>
               </div>
-              <div>
+
+              <div className="border-t pt-4 mt-4">
+                <h4 className="text-md font-semibold mb-4 text-gray-900 dark:text-white">
+                  Meta Header Tags
+                </h4>
+                <div>
+                  <label className="block text-sm font-medium mb-1">
+                    Custom Header Tags
+                  </label>
+                  <textarea
+                    value={industryForm.metaHeaderTags || ""}
+                    onChange={(e) =>
+                      setIndustryForm({
+                        ...industryForm,
+                        metaHeaderTags: e.target.value,
+                      })
+                    }
+                    rows={12}
+                    className="w-full px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600 font-mono text-sm"
+                    placeholder='<script type="application/ld+json">&#10;{&#10;  "@context": "https://schema.org",&#10;  "@type": "LocalBusiness",&#10;  "name": "Your Business Name"&#10;}&#10;</script>'
+                  />
+                  <p className="text-xs text-gray-500 mt-1">
+                    Add custom HTML tags to be included in the &lt;head&gt; section (JSON-LD structured data, meta tags, scripts, links, etc.)
+                  </p>
+                </div>
+              </div>
+
+              <div className="space-y-3">
                 <label className="flex items-center">
                   <input
                     type="checkbox"
@@ -414,6 +431,22 @@ export default function IndustriesAdmin() {
                     className="mr-2"
                   />
                   <span className="text-sm">Published</span>
+                </label>
+                <label className="flex items-center">
+                  <input
+                    type="checkbox"
+                    checked={industryForm.allowIndexing}
+                    onChange={(e) =>
+                      setIndustryForm({
+                        ...industryForm,
+                        allowIndexing: e.target.checked,
+                      })
+                    }
+                    className="mr-2"
+                  />
+                  <span className="text-sm">
+                    Allow Search Engine Indexing (uncheck to add noindex meta tag)
+                  </span>
                 </label>
               </div>
               <div className="flex space-x-2 pt-4">

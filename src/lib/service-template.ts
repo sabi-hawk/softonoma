@@ -1,4 +1,105 @@
-import { ServiceTemplateData } from "@/components/ServiceTemplate";
+export interface ServiceTemplateData {
+  hero: {
+    breadcrumbs?: string;
+    title: string;
+    subtitle?: string;
+    description: string;
+    primaryButtonText: string;
+    primaryButtonLink: string;
+    backgroundImage?: string;
+    backgroundVideo?: string;
+    backgroundOpacity?: number;
+  };
+  overview: {
+    title: string;
+    paragraphs: Array<{ text: string }>;
+    image?: string;
+    backgroundColor?: string;
+    isActive?: boolean;
+  };
+  stats?: {
+    items: Array<{ icon?: string; value: string; label: string }>;
+    backgroundColor?: string;
+    isActive?: boolean;
+  };
+  subServices?: {
+    title: string;
+    description?: string;
+    items: Array<{ icon?: string; title: string; description: string }>;
+    ctaButtonText?: string;
+    ctaButtonLink?: string;
+    backgroundColor?: string;
+    isActive?: boolean;
+  };
+  whyChooseUs?: {
+    title: string;
+    subtitle?: string;
+    items: Array<{ text: string }>;
+    image?: string;
+    certifications?: Array<{ name: string; image?: string }>;
+    backgroundColor?: string;
+    isActive?: boolean;
+  };
+  technologies?: {
+    title: string;
+    description: string;
+    items: Array<{ name: string; icon?: string }>;
+    backgroundColor?: string;
+    isActive?: boolean;
+  };
+  process?: {
+    title: string;
+    description: string;
+    steps: Array<{ number: string; title: string; description: string }>;
+    backgroundColor?: string;
+    isActive?: boolean;
+  };
+  portfolio?: {
+    title: string;
+    description?: string;
+    projects: Array<{
+      image?: string;
+      category?: string;
+      title: string;
+      description: string;
+      link?: string;
+      technologies?: string[];
+    }>;
+    backgroundColor?: string;
+    isActive?: boolean;
+  };
+  partners?: {
+    title: string;
+    description?: string;
+    partners: Array<{ name?: string; logo?: string }>;
+    backgroundColor?: string;
+    isActive?: boolean;
+  };
+  cards?: {
+    title: string;
+    description?: string;
+    showStars?: boolean;
+    items: Array<{ quote?: string; author?: string; role?: string; company?: string }>;
+    backgroundColor?: string;
+    isActive?: boolean;
+  };
+  faq?: {
+    title: string;
+    description?: string;
+    items: Array<{ question: string; answer: string }>;
+    backgroundColor?: string;
+    isActive?: boolean;
+  };
+  cta?: {
+    title: string;
+    description: string;
+    buttonText: string;
+    buttonLink: string;
+    backgroundColor?: string;
+    isActive?: boolean;
+  };
+  sectionOrder?: string[];
+}
 
 export const defaultServiceTemplateData: ServiceTemplateData = {
   hero: {

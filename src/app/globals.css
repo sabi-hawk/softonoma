@@ -126,6 +126,11 @@ a[class*="inline-block"][class*="px-"][class*="py-"][class*="rounded"] {
   background-color: var(--color-primary-mid);
 }
 
+/* Darker variant for buttons to ensure WCAG AA contrast compliance */
+.theme-bg-primary-mid-dark {
+  background-color: var(--color-primary-mid-dark);
+}
+
 .theme-hover-primary-mid:hover {
   color: var(--color-primary-mid);
   transition: color 0.3s ease;

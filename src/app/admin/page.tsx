@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import Loader from "@/components/admin/Loader";
+import FileUpload from "@/components/admin/FileUpload";
 
 interface Page {
   _id: string;
@@ -17,6 +18,8 @@ interface Page {
   ogImage?: string;
   ogTitle?: string;
   ogDescription?: string;
+  metaHeaderTags?: string;
+  allowIndexing?: boolean;
 }
 
 interface Service {
@@ -67,12 +70,15 @@ export default function AdminPanel() {
     ogImage: "",
     ogTitle: "",
     ogDescription: "",
+    metaHeaderTags: "",
+    allowIndexing: true,
   });
 
   useEffect(() => {
     checkAuth();
     fetchData();
   }, []);
+
 
   const checkAuth = async () => {
     try {
@@ -185,13 +191,18 @@ export default function AdminPanel() {
         : "/api/pages";
       const method = editingPage ? "PUT" : "POST";
 
+      // Auto-populate OG Title and OG Description from Meta Title and Meta Description
+      const submitData = {
+        ...pageForm,
+        ogTitle: pageForm.seoTitle || "",
+        ogDescription: pageForm.seoDescription || "",
+        order: editingPage ? editingPage.order : pages.length,
+      };
+
       const res = await fetch(url, {
         method,
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          ...pageForm,
-          order: editingPage ? editingPage.order : pages.length,
-        }),
+        body: JSON.stringify(submitData),
       });
 
       const data = await res.json();
@@ -209,6 +220,8 @@ export default function AdminPanel() {
           ogImage: "",
           ogTitle: "",
           ogDescription: "",
+          metaHeaderTags: "",
+          allowIndexing: true,
         });
         // Show notification if template was auto-applied
         if (data.templateApplied) {
@@ -299,6 +312,8 @@ export default function AdminPanel() {
       ogImage: page.ogImage || "",
       ogTitle: page.ogTitle || "",
       ogDescription: page.ogDescription || "",
+      metaHeaderTags: page.metaHeaderTags || "",
+      allowIndexing: page.allowIndexing !== undefined ? page.allowIndexing : true,
     });
     setShowPageForm(true);
   };
@@ -388,6 +403,8 @@ export default function AdminPanel() {
                     ogImage: "",
                     ogTitle: "",
                     ogDescription: "",
+                    metaHeaderTags: "",
+                    allowIndexing: true,
                   });
                   setShowPageForm(true);
                 }}
@@ -517,70 +534,56 @@ export default function AdminPanel() {
                     </h4>
                     <div className="space-y-4">
                       <div>
-                        <label className="block text-sm font-medium mb-1">
-                          OG Image URL
-                        </label>
-                        <input
-                          type="text"
-                          value={pageForm.ogImage}
-                          onChange={(e) =>
+                        <FileUpload
+                          label="OG Image"
+                          value={pageForm.ogImage || ""}
+                          onChange={(url) =>
                             setPageForm({
                               ...pageForm,
-                              ogImage: e.target.value,
+                              ogImage: url,
                             })
                           }
-                          className="w-full px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600"
-                          placeholder="https://example.com/image.jpg"
+                          type="image"
+                          folder="og-images"
                         />
                         <p className="text-xs text-gray-500 mt-1">
                           Image shown when sharing on social media (1200x630px
                           recommended)
                         </p>
                       </div>
-                      <div>
-                        <label className="block text-sm font-medium mb-1">
-                          OG Title
-                        </label>
-                        <input
-                          type="text"
-                          value={pageForm.ogTitle}
-                          onChange={(e) =>
-                            setPageForm({
-                              ...pageForm,
-                              ogTitle: e.target.value,
-                            })
-                          }
-                          className="w-full px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600"
-                          placeholder="Title for social media shares"
-                        />
-                        <p className="text-xs text-gray-500 mt-1">
-                          Leave empty to use Meta Title
-                        </p>
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium mb-1">
-                          OG Description
-                        </label>
-                        <textarea
-                          value={pageForm.ogDescription}
-                          onChange={(e) =>
-                            setPageForm({
-                              ...pageForm,
-                              ogDescription: e.target.value,
-                            })
-                          }
-                          rows={2}
-                          className="w-full px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600"
-                          placeholder="Description for social media shares"
-                        />
-                        <p className="text-xs text-gray-500 mt-1">
-                          Leave empty to use Meta Description
-                        </p>
-                      </div>
+                      <p className="text-xs text-gray-500 mt-2">
+                        Note: OG Title and OG Description are automatically set from Meta Title and Meta Description
+                      </p>
                     </div>
                   </div>
 
-                  <div>
+                  <div className="border-t pt-4 mt-4">
+                    <h4 className="text-md font-semibold mb-4 text-gray-900 dark:text-white">
+                      Meta Header Tags
+                    </h4>
+                    <div>
+                      <label className="block text-sm font-medium mb-1">
+                        Custom Header Tags
+                      </label>
+                      <textarea
+                        value={pageForm.metaHeaderTags || ""}
+                        onChange={(e) =>
+                          setPageForm({
+                            ...pageForm,
+                            metaHeaderTags: e.target.value,
+                          })
+                        }
+                        rows={12}
+                        className="w-full px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600 font-mono text-sm"
+                        placeholder='<script type="application/ld+json">&#10;{&#10;  "@context": "https://schema.org",&#10;  "@type": "LocalBusiness",&#10;  "name": "Your Business Name"&#10;}&#10;</script>'
+                      />
+                      <p className="text-xs text-gray-500 mt-1">
+                        Add custom HTML tags to be included in the &lt;head&gt; section (JSON-LD structured data, meta tags, scripts, links, etc.)
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="space-y-3">
                     <label className="flex items-center">
                       <input
                         type="checkbox"
@@ -595,6 +598,22 @@ export default function AdminPanel() {
                       />
                       <span className="text-sm">
                         Published (appears in navigation when published)
+                      </span>
+                    </label>
+                    <label className="flex items-center">
+                      <input
+                        type="checkbox"
+                        checked={pageForm.allowIndexing}
+                        onChange={(e) =>
+                          setPageForm({
+                            ...pageForm,
+                            allowIndexing: e.target.checked,
+                          })
+                        }
+                        className="mr-2"
+                      />
+                      <span className="text-sm">
+                        Allow Search Engine Indexing (uncheck to add noindex meta tag)
                       </span>
                     </label>
                   </div>
@@ -620,6 +639,8 @@ export default function AdminPanel() {
                           ogImage: "",
                           ogTitle: "",
                           ogDescription: "",
+                          metaHeaderTags: "",
+                          allowIndexing: true,
                         });
                       }}
                       className="bg-gray-300 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-400"
