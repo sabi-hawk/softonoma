@@ -13,24 +13,54 @@ interface FileUploadProps {
   className?: string;
 }
 
-// Helper function to extract file ID from Appwrite URL
-function extractFileIdFromUrl(url: string): string | null {
+// Helper function to extract S3 key from URL or return the key if it's already a key
+function extractS3KeyFromUrl(url: string): string | null {
   try {
-    const urlObj = new URL(url);
-    const pathParts = urlObj.pathname.split("/");
-    const filesIndex = pathParts.indexOf("files");
+    // If it's already a key (no http/https), return as-is
+    if (!url.startsWith("http://") && !url.startsWith("https://")) {
+      return url;
+    }
 
-    if (filesIndex !== -1 && filesIndex + 1 < pathParts.length) {
-      const fileId = pathParts[filesIndex + 1];
-      if (fileId && fileId.length > 10) {
-        return fileId;
-      }
+    const urlObj = new URL(url);
+    const bucketName = process.env.NEXT_PUBLIC_AWS_S3_BUCKET_NAME || "";
+    const region = process.env.NEXT_PUBLIC_AWS_REGION || "us-east-1";
+
+    // Check if it's an S3 URL
+    if (
+      urlObj.hostname === `${bucketName}.s3.${region}.amazonaws.com` ||
+      urlObj.hostname === `s3.${region}.amazonaws.com` ||
+      urlObj.hostname.includes("s3")
+    ) {
+      // Remove leading slash from pathname
+      return urlObj.pathname.substring(1);
     }
 
     return null;
   } catch {
-    return null;
+    // If URL parsing fails, might be a key already
+    return url.includes("/") || url.includes(".") ? url : null;
   }
+}
+
+// Helper function to get permanent URL for display
+// Files are uploaded with public-read ACL, so we can use permanent URLs directly
+function getDisplayUrl(urlOrKey: string): string {
+  // If it's already a full URL, return as-is
+  if (urlOrKey.startsWith("http://") || urlOrKey.startsWith("https://")) {
+    return urlOrKey;
+  }
+  
+  // If it's an S3 key, construct the permanent URL
+  const key = extractS3KeyFromUrl(urlOrKey) || urlOrKey;
+  if (key && (key.includes("/") || key.includes("."))) {
+    // Construct permanent S3 URL
+    const bucketName = process.env.NEXT_PUBLIC_AWS_S3_BUCKET_NAME || "";
+    const region = process.env.NEXT_PUBLIC_AWS_REGION || "eu-north-1";
+    return `https://${bucketName}.s3.${region}.amazonaws.com/${key}`;
+  }
+  
+  // Return as-is for external URLs or other formats
+  return urlOrKey;
 }
 
 export default function FileUpload({
@@ -44,18 +74,31 @@ export default function FileUpload({
 }: FileUploadProps) {
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [preview, setPreview] = useState<string | null>(value || null);
+  const [preview, setPreview] = useState<string | null>(null);
   const [previousValue, setPreviousValue] = useState<string>(value || "");
+  const [isClient, setIsClient] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Set client-side flag to prevent hydration mismatches
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   // Update previous value and preview when value prop changes (but not from our own upload)
   useEffect(() => {
-    if (value !== preview) {
+    if (!isClient) return; // Only run on client to prevent hydration issues
+    
+    if (value !== previousValue) {
       setPreviousValue(value || "");
-      setPreview(value || null);
+      // Use permanent URL directly (files are public)
+      if (value) {
+        setPreview(getDisplayUrl(value));
+      } else {
+        setPreview(null);
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [value]);
+  }, [value, isClient]);
 
   const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -149,20 +192,20 @@ export default function FileUpload({
       const previewUrl = URL.createObjectURL(file);
       setPreview(previewUrl);
 
-      // Extract old file ID if previous value is an Appwrite URL
-      const oldFileId = previousValue
-        ? extractFileIdFromUrl(previousValue)
+      // Extract old file key if previous value is an S3 URL
+      const oldFileKey = previousValue
+        ? extractS3KeyFromUrl(previousValue)
         : null;
 
-      // Upload to Appwrite
+      // Upload to S3
       const formData = new FormData();
       formData.append("file", file);
       formData.append("expectedType", type); // Send expected type for server-side validation
       if (folder) {
         formData.append("folder", folder);
       }
-      if (oldFileId) {
-        formData.append("oldFileId", oldFileId);
+      if (oldFileKey) {
+        formData.append("oldFileKey", oldFileKey);
       }
 
       const response = await fetch("/api/upload", {
@@ -173,9 +216,12 @@ export default function FileUpload({
       const result = await response.json();
 
       if (result.success && result.url) {
+        // Store the S3 URL (which contains the key)
         onChange(result.url);
         setPreviousValue(result.url);
         setError(null);
+        // Use permanent URL for preview
+        setPreview(getDisplayUrl(result.url));
       } else {
         setError(result.error || "Upload failed");
         setPreview(null);
@@ -195,15 +241,15 @@ export default function FileUpload({
   };
 
   const handleRemove = async () => {
-    // Delete old file from Appwrite if it's an Appwrite URL
+    // Delete old file from S3 if it's an S3 URL
     if (value) {
-      const fileId = extractFileIdFromUrl(value);
-      if (fileId) {
+      const fileKey = extractS3KeyFromUrl(value);
+      if (fileKey && (fileKey.includes("/") || fileKey.includes("."))) {
         try {
           await fetch("/api/upload", {
             method: "DELETE",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ fileId }),
+            body: JSON.stringify({ fileKey }),
           });
         } catch (error) {
           console.error("Error deleting file:", error);
@@ -220,18 +266,18 @@ export default function FileUpload({
     }
   };
 
-  const handleUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleUrlChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const url = e.target.value;
 
-    // If user is changing from Appwrite URL to external URL, delete old file
+    // If user is changing from S3 URL to external URL, delete old file
     if (previousValue && !url) {
-      const oldFileId = extractFileIdFromUrl(previousValue);
-      if (oldFileId) {
+      const oldFileKey = extractS3KeyFromUrl(previousValue);
+      if (oldFileKey && (oldFileKey.includes("/") || oldFileKey.includes("."))) {
         // Delete old file asynchronously
         fetch("/api/upload", {
           method: "DELETE",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ fileId: oldFileId }),
+          body: JSON.stringify({ fileKey: oldFileKey }),
         }).catch((error) => {
           console.error("Error deleting old file:", error);
         });
@@ -239,7 +285,14 @@ export default function FileUpload({
     }
 
     onChange(url);
-    setPreview(url || null);
+    
+    // Update preview - use permanent URL directly
+    if (url) {
+      setPreview(getDisplayUrl(url));
+    } else {
+      setPreview(null);
+    }
+    
     setPreviousValue(url || "");
   };
 
@@ -295,8 +348,8 @@ export default function FileUpload({
         className="hidden"
       />
 
-      {/* Preview */}
-      {preview && (
+      {/* Preview - Only render on client to prevent hydration issues */}
+      {isClient && preview && (
         <div className="mt-3">
           {type === "image" ? (
             <div className="relative w-full h-48 border rounded-md overflow-hidden bg-gray-100 dark:bg-gray-800">

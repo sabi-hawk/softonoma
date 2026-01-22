@@ -24,14 +24,21 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: 'cloud.appwrite.io',
-        pathname: '/v1/storage/**',
-      },
-      {
-        protocol: 'https',
         hostname: 'ik.imagekit.io',
         pathname: '/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'cloud.appwrite.io',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'softonoma-s3-bucket.s3.eu-north-1.amazonaws.com',
+        pathname: '/**',
+      },
+      // Add more S3 hostnames here if you use multiple buckets or regions
+      // Format: bucket-name.s3.region.amazonaws.com
     ],
   },
   

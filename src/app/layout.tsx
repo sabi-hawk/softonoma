@@ -73,7 +73,7 @@ export default async function RootLayout({
         />
         {metaHeaderTags && <MetaHeaderTags html={metaHeaderTags} />}
       </head>
-      <body className={`${figtree.variable} ${inter.variable} antialiased`}>
+      <body className={`${figtree.variable} ${inter.variable} antialiased`} suppressHydrationWarning>
         <NavbarWrapper />
         {children}
         <FooterWrapper />
