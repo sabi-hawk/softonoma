@@ -106,7 +106,7 @@ export default function ProcessSection({
                     {/* Text Content */}
                     <div className="flex-1 pt-0.5 sm:pt-1">
                       {step.title && (
-                        <h3 className="text-lg sm:text-xl font-bold theme-text-black mb-2 sm:mb-3 group-hover:text-[#5c8c24] transition-colors">
+                        <h3 className="text-lg sm:text-xl font-bold theme-text-black mb-2 sm:mb-3 theme-hover-primary-end transition-colors">
                           {step.title}
                         </h3>
                       )}

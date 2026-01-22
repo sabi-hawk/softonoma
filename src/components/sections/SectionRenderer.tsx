@@ -9,7 +9,6 @@ const IndustriesSection = dynamic(() => import("./IndustriesSection"));
 const AboutSection = dynamic(() => import("./AboutSection"));
 const PartnershipsSection = dynamic(() => import("./PartnershipsSection"));
 const CTASection = dynamic(() => import("./CTASection"));
-const FooterSection = dynamic(() => import("./FooterSection"));
 const FeaturesSection = dynamic(() => import("./FeaturesSection"));
 const CardsSection = dynamic(() => import("./CardsSection"));
 const PortfolioSection = dynamic(() => import("./PortfolioSection"));
@@ -39,8 +38,6 @@ export default function SectionRenderer({ section }: SectionRendererProps) {
       return <PartnershipsSection section={section} />;
     case "cta":
       return <CTASection section={section} />;
-    case "footer":
-      return <FooterSection section={section} />;
     case "features":
       return <FeaturesSection section={section} />;
     case "cards":

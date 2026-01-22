@@ -46,16 +46,6 @@ export interface HomePageData {
       name: string;
     }>;
   };
-  testimonials: {
-    title: string;
-    description: string;
-    items: Array<{
-      quote: string;
-      author: string;
-      company: string;
-      role?: string;
-    }>;
-  };
   cta: {
     title: string;
     description: string;
@@ -72,7 +62,7 @@ export default function HomePage({ data }: HomePageProps) {
   return (
     <div className="min-h-screen">
       {/* Hero Section - Compact with IT Theme */}
-      <section className="relative py-20 md:py-32 overflow-hidden bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900">
+      <section className="relative py-20 md:py-32 overflow-hidden theme-bg-gradient-to-br">
         {/* IT-Themed Background Pattern */}
         <div className="absolute inset-0 opacity-10">
           {/* Code-like grid pattern */}
@@ -80,8 +70,8 @@ export default function HomePage({ data }: HomePageProps) {
             className="absolute inset-0"
             style={{
               backgroundImage: `
-              linear-gradient(rgba(59, 130, 246, 0.1) 1px, transparent 1px),
-              linear-gradient(90deg, rgba(59, 130, 246, 0.1) 1px, transparent 1px)
+              linear-gradient(var(--color-primary-start-rgba-10) 1px, transparent 1px),
+              linear-gradient(90deg, var(--color-primary-start-rgba-10) 1px, transparent 1px)
             `,
               backgroundSize: "50px 50px",
             }}
@@ -151,12 +141,12 @@ export default function HomePage({ data }: HomePageProps) {
               {data.hero.primaryButtonText && (
                 <Link
                   href={data.hero.primaryButtonLink || "#"}
-                  className="group relative px-8 py-4 bg-white text-blue-600 rounded-lg font-semibold text-base hover:bg-gray-50 transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-0.5 overflow-hidden"
+                  className="group relative px-8 py-4 theme-bg-white theme-text-primary-start rounded-lg font-semibold text-base theme-hover-bg-secondary transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-0.5 overflow-hidden"
                 >
-                  <span className="relative z-10">
+                  <span className="relative z-10 group-hover:text-white transition-colors">
                     {data.hero.primaryButtonText}
                   </span>
-                  <div className="absolute inset-0 bg-gradient-to-r from-blue-50 to-purple-50 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                  <div className="absolute inset-0 theme-bg-gradient-to-r opacity-0 group-hover:opacity-100 transition-opacity"></div>
                 </Link>
               )}
               {data.hero.secondaryButtonText && (
@@ -176,7 +166,7 @@ export default function HomePage({ data }: HomePageProps) {
       <section className={`py-20 md:py-28 px-4 sm:px-6 lg:px-8 bg-white`}>
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+            <h2 className="text-4xl md:text-5xl font-bold theme-text-primary mb-4">
               {data.services.title}
             </h2>
             {data.services.description && (
@@ -196,10 +186,10 @@ export default function HomePage({ data }: HomePageProps) {
                 <div className="absolute inset-0 bg-gradient-to-br from-blue-50/0 to-purple-50/0 group-hover:from-blue-50/50 group-hover:to-purple-50/50 transition-all duration-300"></div>
 
                 <div className="relative z-10">
-                  <div className="w-16 h-16 mb-6 rounded-xl bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 flex items-center justify-center text-3xl transform group-hover:scale-110 group-hover:rotate-3 transition-all duration-300 shadow-lg">
+                  <div className="w-16 h-16 mb-6 rounded-xl theme-bg-gradient-to-br flex items-center justify-center text-3xl transform group-hover:scale-110 group-hover:rotate-3 transition-all duration-300 shadow-lg">
                     {service.icon}
                   </div>
-                  <h3 className="text-xl font-bold text-gray-900 mb-3 group-hover:text-blue-600 transition-colors">
+                  <h3 className="text-xl font-bold theme-text-primary mb-3 theme-hover-primary-end transition-colors">
                     {service.title}
                   </h3>
                   <p className="text-gray-600 leading-relaxed text-sm">
@@ -219,7 +209,7 @@ export default function HomePage({ data }: HomePageProps) {
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             <div>
-              <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
+              <h2 className="text-4xl md:text-5xl font-bold theme-text-primary mb-6">
                 {data.about.title}
               </h2>
               {data.about.description && (
@@ -244,7 +234,7 @@ export default function HomePage({ data }: HomePageProps) {
                       </svg>
                     </div>
                     <div className="flex-1">
-                      <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors">
+                      <h3 className="text-xl font-bold theme-text-primary mb-2 theme-hover-primary-end transition-colors">
                         {feature.title}
                       </h3>
                       <p className="text-gray-600 leading-relaxed">
@@ -257,7 +247,7 @@ export default function HomePage({ data }: HomePageProps) {
             </div>
             {data.about.image ? (
               <div className="relative">
-                <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 rounded-2xl transform rotate-3 opacity-20"></div>
+                <div className="absolute inset-0 theme-bg-gradient-to-br rounded-2xl transform rotate-3 opacity-20"></div>
                 <img
                   src={data.about.image}
                   alt="About us"
@@ -266,15 +256,15 @@ export default function HomePage({ data }: HomePageProps) {
               </div>
             ) : (
               <div className="relative">
-                <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 rounded-2xl transform rotate-3 opacity-20"></div>
-                <div className="relative h-96 bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 rounded-2xl shadow-2xl flex items-center justify-center overflow-hidden">
+                <div className="absolute inset-0 theme-bg-gradient-to-br rounded-2xl transform rotate-3 opacity-20"></div>
+                <div className="relative h-96 theme-bg-gradient-to-br rounded-2xl shadow-2xl flex items-center justify-center overflow-hidden">
                   {/* Tech pattern overlay */}
                   <div
                     className="absolute inset-0 opacity-10"
                     style={{
                       backgroundImage: `
-                      linear-gradient(rgba(59, 130, 246, 0.1) 1px, transparent 1px),
-                      linear-gradient(90deg, rgba(59, 130, 246, 0.1) 1px, transparent 1px)
+                      linear-gradient(var(--color-primary-end-rgba-10) 1px, transparent 1px),
+                      linear-gradient(90deg, var(--color-primary-end-rgba-10) 1px, transparent 1px)
                     `,
                       backgroundSize: "30px 30px",
                     }}
@@ -294,7 +284,7 @@ export default function HomePage({ data }: HomePageProps) {
 
       {/* Stats Section */}
       <section
-        className={`py-20 md:py-28 px-4 sm:px-6 lg:px-8 relative overflow-hidden bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900`}
+        className={`py-20 md:py-28 px-4 sm:px-6 lg:px-8 relative overflow-hidden theme-bg-gradient-to-br`}
       >
         {/* Background pattern */}
         <div className="absolute inset-0 opacity-10">
@@ -337,7 +327,7 @@ export default function HomePage({ data }: HomePageProps) {
       <section className={`py-20 md:py-28 px-4 sm:px-6 lg:px-8 bg-white`}>
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+            <h2 className="text-4xl md:text-5xl font-bold theme-text-primary mb-4">
               {data.industries.title}
             </h2>
             {data.industries.description && (
@@ -350,12 +340,23 @@ export default function HomePage({ data }: HomePageProps) {
             {data.industries.items.map((industry, index) => (
               <div
                 key={index}
-                className="group p-6 rounded-xl bg-gradient-to-br from-gray-50 to-white hover:from-blue-50 hover:to-purple-50 border border-gray-200 hover:border-blue-300 transition-all duration-300 text-center cursor-pointer hover:shadow-lg hover:-translate-y-1"
+                className="group p-6 rounded-xl border border-gray-200 transition-all duration-300 text-center cursor-pointer hover:shadow-lg hover:-translate-y-1"
+                style={{
+                  background: 'linear-gradient(to bottom right, var(--color-bg-secondary), var(--color-white))',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = 'linear-gradient(to bottom right, var(--color-primary-start-rgba-10), var(--color-primary-end-rgba-10))';
+                  e.currentTarget.style.borderColor = 'var(--color-primary-end-rgba-30)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = 'linear-gradient(to bottom right, var(--color-bg-secondary), var(--color-white))';
+                  e.currentTarget.style.borderColor = '';
+                }}
               >
                 <div className="text-4xl mb-4 transform group-hover:scale-110 group-hover:rotate-6 transition-all duration-300">
                   {industry.icon}
                 </div>
-                <h3 className="text-base font-semibold text-gray-900 group-hover:text-blue-600 transition-colors">
+                <h3 className="text-base font-semibold theme-text-primary theme-hover-primary-end transition-colors">
                   {industry.name}
                 </h3>
               </div>
@@ -364,55 +365,10 @@ export default function HomePage({ data }: HomePageProps) {
         </div>
       </section>
 
-      {/* Testimonials Section */}
-      {data.testimonials.items.length > 0 && (
-        <section
-          className={`py-20 md:py-28 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-gray-50 to-white`}
-        >
-          <div className="max-w-7xl mx-auto">
-            <div className="text-center mb-16">
-              <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-                {data.testimonials.title}
-              </h2>
-              {data.testimonials.description && (
-                <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-                  {data.testimonials.description}
-                </p>
-              )}
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-              {data.testimonials.items.map((testimonial, index) => (
-                <div
-                  key={index}
-                  className="group p-8 bg-white rounded-xl border border-gray-200 hover:border-blue-300 shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-1"
-                >
-                  <div className="text-yellow-400 mb-4 text-lg">
-                    {"★★★★★".split("").map((star, i) => (
-                      <span key={i}>{star}</span>
-                    ))}
-                  </div>
-                  <p className="text-gray-700 mb-6 leading-relaxed italic text-sm">
-                    &ldquo;{testimonial.quote}&rdquo;
-                  </p>
-                  <div className="pt-4 border-t border-gray-100">
-                    <p className="font-bold text-gray-900 mb-1">
-                      {testimonial.author}
-                    </p>
-                    <p className="text-xs text-gray-600">
-                      {testimonial.role && `${testimonial.role}, `}
-                      {testimonial.company}
-                    </p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
 
       {/* CTA Section */}
       <section
-        className={`py-20 md:py-28 px-4 sm:px-6 lg:px-8 relative overflow-hidden bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900`}
+        className={`py-20 md:py-28 px-4 sm:px-6 lg:px-8 relative overflow-hidden theme-bg-gradient-to-br`}
       >
         {/* Background pattern */}
         <div className="absolute inset-0 opacity-10">
@@ -439,9 +395,12 @@ export default function HomePage({ data }: HomePageProps) {
           )}
           <Link
             href={data.cta.buttonLink || "#"}
-            className="group inline-flex items-center gap-2 bg-white text-blue-600 px-10 py-4 rounded-lg font-semibold text-lg hover:bg-gray-50 transition-all duration-300 shadow-xl hover:shadow-2xl hover:-translate-y-0.5"
+            className="group relative inline-flex items-center gap-2 theme-bg-white theme-text-primary-start px-10 py-4 rounded-lg font-semibold text-lg theme-hover-bg-secondary transition-all duration-300 shadow-xl hover:shadow-2xl hover:-translate-y-0.5 overflow-hidden"
           >
-            <span>{data.cta.buttonText}</span>
+            <span className="relative z-10 group-hover:text-white transition-colors">
+              {data.cta.buttonText}
+            </span>
+            <div className="absolute inset-0 theme-bg-gradient-to-r opacity-0 group-hover:opacity-100 transition-opacity"></div>
             <svg
               className="w-5 h-5 transform group-hover:translate-x-1 transition-transform"
               fill="none"

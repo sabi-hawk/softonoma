@@ -4,17 +4,17 @@
 export const getDefaultBackground = (sectionType: string): string => {
   const defaults: Record<string, string> = {
     about: "white",
-    services: "theme-bg-white-green-gradient",
+    services: "theme-bg-light-gradient",
     stats: "white",
-    partnerships: "theme-bg-white-green-gradient",
+    partnerships: "theme-bg-light-gradient",
     portfolio: "white",
-    technologies: "theme-bg-white-green-gradient",
+    technologies: "theme-bg-light-gradient",
     partners: "white",
     cards: "white",
-    cta: "theme-bg-white-green-gradient",
+    cta: "theme-bg-light-gradient",
     faq: "white",
     industries: "white",
-    features: "theme-bg-white-green-gradient",
+    features: "theme-bg-light-gradient",
     blog: "white",
     process: "white",
   };
@@ -60,8 +60,8 @@ export const getBackgroundStyle = (
     return { className: "theme-bg-white" };
   }
 
-  if (bgColor === "theme-bg-white-green-gradient") {
-    return { className: "theme-bg-white-green-gradient" };
+  if (bgColor === "theme-bg-white-green-gradient" || bgColor === "theme-bg-light-gradient") {
+    return { className: "theme-bg-light-gradient" };
   }
 
   // If it's a gradient class or theme class, return className

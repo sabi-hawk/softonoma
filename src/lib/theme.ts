@@ -3,28 +3,31 @@
  * These colors are used throughout the application
  */
 
+// Get CSS variable values (for use in JavaScript/TypeScript)
+// Note: These should match the values in globals.css
+// In most cases, use CSS variables directly in components instead of this object
 export const theme = {
   colors: {
-    // Primary gradient colors
+    // Primary gradient colors - use CSS variables instead
     primary: {
-      start: "#5c8c24", // Dark green
-      end: "#ced430", // Yellow-green
-      gradient: "linear-gradient(99.01deg, #5c8c24 -0.67%, #ced430)",
+      start: "var(--color-primary-start)", // Dark blue-grey
+      end: "var(--color-primary-end)", // Orange-yellow
+      gradient: "var(--color-primary-gradient)",
       gradientDirection: "99.01deg",
     },
-    // Base colors
-    black: "#000000",
-    white: "#ffffff",
-    // Semantic colors
+    // Base colors - use CSS variables instead
+    black: "var(--color-black)",
+    white: "var(--color-white)",
+    // Semantic colors - use CSS variables instead
     text: {
-      primary: "#000000",
-      secondary: "#ffffff",
-      muted: "#666666",
+      primary: "var(--color-text-primary)", // Dark text
+      secondary: "var(--color-text-secondary)", // White text
+      muted: "var(--color-text-muted)",
     },
     background: {
-      primary: "#ffffff",
-      secondary: "#000000",
-      overlay: "rgba(0, 0, 0, 0.8)",
+      primary: "var(--color-bg-primary)", // White
+      secondary: "var(--color-bg-secondary)", // Light grey
+      overlay: "var(--color-bg-overlay)",
   },
   },
 } as const;
@@ -40,8 +43,9 @@ export function getGradient(direction?: number): string {
 /**
  * Get gradient as Tailwind classes
  */
+// Use theme utility classes from globals.css instead
 export const gradientClasses = {
-  bg: "bg-gradient-to-br from-[#5c8c24] to-[#ced430]",
-  text: "bg-gradient-to-br from-[#5c8c24] to-[#ced430] bg-clip-text text-transparent",
-  border: "border-gradient-to-br from-[#5c8c24] to-[#ced430]",
+  bg: "theme-bg-gradient-to-br",
+  text: "theme-gradient-text",
+  border: "theme-border-primary",
 };

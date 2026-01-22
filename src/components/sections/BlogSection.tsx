@@ -175,7 +175,7 @@ export default function BlogSection({ section }: BlogSectionProps) {
               <button
                 onClick={prevSlide}
                 className="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 w-12 h-12 bg-transparent border-2 theme-text-black rounded-full items-center justify-center shadow-md hover:scale-110 transition-all backdrop-blur-sm"
-                style={{ borderColor: "rgba(0, 0, 0, 0.2)" }}
+                style={{ borderColor: "var(--color-border-default-20)" }}
                 aria-label="Previous"
               >
                 <svg
@@ -234,7 +234,7 @@ export default function BlogSection({ section }: BlogSectionProps) {
                       {post.category && (
                         <span
                           className="inline-block px-3 py-1 text-xs font-semibold theme-primary-end rounded-full mb-3"
-                          style={{ backgroundColor: "rgba(206, 212, 48, 0.1)" }}
+                          style={{ backgroundColor: "var(--color-primary-end-rgba-10)" }}
                         >
                           {post.category}
                         </span>
@@ -316,7 +316,7 @@ export default function BlogSection({ section }: BlogSectionProps) {
                     {post.category && (
                       <span
                         className="inline-block px-3 py-1 text-xs font-semibold theme-primary-end rounded-full mb-3"
-                        style={{ backgroundColor: "rgba(206, 212, 48, 0.1)" }}
+                        style={{ backgroundColor: "var(--color-primary-end-rgba-10)" }}
                       >
                         {post.category}
                       </span>
@@ -372,7 +372,7 @@ export default function BlogSection({ section }: BlogSectionProps) {
               <button
                 onClick={nextSlide}
                 className="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 w-12 h-12 bg-transparent border-2 theme-text-black rounded-full items-center justify-center shadow-md hover:scale-110 transition-all backdrop-blur-sm"
-                style={{ borderColor: "rgba(0, 0, 0, 0.2)" }}
+                style={{ borderColor: "var(--color-border-default-20)" }}
                 aria-label="Next"
               >
                 <svg
@@ -399,7 +399,7 @@ export default function BlogSection({ section }: BlogSectionProps) {
                      key={index}
                      className={`w-1.5 h-1.5 rounded-full transition-all ${
                        getCurrentSlideIndex() === index
-                         ? 'bg-[#79b246]'
+                         ? 'theme-bg-primary-end'
                          : 'bg-gray-400 opacity-40'
                      }`}
                    />

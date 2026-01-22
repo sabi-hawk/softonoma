@@ -35,7 +35,7 @@ export default function FAQSection({ section }: FAQSectionProps) {
             </h2>
             {content.description && (
               <p
-                className="text-base sm:text-lg md:text-xl theme-text-black max-w-3xl mx-auto px-2"
+                className="text-base sm:text-lg md:text-xl theme-text-primary max-w-3xl mx-auto px-2"
                 style={{ opacity: 0.8 }}
               >
                 {content.description}
@@ -53,64 +53,84 @@ export default function FAQSection({ section }: FAQSectionProps) {
                   answer?: string;
                 },
                 index: number
-              ) => (
-                <div
-                  key={index}
-                  className="theme-bg-white rounded-xl border overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300"
-                  style={{ borderColor: "rgba(0, 0, 0, 0.1)" }}
-                >
-                  {/* Question */}
-                  <button
-                    onClick={() => toggleFAQ(index)}
-                    className="w-full px-4 py-3 sm:px-6 sm:py-5 text-left flex items-center justify-between focus:outline-none focus:ring-2 focus:ring-offset-2 rounded-xl"
-                  >
-                    <span className="text-base sm:text-lg font-semibold theme-text-black pr-3 sm:pr-4">
-                      {faq.question || `Question ${index + 1}`}
-                    </span>
-                    <div
-                      className={`shrink-0 w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-transparent border-2 theme-text-black flex items-center justify-center transition-all duration-300 backdrop-blur-sm ${
-                        openIndex === index ? "rotate-180" : ""
-                      }`}
-                      style={{ borderColor: "rgba(0, 0, 0, 0.2)" }}
-                    >
-                      <svg
-                        className="w-4 h-4 sm:w-5 sm:h-5"
-                        fill="none"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2.5"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                      >
-                        <path d="M19 9l-7 7-7-7"></path>
-                      </svg>
-                    </div>
-                  </button>
-
-                  {/* Answer */}
+              ) => {
+                const isExpanded = openIndex === index;
+                return (
                   <div
-                    className={`overflow-hidden transition-all duration-300 ${
-                      openIndex === index ? "max-h-96" : "max-h-0"
-                    }`}
+                    key={index}
+                    className="theme-bg-white rounded-xl overflow-hidden shadow-sm"
+                    style={{ 
+                      boxShadow: "0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)"
+                    }}
                   >
-                    <div className="px-4 pb-4 sm:px-6 sm:pb-5 pt-0">
-                      <p
-                        className="text-sm sm:text-base theme-text-black leading-relaxed"
-                        style={{ opacity: 0.8 }}
-                      >
-                        {faq.answer || `Answer ${index + 1}`}
-                      </p>
-                    </div>
+                    {/* Question Button */}
+                    <button
+                      onClick={() => toggleFAQ(index)}
+                      className={`w-full px-5 py-4 sm:px-6 sm:py-5 text-left flex items-center justify-between focus:outline-none transition-all duration-300 ${
+                        isExpanded 
+                          ? "theme-bg-primary-start theme-text-white rounded-t-xl" 
+                          : "theme-bg-secondary theme-text-primary rounded-xl"
+                      }`}
+                    >
+                      <span className={`text-base sm:text-lg font-semibold pr-3 sm:pr-4 ${
+                        isExpanded ? "theme-text-white" : "theme-text-primary"
+                      }`}>
+                        {faq.question || `Question ${index + 1}`}
+                      </span>
+                      <div className="shrink-0 w-6 h-6 sm:w-7 sm:h-7 flex items-center justify-center">
+                        {isExpanded ? (
+                          <svg
+                            className="w-5 h-5 sm:w-6 sm:h-6"
+                            fill="none"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2.5"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                            style={{ color: "var(--color-text-secondary)" }}
+                          >
+                            <path d="M20 12H4"></path>
+                          </svg>
+                        ) : (
+                          <svg
+                            className="w-5 h-5 sm:w-6 sm:h-6"
+                            fill="none"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2.5"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                            style={{ color: "var(--color-text-primary)" }}
+                          >
+                            <path d="M12 4v16m8-8H4"></path>
+                          </svg>
+                        )}
+                      </div>
+                    </button>
+
+                    {/* Answer */}
+                    {isExpanded && (
+                      <div className="overflow-hidden transition-all duration-300">
+                        <div className="px-5 py-4 sm:px-6 sm:py-5 theme-bg-secondary rounded-b-xl">
+                          <p
+                            className="text-sm sm:text-base theme-text-primary leading-relaxed"
+                            style={{ opacity: 0.7 }}
+                          >
+                            {faq.answer || `Answer ${index + 1}`}
+                          </p>
+                        </div>
+                      </div>
+                    )}
                   </div>
-                </div>
-              )
+                );
+              }
             )}
           </div>
         )}
 
         {faqs.length === 0 && (
           <div className="text-center py-12">
-            <p className="text-gray-500">No FAQs to display yet.</p>
+            <p className="theme-text-primary" style={{ opacity: 0.7 }}>No FAQs to display yet.</p>
           </div>
         )}
       </div>

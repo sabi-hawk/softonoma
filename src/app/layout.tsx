@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter, Figtree } from "next/font/google";
+import { Sora, Inter } from "next/font/google";
 import "./globals.css";
 import NavbarWrapper from "@/components/NavbarWrapper";
 import FooterWrapper from "@/components/FooterWrapper";
@@ -11,14 +11,16 @@ import {
   MetaHeaderTags,
 } from "@/lib/meta-header-tags";
 
+const sora = Sora({
+  variable: "--font-sora",
+  subsets: ["latin"],
+  display: "swap",
+});
+
 const inter = Inter({
   variable: "--font-inter",
   subsets: ["latin"],
-});
-
-const figtree = Figtree({
-  variable: "--font-figtree",
-  subsets: ["latin"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -73,7 +75,7 @@ export default async function RootLayout({
         />
         {metaHeaderTags && <MetaHeaderTags html={metaHeaderTags} />}
       </head>
-      <body className={`${figtree.variable} ${inter.variable} antialiased`} suppressHydrationWarning>
+      <body className={`${sora.variable} ${inter.variable} antialiased`} suppressHydrationWarning>
         <NavbarWrapper />
         {children}
         <FooterWrapper />

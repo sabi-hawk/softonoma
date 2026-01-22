@@ -93,8 +93,8 @@ export default function HeroSection({ section }: HeroSectionProps) {
           className="absolute inset-0"
           style={{
             backgroundImage: `
-              linear-gradient(rgba(206, 212, 48, 0.1) 1px, transparent 1px),
-              linear-gradient(90deg, rgba(206, 212, 48, 0.1) 1px, transparent 1px)
+              linear-gradient(var(--color-primary-end-rgba-10) 1px, transparent 1px),
+              linear-gradient(90deg, var(--color-primary-end-rgba-10) 1px, transparent 1px)
             `,
             backgroundSize: "50px 50px",
           }}
@@ -103,7 +103,7 @@ export default function HeroSection({ section }: HeroSectionProps) {
         {/* Animated code snippets effect */}
         <div
           className="absolute top-20 right-10 font-mono text-xs"
-          style={{ color: "rgba(206, 212, 48, 0.2)" }}
+          style={{ color: "var(--color-primary-end-rgba-20)" }}
         >
           <div className="animate-pulse">const innovation = {"{"}...</div>
           <div className="animate-pulse delay-75">
@@ -120,15 +120,15 @@ export default function HeroSection({ section }: HeroSectionProps) {
         {/* Geometric shapes */}
         <div
           className="absolute top-40 left-10 w-32 h-32 border rotate-45"
-          style={{ borderColor: "rgba(206, 212, 48, 0.2)" }}
+          style={{ borderColor: "var(--color-primary-end-rgba-20)" }}
         ></div>
         <div
           className="absolute bottom-40 right-20 w-24 h-24 border rounded-full"
-          style={{ borderColor: "rgba(92, 140, 36, 0.2)" }}
+          style={{ borderColor: "var(--color-primary-start-rgba-20)" }}
         ></div>
         <div
           className="absolute top-1/2 left-1/4 w-16 h-16 rounded-lg rotate-12"
-          style={{ backgroundColor: "rgba(206, 212, 48, 0.1)" }}
+          style={{ backgroundColor: "var(--color-primary-end-rgba-10)" }}
         ></div>
 
         {/* Floating tech elements */}
@@ -147,8 +147,8 @@ export default function HeroSection({ section }: HeroSectionProps) {
             <div
               className="inline-flex items-center gap-2 px-3 py-1.5 sm:px-4 sm:py-2 mb-4 sm:mb-6 rounded-full"
               style={{
-                backgroundColor: "rgba(92, 140, 36, 0.1)",
-                border: "1px solid rgba(206, 212, 48, 0.2)",
+                backgroundColor: "var(--color-primary-start-rgba-10)",
+                border: "1px solid var(--color-primary-end-rgba-20)",
               }}
             >
               <span
@@ -200,7 +200,7 @@ export default function HeroSection({ section }: HeroSectionProps) {
               <Link
                 href={String(content.secondaryButtonLink)}
                 className="px-6 py-3 sm:px-8 sm:py-4 bg-transparent border-2 theme-text-white rounded-lg font-semibold text-sm sm:text-base hover:bg-white/10 transition-all duration-300 backdrop-blur-sm w-full sm:w-auto"
-                style={{ borderColor: "rgba(255, 255, 255, 0.3)" }}
+                style={{ borderColor: "var(--color-border-white-30)" }}
               >
                 {content.secondaryButtonText}
               </Link>

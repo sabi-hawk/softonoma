@@ -195,7 +195,7 @@ export default function ServicesSection({ section }: ServicesSectionProps) {
               <button
                 onClick={prevSlide}
                 className="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 w-12 h-12 bg-transparent border-2 theme-text-black rounded-full items-center justify-center shadow-md hover:scale-110 transition-all backdrop-blur-sm"
-                style={{ borderColor: "rgba(0, 0, 0, 0.2)" }}
+                style={{ borderColor: "var(--color-border-default-20)" }}
                 aria-label="Previous"
               >
                 <svg
@@ -234,11 +234,11 @@ export default function ServicesSection({ section }: ServicesSectionProps) {
                     <div
                       key={index}
                       className="group relative p-6 rounded-xl theme-bg-white border border-gray-200 transition-all duration-300 overflow-hidden shrink-0 w-full px-4"
-                      style={{ borderColor: "rgba(0, 0, 0, 0.1)" }}
+                      style={{ borderColor: "var(--color-border-default)" }}
                     >
                       <div className="relative z-10">
                         {service.icon && (
-                          <div className="w-16 h-16 mb-6 rounded-xl bg-gray-100 flex items-center justify-center text-3xl transform transition-all duration-300 shadow-sm border border-gray-200">
+                          <div className="w-16 h-16 mb-6 rounded-xl theme-bg-secondary flex items-center justify-center text-3xl transform transition-all duration-300 shadow-sm border border-gray-200">
                             {isIconUrl(service.icon) ? (
                               <img
                                 src={service.icon}
@@ -280,7 +280,7 @@ export default function ServicesSection({ section }: ServicesSectionProps) {
                     <div
                       key={originalIndex}
                       className="group relative p-8 rounded-xl theme-bg-white border border-gray-200 transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 overflow-hidden"
-                      style={{ borderColor: "rgba(0, 0, 0, 0.1)" }}
+                      style={{ borderColor: "var(--color-border-default)" }}
                     >
                       {/* Gradient overlay on hover */}
                       <div className="absolute inset-0 opacity-0 group-hover:opacity-10 theme-gradient transition-all duration-300"></div>
@@ -329,7 +329,7 @@ export default function ServicesSection({ section }: ServicesSectionProps) {
               <button
                 onClick={nextSlide}
                 className="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 w-12 h-12 bg-transparent border-2 theme-text-black rounded-full items-center justify-center shadow-md hover:scale-110 transition-all backdrop-blur-sm"
-                style={{ borderColor: "rgba(0, 0, 0, 0.2)" }}
+                style={{ borderColor: "var(--color-border-default-20)" }}
                 aria-label="Next"
               >
                 <svg
@@ -356,7 +356,7 @@ export default function ServicesSection({ section }: ServicesSectionProps) {
                     key={index}
                     className={`w-1.5 h-1.5 rounded-full transition-all ${
                       getCurrentSlideIndex() === index
-                        ? 'bg-[#79b246]'
+                        ? 'theme-bg-primary-end'
                         : 'bg-gray-400 opacity-40'
                     }`}
                   />

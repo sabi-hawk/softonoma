@@ -88,8 +88,8 @@ export default function FeaturesSection({ section }: FeaturesSectionProps) {
                   className="absolute inset-0 opacity-10"
                   style={{
                     backgroundImage: `
-                      linear-gradient(rgba(206, 212, 48, 0.1) 1px, transparent 1px),
-                      linear-gradient(90deg, rgba(206, 212, 48, 0.1) 1px, transparent 1px)
+                      linear-gradient(var(--color-primary-end-rgba-10) 1px, transparent 1px),
+                      linear-gradient(90deg, var(--color-primary-end-rgba-10) 1px, transparent 1px)
                     `,
                     backgroundSize: "30px 30px",
                   }}

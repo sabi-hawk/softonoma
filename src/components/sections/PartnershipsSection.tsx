@@ -190,7 +190,7 @@ export default function PartnershipsSection({
               <button
                 onClick={prevSlide}
                 className="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 w-12 h-12 bg-transparent border-2 theme-text-black rounded-full items-center justify-center shadow-md hover:scale-110 transition-all backdrop-blur-sm"
-                style={{ borderColor: "rgba(0, 0, 0, 0.2)" }}
+                style={{ borderColor: "var(--color-border-default-20)" }}
                 aria-label="Previous"
               >
                 <svg
@@ -229,13 +229,13 @@ export default function PartnershipsSection({
                   <div
                     key={index}
                     className="group relative p-6 rounded-xl backdrop-blur-sm border transition-all duration-300 overflow-hidden theme-bg-white flex-shrink-0 w-full px-4"
-                    style={{ borderColor: "rgba(0, 0, 0, 0.1)" }}
+                    style={{ borderColor: "var(--color-border-default)" }}
                   >
                     <div className="relative z-10">
                       {partnership.image && (
                         <div
                           className="w-20 h-20 mb-6 rounded-xl backdrop-blur-sm flex items-center justify-center transform transition-all duration-300 shadow-lg theme-bg-primary-mid"
-                          style={{ borderColor: "rgba(0, 0, 0, 0.1)" }}
+                          style={{ borderColor: "var(--color-border-default)" }}
                         >
                           {isImageUrl(partnership.image) ? (
                             <Image
@@ -283,7 +283,7 @@ export default function PartnershipsSection({
                         partnership.title || visibleIndex
                       }`}
                       className="group relative p-8 rounded-xl backdrop-blur-sm border transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 overflow-hidden theme-bg-white"
-                      style={{ borderColor: "rgba(0, 0, 0, 0.1)" }}
+                      style={{ borderColor: "var(--color-border-default)" }}
                     >
                       {/* Light gradient overlay on hover */}
                       <div className="absolute inset-0 opacity-0 group-hover:opacity-5 theme-gradient transition-all duration-300"></div>
@@ -292,7 +292,7 @@ export default function PartnershipsSection({
                         {partnership.image && (
                           <div
                             className="w-20 h-20 mb-6 rounded-xl backdrop-blur-sm flex items-center justify-center transform group-hover:scale-110 transition-all duration-300 shadow-lg theme-bg-primary-mid"
-                            style={{ borderColor: "rgba(0, 0, 0, 0.1)" }}
+                            style={{ borderColor: "var(--color-border-default)" }}
                           >
                             {isImageUrl(partnership.image) ? (
                               <Image
@@ -338,7 +338,7 @@ export default function PartnershipsSection({
               <button
                 onClick={nextSlide}
                 className="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 w-12 h-12 bg-transparent border-2 theme-text-black rounded-full items-center justify-center shadow-md hover:scale-110 transition-all backdrop-blur-sm"
-                style={{ borderColor: "rgba(0, 0, 0, 0.2)" }}
+                style={{ borderColor: "var(--color-border-default-20)" }}
                 aria-label="Next"
               >
                 <svg
@@ -365,7 +365,7 @@ export default function PartnershipsSection({
                     key={index}
                     className={`w-1.5 h-1.5 rounded-full transition-all ${
                       getCurrentSlideIndex() === index
-                        ? 'bg-[#79b246]'
+                        ? 'theme-bg-primary-end'
                         : 'bg-gray-400 opacity-40'
                     }`}
                   />

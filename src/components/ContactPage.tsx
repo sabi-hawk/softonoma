@@ -100,19 +100,19 @@ export default function ContactPage({
         </div>
 
         {/* Subtle Accent Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-br from-[#79b246]/10 via-transparent to-[#79b246]/5"></div>
+        <div className="absolute inset-0" style={{ background: 'linear-gradient(to bottom right, var(--color-primary-end-rgba-10), transparent, var(--color-primary-end-rgba-5))' }}></div>
 
         {/* Content */}
         <div className="relative max-w-7xl mx-auto text-center z-10">
           <div className="inline-block mb-6 animate-fade-in">
-            <span className="text-sm font-semibold text-[#79b246] uppercase tracking-wider px-6 py-3 bg-slate-800/50 backdrop-blur-sm rounded-full shadow-lg border">
+            <span className="text-sm font-semibold theme-text-primary-end uppercase tracking-wider px-6 py-3 bg-slate-800/50 backdrop-blur-sm rounded-full shadow-lg border">
               Get in Touch
             </span>
           </div>
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight animate-fade-in delay-75">
             {title.split(" ").map((word, index) =>
               word.toLowerCase() === "message" ? (
-                <span key={index} className="text-[#79b246]">
+                <span key={index} className="theme-text-primary-end">
                   {" "}
                   {word}
                 </span>
@@ -152,7 +152,7 @@ export default function ContactPage({
                   />
                 </svg>
               </div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">
+              <h3 className="text-lg font-semibold theme-text-primary mb-2">
                 Email
               </h3>
               <a
@@ -180,7 +180,7 @@ export default function ContactPage({
                   />
                 </svg>
               </div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">
+              <h3 className="text-lg font-semibold theme-text-primary mb-2">
                 Phone
               </h3>
               <a
@@ -208,7 +208,7 @@ export default function ContactPage({
                   />
                 </svg>
               </div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">
+              <h3 className="text-lg font-semibold theme-text-primary mb-2">
                 Office Hours
               </h3>
               <p className="text-gray-600">Mon - Fri: 9:00 AM - 6:00 PM</p>
@@ -236,7 +236,7 @@ export default function ContactPage({
                   <div>
                     <label
                       htmlFor="name"
-                      className="block text-sm font-semibold text-gray-900 mb-2"
+                      className="block text-sm font-semibold theme-text-primary mb-2"
                     >
                       Name <span className="text-red-500">*</span>
                     </label>
@@ -264,7 +264,17 @@ export default function ContactPage({
                         onChange={handleInputChange}
                         placeholder="Your full name"
                         required
-                        className="w-full pl-12 pr-4 py-3.5 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#79b246] focus:ring-opacity-30 focus:border-[#79b246] transition-all bg-gray-50 focus:bg-white"
+                        className="w-full pl-12 pr-4 py-3.5 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 transition-all theme-bg-secondary focus:bg-white"
+                        style={{
+                          '--tw-ring-color': 'var(--color-primary-end-rgba-30)',
+                        } as React.CSSProperties}
+                        onFocus={(e) => {
+                          e.currentTarget.style.borderColor = 'var(--color-primary-end)';
+                          e.currentTarget.style.setProperty('--tw-ring-color', 'var(--color-primary-end-rgba-30)');
+                        }}
+                        onBlur={(e) => {
+                          e.currentTarget.style.borderColor = '';
+                        }}
                       />
                     </div>
                   </div>
@@ -273,7 +283,7 @@ export default function ContactPage({
                   <div>
                     <label
                       htmlFor="businessPhone"
-                      className="block text-sm font-semibold text-gray-900 mb-2"
+                      className="block text-sm font-semibold theme-text-primary mb-2"
                     >
                       Business Phone <span className="text-red-500">*</span>
                     </label>
@@ -301,7 +311,17 @@ export default function ContactPage({
                         onChange={handleInputChange}
                         placeholder="+1 (234) 567-890"
                         required
-                        className="w-full pl-12 pr-4 py-3.5 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#79b246] focus:ring-opacity-30 focus:border-[#79b246] transition-all bg-gray-50 focus:bg-white"
+                        className="w-full pl-12 pr-4 py-3.5 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 transition-all theme-bg-secondary focus:bg-white"
+                        style={{
+                          '--tw-ring-color': 'var(--color-primary-end-rgba-30)',
+                        } as React.CSSProperties}
+                        onFocus={(e) => {
+                          e.currentTarget.style.borderColor = 'var(--color-primary-end)';
+                          e.currentTarget.style.setProperty('--tw-ring-color', 'var(--color-primary-end-rgba-30)');
+                        }}
+                        onBlur={(e) => {
+                          e.currentTarget.style.borderColor = '';
+                        }}
                       />
                     </div>
                   </div>
@@ -310,7 +330,7 @@ export default function ContactPage({
                   <div>
                     <label
                       htmlFor="companyName"
-                      className="block text-sm font-semibold text-gray-900 mb-2"
+                      className="block text-sm font-semibold theme-text-primary mb-2"
                     >
                       Company Name <span className="text-red-500">*</span>
                     </label>
@@ -338,7 +358,17 @@ export default function ContactPage({
                         onChange={handleInputChange}
                         placeholder="Your company name"
                         required
-                        className="w-full pl-12 pr-4 py-3.5 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#79b246] focus:ring-opacity-30 focus:border-[#79b246] transition-all bg-gray-50 focus:bg-white"
+                        className="w-full pl-12 pr-4 py-3.5 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 transition-all theme-bg-secondary focus:bg-white"
+                        style={{
+                          '--tw-ring-color': 'var(--color-primary-end-rgba-30)',
+                        } as React.CSSProperties}
+                        onFocus={(e) => {
+                          e.currentTarget.style.borderColor = 'var(--color-primary-end)';
+                          e.currentTarget.style.setProperty('--tw-ring-color', 'var(--color-primary-end-rgba-30)');
+                        }}
+                        onBlur={(e) => {
+                          e.currentTarget.style.borderColor = '';
+                        }}
                       />
                     </div>
                   </div>
@@ -347,7 +377,7 @@ export default function ContactPage({
                   <div>
                     <label
                       htmlFor="email"
-                      className="block text-sm font-semibold text-gray-900 mb-2"
+                      className="block text-sm font-semibold theme-text-primary mb-2"
                     >
                       Email <span className="text-red-500">*</span>
                     </label>
@@ -375,7 +405,17 @@ export default function ContactPage({
                         onChange={handleInputChange}
                         placeholder="your.email@company.com"
                         required
-                        className="w-full pl-12 pr-4 py-3.5 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#79b246] focus:ring-opacity-30 focus:border-[#79b246] transition-all bg-gray-50 focus:bg-white"
+                        className="w-full pl-12 pr-4 py-3.5 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 transition-all theme-bg-secondary focus:bg-white"
+                        style={{
+                          '--tw-ring-color': 'var(--color-primary-end-rgba-30)',
+                        } as React.CSSProperties}
+                        onFocus={(e) => {
+                          e.currentTarget.style.borderColor = 'var(--color-primary-end)';
+                          e.currentTarget.style.setProperty('--tw-ring-color', 'var(--color-primary-end-rgba-30)');
+                        }}
+                        onBlur={(e) => {
+                          e.currentTarget.style.borderColor = '';
+                        }}
                       />
                     </div>
                   </div>
@@ -384,7 +424,7 @@ export default function ContactPage({
                   <div>
                     <label
                       htmlFor="message"
-                      className="block text-sm font-semibold text-gray-900 mb-2"
+                      className="block text-sm font-semibold theme-text-primary mb-2"
                     >
                       Key in Your Message{" "}
                       <span className="text-red-500">*</span>
@@ -397,7 +437,17 @@ export default function ContactPage({
                       placeholder="Tell us about your project requirements..."
                       required
                       rows={6}
-                      className="w-full px-4 py-3.5 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#79b246] focus:ring-opacity-30 focus:border-[#79b246] transition-all resize-y bg-gray-50 focus:bg-white"
+                      className="w-full px-4 py-3.5 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 transition-all resize-y theme-bg-secondary focus:bg-white"
+                      style={{
+                        '--tw-ring-color': 'var(--color-primary-end-rgba-30)',
+                      } as React.CSSProperties}
+                      onFocus={(e) => {
+                        e.currentTarget.style.borderColor = 'var(--color-primary-end)';
+                        e.currentTarget.style.setProperty('--tw-ring-color', 'var(--color-primary-end-rgba-30)');
+                      }}
+                      onBlur={(e) => {
+                        e.currentTarget.style.borderColor = '';
+                      }}
                     />
                   </div>
 
@@ -452,7 +502,7 @@ export default function ContactPage({
                     type="submit"
                     disabled={isSubmitting}
                     className="w-full px-6 py-4 rounded-lg font-semibold text-white transition-all hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
-                    style={{ backgroundColor: "#79b246" }}
+                    style={{ backgroundColor: "var(--color-primary-end)" }}
                   >
                     {isSubmitting ? (
                       <span className="flex items-center justify-center gap-2">
@@ -514,7 +564,7 @@ export default function ContactPage({
                           />
                         </svg>
                       </div>
-                      <span className="text-base text-gray-700 leading-relaxed pt-1.5 group-hover:text-gray-900 transition-colors">
+                      <span className="text-base theme-text-primary leading-relaxed pt-1.5 group-hover:theme-text-primary-start transition-colors">
                         {advantage}
                       </span>
                     </li>
@@ -538,7 +588,7 @@ export default function ContactPage({
                       </svg>
                     </div>
                     <div>
-                      <p className="font-semibold text-gray-900">
+                      <p className="font-semibold theme-text-primary">
                         24/7 Support Available
                       </p>
                       <p className="text-sm text-gray-600">

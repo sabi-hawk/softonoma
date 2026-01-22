@@ -33,7 +33,7 @@ export default function SubServicesSection({
     <section className={`py-12 sm:py-16 md:py-24 ${background.className || ""}`} style={background.style}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-8 sm:mb-10 md:mb-12">
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-3 sm:mb-4 px-2">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold theme-text-primary mb-3 sm:mb-4 px-2">
             {title}
           </h2>
           {description && (
@@ -64,10 +64,10 @@ export default function SubServicesSection({
                   </div>
                 )}
                 <div className="flex-1">
-                  <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-1 sm:mb-2 group-hover:theme-text-primary transition-colors">
+                  <h3 className="text-lg sm:text-xl font-semibold theme-text-primary mb-1 sm:mb-2 theme-hover-primary-end transition-colors">
                     {item.title}
                   </h3>
-                  <p className="text-sm sm:text-base text-gray-600 leading-relaxed">{item.description}</p>
+                  <p className="text-sm sm:text-base theme-text-primary leading-relaxed opacity-80">{item.description}</p>
                 </div>
               </div>
             </div>

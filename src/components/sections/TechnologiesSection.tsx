@@ -314,7 +314,7 @@ export default function TechnologiesSection({
                       key={index}
                       className={`w-1.5 h-1.5 rounded-full transition-all ${
                         getCurrentSlideIndex() === index
-                          ? 'bg-[#79b246]'
+                          ? 'theme-bg-primary-end'
                           : 'bg-gray-400 opacity-40'
                       }`}
                     />

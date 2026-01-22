@@ -73,7 +73,7 @@ export default function CardsSection({
               <button
                 onClick={onPrev}
                 className="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 w-12 h-12 bg-transparent border-2 theme-text-black rounded-full items-center justify-center shadow-md hover:scale-110 transition-all backdrop-blur-sm"
-                style={{ borderColor: "rgba(0, 0, 0, 0.2)" }}
+                style={{ borderColor: "var(--color-border-default-20)" }}
                 aria-label="Previous"
               >
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -96,10 +96,10 @@ export default function CardsSection({
                   <div
                     key={index}
                     className="group p-6 theme-bg-white rounded-xl border border-gray-200 shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 shrink-0 w-full px-4"
-                    style={{ borderColor: "rgba(0, 0, 0, 0.1)" }}
+                    style={{ borderColor: "var(--color-border-default)" }}
                   >
                     {showStars && (
-                      <div className="mb-4 text-lg" style={{ color: "#FFD700" }}>
+                      <div className="mb-4 text-lg theme-text-primary-end">
                         {"★★★★★".split("").map((star, i) => (
                           <span key={i}>{star}</span>
                         ))}
@@ -176,7 +176,7 @@ export default function CardsSection({
               <button
                 onClick={onNext}
                 className="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 w-12 h-12 bg-transparent border-2 theme-text-black rounded-full items-center justify-center shadow-md hover:scale-110 transition-all backdrop-blur-sm"
-                style={{ borderColor: "rgba(0, 0, 0, 0.2)" }}
+                style={{ borderColor: "var(--color-border-default-20)" }}
                 aria-label="Next"
               >
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">

@@ -93,7 +93,13 @@ function Navbar({ pages, services, industries }: NavbarProps) {
       className="group flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 transition-all duration-200 border border-transparent hover:border-gray-200 hover:shadow-sm"
     >
       {/* Icon Circle */}
-      <div className="shrink-0 w-12 h-12 rounded-xl flex items-center justify-center bg-white border border-gray-200 shadow-sm group-hover:shadow-md group-hover:border-[#79b246]/30 transition-all duration-200">
+      <div className="shrink-0 w-12 h-12 rounded-xl flex items-center justify-center theme-bg-white border border-gray-200 shadow-sm group-hover:shadow-md transition-all duration-200"
+        onMouseEnter={(e) => {
+          e.currentTarget.style.borderColor = 'var(--color-primary-end-rgba-30)';
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.borderColor = '';
+        }}>
         {item.icon ? (
           isIconUrl(item.icon) ? (
             <Image
@@ -129,14 +135,14 @@ function Navbar({ pages, services, industries }: NavbarProps) {
       </div>
       {/* Content */}
       <div className="flex-1 min-w-0">
-        <h3 className="text-sm font-semibold text-gray-900 group-hover:text-[#79b246] transition-colors">
+        <h3 className="text-sm font-semibold theme-text-primary theme-hover-primary-end transition-colors">
           {item.title}
         </h3>
       </div>
       {/* Arrow Icon */}
       <div className="shrink-0 flex items-center opacity-0 group-hover:opacity-100 transition-opacity">
         <svg
-          className="w-4 h-4 text-[#79b246] transform group-hover:translate-x-1 transition-transform"
+          className="w-4 h-4 theme-text-primary-end transform group-hover:translate-x-1 transition-transform"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -187,7 +193,7 @@ function Navbar({ pages, services, industries }: NavbarProps) {
           {/* Logo on the left */}
           <div className="flex items-center shrink-0">
             <Link href="/" className="flex items-center group">
-              <span className="text-2xl font-bold text-gray-900 tracking-tight group-hover:text-gray-700 transition-colors">
+              <span className="text-2xl font-bold theme-text-primary tracking-tight group-hover:theme-text-primary-start transition-colors">
                 Softonoma
               </span>
             </Link>
@@ -203,10 +209,10 @@ function Navbar({ pages, services, industries }: NavbarProps) {
                       key={item.id}
                       href={`/${item.slug}`}
                       prefetch={true}
-                      className="px-4 py-2 text-sm font-bold text-gray-700 hover:text-gray-900 hover:bg-gray-50 rounded-lg transition-all duration-200 relative group"
+                      className="px-4 py-2 text-sm font-bold theme-text-primary hover:theme-text-primary-start theme-hover-bg-secondary rounded-lg transition-all duration-200 relative group"
                     >
                       {item.title}
-                      <span className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-0 h-0.5 bg-[#79b246] group-hover:w-3/4 transition-all duration-200"></span>
+                      <span className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-0 h-0.5 theme-bg-primary-end group-hover:w-3/4 transition-all duration-200"></span>
                     </Link>
                   );
                 } else if (item.type === "services") {
@@ -244,7 +250,7 @@ function Navbar({ pages, services, industries }: NavbarProps) {
                         >
                           <path d="M19 9l-7 7-7-7"></path>
                         </svg>
-                        <span className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-0 h-0.5 bg-[#79b246] group-hover:w-3/4 transition-all duration-200"></span>
+                        <span className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-0 h-0.5 theme-bg-primary-end group-hover:w-3/4 transition-all duration-200"></span>
                       </button>
                       {servicesDropdownOpen && (
                         <>
@@ -287,9 +293,9 @@ function Navbar({ pages, services, industries }: NavbarProps) {
                           setIndustriesDropdownOpen(!industriesDropdownOpen);
                           setServicesDropdownOpen(false);
                         }}
-                        className={`px-4 py-2 text-sm font-bold text-gray-700 hover:text-gray-900 hover:bg-gray-50 rounded-lg transition-all duration-200 flex items-center gap-1.5 relative group ${
+                        className={`px-4 py-2 text-sm font-bold theme-text-primary hover:theme-text-primary-start theme-hover-bg-secondary rounded-lg transition-all duration-200 flex items-center gap-1.5 relative group ${
                           industriesDropdownOpen
-                            ? "bg-gray-50 text-gray-900"
+                            ? "theme-bg-secondary theme-text-primary"
                             : ""
                         }`}
                       >
@@ -307,7 +313,7 @@ function Navbar({ pages, services, industries }: NavbarProps) {
                         >
                           <path d="M19 9l-7 7-7-7"></path>
                         </svg>
-                        <span className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-0 h-0.5 bg-[#79b246] group-hover:w-3/4 transition-all duration-200"></span>
+                        <span className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-0 h-0.5 theme-bg-primary-end group-hover:w-3/4 transition-all duration-200"></span>
                       </button>
                       {industriesDropdownOpen && (
                         <>
@@ -344,7 +350,7 @@ function Navbar({ pages, services, industries }: NavbarProps) {
           <div className="hidden lg:flex items-center shrink-0">
             <Link
               href="/contact"
-              className="px-6 py-2.5 text-sm font-semibold rounded-lg transition-all duration-200 bg-[#4a6f1c] text-white hover:bg-[#3d5a17] shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
+              className="px-6 py-2.5 text-sm font-semibold rounded-lg transition-all duration-200 theme-bg-primary-start theme-text-white hover:opacity-90 shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
             >
               Contact Us
             </Link>
@@ -401,7 +407,7 @@ function Navbar({ pages, services, industries }: NavbarProps) {
                       key={item.id}
                       href={`/${item.slug}`}
                       onClick={() => setMobileMenuOpen(false)}
-                      className="px-4 py-3 text-base font-medium text-gray-700 hover:bg-gray-50 rounded-lg transition-colors"
+                      className="px-4 py-3 text-base font-medium theme-text-primary theme-hover-bg-secondary rounded-lg transition-colors"
                     >
                       {item.title}
                     </Link>
@@ -420,7 +426,7 @@ function Navbar({ pages, services, industries }: NavbarProps) {
                           e.stopPropagation();
                           setServicesDropdownOpen(!servicesDropdownOpen);
                         }}
-                        className="w-full flex items-center justify-between px-4 py-3 text-base font-medium text-gray-700 hover:bg-gray-50 active:bg-gray-100 rounded-lg transition-colors"
+                        className="w-full flex items-center justify-between px-4 py-3 text-base font-medium theme-text-primary theme-hover-bg-secondary rounded-lg transition-colors"
                         style={{ touchAction: "manipulation" }}
                       >
                         <span>Services</span>
@@ -486,7 +492,7 @@ function Navbar({ pages, services, industries }: NavbarProps) {
                           e.stopPropagation();
                           setIndustriesDropdownOpen(!industriesDropdownOpen);
                         }}
-                        className="w-full flex items-center justify-between px-4 py-3 text-base font-medium text-gray-700 hover:bg-gray-50 active:bg-gray-100 rounded-lg transition-colors"
+                        className="w-full flex items-center justify-between px-4 py-3 text-base font-medium theme-text-primary theme-hover-bg-secondary rounded-lg transition-colors"
                         style={{ touchAction: "manipulation" }}
                       >
                         <span>Industries</span>
@@ -543,7 +549,7 @@ function Navbar({ pages, services, industries }: NavbarProps) {
               <Link
                 href="/contact"
                 onClick={() => setMobileMenuOpen(false)}
-                className="mx-4 mt-4 px-6 py-3 text-sm font-semibold text-center rounded-lg bg-[#4a6f1c] text-white hover:bg-[#3d5a17] transition-colors"
+                className="mx-4 mt-4 px-6 py-3 text-sm font-semibold text-center rounded-lg theme-bg-primary-start theme-text-white hover:opacity-90 transition-colors"
               >
                 Contact Us
               </Link>
