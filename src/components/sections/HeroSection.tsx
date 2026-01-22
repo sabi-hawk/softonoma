@@ -162,15 +162,13 @@ export default function HeroSection({ section }: HeroSectionProps) {
           )}
 
           {content.title && (
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold theme-text-white mb-4 sm:mb-6 leading-tight px-2">
-              <span className="theme-gradient-text">
-                {content.title.split("\n").map((line, i, arr) => (
-                  <span key={i}>
-                    {line}
-                    {i < arr.length - 1 && <br />}
-                  </span>
-                ))}
-              </span>
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-4 sm:mb-6 leading-tight px-2">
+              {content.title.split("\n").map((line, i, arr) => (
+                <span key={i}>
+                  {line}
+                  {i < arr.length - 1 && <br />}
+                </span>
+              ))}
             </h1>
           )}
 

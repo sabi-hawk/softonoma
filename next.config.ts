@@ -37,6 +37,11 @@ const nextConfig: NextConfig = {
         hostname: 'softonoma-s3-bucket.s3.eu-north-1.amazonaws.com',
         pathname: '/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'images.unsplash.com',
+        pathname: '/**',
+      },
       // Add more S3 hostnames here if you use multiple buckets or regions
       // Format: bucket-name.s3.region.amazonaws.com
     ],
