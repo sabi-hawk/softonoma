@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
+import { getImageUrl } from "@/lib/image-utils";
 
 interface IconUploadProps {
   label: string;
@@ -41,25 +42,8 @@ function extractS3KeyFromUrl(url: string): string | null {
   }
 }
 
-// Helper function to get permanent URL for display
-// Files are uploaded with public-read ACL, so we can use permanent URLs directly
 function getDisplayUrl(urlOrKey: string): string {
-  // If it's already a full URL, return as-is
-  if (urlOrKey.startsWith("http://") || urlOrKey.startsWith("https://")) {
-    return urlOrKey;
-  }
-  
-  // If it's an S3 key, construct the permanent URL
-  const key = extractS3KeyFromUrl(urlOrKey) || urlOrKey;
-  if (key && (key.includes("/") || key.includes("."))) {
-    // Construct permanent S3 URL
-    const bucketName = process.env.NEXT_PUBLIC_AWS_S3_BUCKET_NAME || "";
-    const region = process.env.NEXT_PUBLIC_AWS_REGION || "eu-north-1";
-    return `https://${bucketName}.s3.${region}.amazonaws.com/${key}`;
-  }
-  
-  // Return as-is for external URLs or other formats
-  return urlOrKey;
+  return getImageUrl(urlOrKey);
 }
 
 export default function IconUpload({

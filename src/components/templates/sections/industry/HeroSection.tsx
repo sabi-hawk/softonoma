@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
+import { getImageUrl } from "@/lib/image-utils";
 
 interface HeroSectionProps {
   title: string;
@@ -42,7 +43,7 @@ export default function HeroSection({
           {backgroundImage && (
             <div className="relative w-full h-full">
               <Image
-                src={backgroundImage}
+                src={getImageUrl(backgroundImage)}
                 alt="Hero background"
                 fill
                 priority

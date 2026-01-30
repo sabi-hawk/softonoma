@@ -1,5 +1,7 @@
 import { ISection } from "@/models/Section";
+import Image from "next/image";
 import { getBackgroundStyle, getDefaultBackground } from "@/lib/section-helpers";
+import { getImageUrl } from "@/lib/image-utils";
 
 interface FeaturesSectionProps {
   section: ISection;
@@ -21,10 +23,7 @@ export default function FeaturesSection({ section }: FeaturesSectionProps) {
               </h2>
             )}
             {content.description && (
-              <p
-                className="text-base sm:text-lg theme-text-black mb-6 sm:mb-10 leading-relaxed"
-                style={{ opacity: 0.8 }}
-              >
+              <p className="text-base sm:text-lg theme-text-muted mb-6 sm:mb-10 leading-relaxed">
                 {content.description}
               </p>
             )}
@@ -56,10 +55,7 @@ export default function FeaturesSection({ section }: FeaturesSectionProps) {
                           </h3>
                         )}
                         {feature.description && (
-                          <p
-                            className="text-sm sm:text-base theme-text-black leading-relaxed"
-                            style={{ opacity: 0.8 }}
-                          >
+                          <p className="text-sm sm:text-base theme-text-muted leading-relaxed">
                             {feature.description}
                           </p>
                         )}
@@ -73,11 +69,15 @@ export default function FeaturesSection({ section }: FeaturesSectionProps) {
           {content.image ? (
             <div className="relative">
               <div className="absolute inset-0 theme-bg-primary-mid rounded-2xl transform rotate-3 opacity-20"></div>
-              <img
-                src={content.image}
-                alt={content.title || "Section image"}
-                className="relative rounded-2xl shadow-2xl"
-              />
+              <div className="relative w-full aspect-[4/3] rounded-2xl shadow-2xl overflow-hidden">
+                <Image
+                  src={getImageUrl(content.image as string)}
+                  alt={content.title || "Section image"}
+                  fill
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                  className="object-cover rounded-2xl"
+                />
+              </div>
             </div>
           ) : (
             <div className="relative">

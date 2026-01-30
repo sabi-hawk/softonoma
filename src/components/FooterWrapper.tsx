@@ -1,7 +1,9 @@
 import connectDB from "@/lib/mongodb";
 import Service from "@/models/Service";
 import Industry from "@/models/Industry";
-import Footer from "./Footer";
+import dynamic from "next/dynamic";
+
+const Footer = dynamic(() => import("./Footer"), { ssr: true });
 
 // Cache footer data for 60 seconds to improve performance
 export const revalidate = 60;

@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { getBackgroundStyle, getDefaultBackground } from "@/lib/section-helpers";
+import { getImageUrl } from "@/lib/image-utils";
 import { isIconUrl } from "../../utils/helpers";
 
 interface StatItem {
@@ -28,11 +29,11 @@ export default function StatsSection({ items, backgroundColor }: StatsSectionPro
                   <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg flex items-center justify-center text-white text-xl sm:text-2xl mb-3 sm:mb-4 relative overflow-hidden mx-auto">
                     {isIconUrl(stat.icon) && stat.icon ? (
                       <Image
-                        src={stat.icon}
+                        src={getImageUrl(stat.icon)}
                         alt={stat.label || "Stat"}
                         fill
+                        sizes="40px"
                         className="object-contain transition-all duration-300"
-                        unoptimized
                         onError={(e) => {
                           const target = e.currentTarget;
                           target.style.display = "none";

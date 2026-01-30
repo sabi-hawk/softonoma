@@ -6,6 +6,7 @@ import {
   getBackgroundStyle,
   getDefaultBackground,
 } from "@/lib/section-helpers";
+import { getImageUrl } from "@/lib/image-utils";
 import Image from "next/image";
 
 interface CardsSectionProps {
@@ -162,12 +163,11 @@ export default function CardsSection({ section }: CardsSectionProps) {
           {/* Quote Icon */}
           <div className="mb-4 sm:mb-5">
             <Image
-              src="https://newkit.creativemox.com/softlow/wp-content/uploads/sites/8/2025/12/Left-quote-traced.png"
+              src="/Left-quote-traced.png"
               alt="Quote icon"
               width={60}
               height={60}
               className="w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14"
-              unoptimized
             />
           </div>
 
@@ -181,11 +181,8 @@ export default function CardsSection({ section }: CardsSectionProps) {
           {/* Description */}
           {content.description && (
             <p
-              className="text-sm sm:text-base md:text-lg theme-text-primary leading-relaxed"
-              style={{ 
-                opacity: 0.7,
-                fontFamily: "var(--font-inter), sans-serif"
-              }}
+              className="text-sm sm:text-base md:text-lg theme-text-muted leading-relaxed"
+              style={{ fontFamily: "var(--font-inter), sans-serif" }}
             >
               {content.description}
             </p>
@@ -237,8 +234,9 @@ export default function CardsSection({ section }: CardsSectionProps) {
                 {items.map((item, index) => (
                   <div
                     key={index}
-                    className="group p-6 sm:p-8 theme-bg-secondary rounded-2xl border flex-shrink-0 w-full shadow-sm transition-all duration-300"
+                    className="group p-6 sm:p-8 theme-bg-secondary rounded-2xl border shrink-0 shadow-sm transition-all duration-300 mx-2"
                     style={{ 
+                      width: "calc(100% - 1rem)" as string,
                       borderColor: "var(--color-border-default-20)",
                       boxShadow: "0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)"
                     }}
@@ -253,11 +251,8 @@ export default function CardsSection({ section }: CardsSectionProps) {
                     {/* Client Title/Role */}
                     {(item.role || item.company) && (
                       <p
-                        className="text-xs sm:text-sm theme-text-primary mb-4 sm:mb-6 uppercase tracking-wide"
-                        style={{ 
-                          opacity: 0.6,
-                          fontFamily: "var(--font-inter), sans-serif"
-                        }}
+                        className="text-xs sm:text-sm theme-text-muted mb-4 sm:mb-6 uppercase tracking-wide"
+                        style={{ fontFamily: "var(--font-inter), sans-serif" }}
                       >
                         {item.role && `${item.role}`}
                         {item.role && item.company && " "}
@@ -268,11 +263,8 @@ export default function CardsSection({ section }: CardsSectionProps) {
                     {/* Quote */}
                     {item.quote && (
                       <p
-                        className="theme-text-primary mb-6 sm:mb-8 leading-relaxed text-sm sm:text-base"
-                        style={{ 
-                          opacity: 0.7,
-                          fontFamily: "var(--font-inter), sans-serif"
-                        }}
+                        className="theme-text-muted mb-6 sm:mb-8 leading-relaxed text-sm sm:text-base"
+                        style={{ fontFamily: "var(--font-inter), sans-serif" }}
                       >
                         {item.quote}
                       </p>
@@ -282,12 +274,12 @@ export default function CardsSection({ section }: CardsSectionProps) {
                     {item.image && (
                       <div className="mt-6">
                         <Image
-                          src={item.image}
+                          src={getImageUrl(item.image)}
                           alt={item.author || "Client"}
                           width={48}
                           height={48}
+                          sizes="48px"
                           className="w-12 h-12 rounded-full object-cover"
-                          unoptimized
                         />
                       </div>
                     )}
@@ -318,11 +310,8 @@ export default function CardsSection({ section }: CardsSectionProps) {
                     {/* Client Title/Role */}
                     {(item.role || item.company) && (
                       <p
-                        className="text-xs sm:text-sm theme-text-primary mb-4 sm:mb-6 uppercase tracking-wide"
-                        style={{ 
-                          opacity: 0.6,
-                          fontFamily: "var(--font-inter), sans-serif"
-                        }}
+                        className="text-xs sm:text-sm theme-text-muted mb-4 sm:mb-6 uppercase tracking-wide"
+                        style={{ fontFamily: "var(--font-inter), sans-serif" }}
                       >
                         {item.role && `${item.role}`}
                         {item.role && item.company && " "}
@@ -333,11 +322,8 @@ export default function CardsSection({ section }: CardsSectionProps) {
                     {/* Quote */}
                     {item.quote && (
                       <p
-                        className="theme-text-primary mb-6 sm:mb-8 leading-relaxed text-sm sm:text-base"
-                        style={{ 
-                          opacity: 0.7,
-                          fontFamily: "var(--font-inter), sans-serif"
-                        }}
+                        className="theme-text-muted mb-6 sm:mb-8 leading-relaxed text-sm sm:text-base"
+                        style={{ fontFamily: "var(--font-inter), sans-serif" }}
                       >
                         {item.quote}
                       </p>
@@ -347,12 +333,12 @@ export default function CardsSection({ section }: CardsSectionProps) {
                     {item.image && (
                       <div className="mt-6">
                         <Image
-                          src={item.image}
+                          src={getImageUrl(item.image)}
                           alt={item.author || "Client"}
                           width={48}
                           height={48}
+                          sizes="48px"
                           className="w-12 h-12 rounded-full object-cover"
-                          unoptimized
                         />
                       </div>
                     )}

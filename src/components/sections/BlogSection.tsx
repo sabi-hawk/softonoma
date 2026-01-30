@@ -1,13 +1,14 @@
 "use client";
 
 import { ISection } from "@/models/Section";
-import { useState, useRef, useEffect } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { getBackgroundStyle, getDefaultBackground } from "@/lib/section-helpers";
+import { getImageUrl } from "@/lib/image-utils";
 
 interface BlogSectionProps {
-  section: ISection;
+  readonly section: ISection;
 }
 
 // Helper to check if image is a URL
@@ -21,133 +22,59 @@ export default function BlogSection({ section }: BlogSectionProps) {
   const backgroundColor = (content.backgroundColor as string) || getDefaultBackground("blog");
   const background = getBackgroundStyle(backgroundColor, content.backgroundColorOpacity as number);
   const posts = Array.isArray(content.posts) ? content.posts : [];
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const touchStartX = useRef<number | null>(null);
-  const touchEndX = useRef<number | null>(null);
-  const autoSlideIntervalRef = useRef<NodeJS.Timeout | null>(null);
-  const isUserInteractingRef = useRef(false);
-
-  const itemsToShow = 3;
-  const totalItems = posts.length;
-  const mobileItemsToShow = 1;
-  const totalSlides = Math.ceil(totalItems / mobileItemsToShow);
-
-  const nextSlide = () => {
-    setCurrentIndex((prev) => (prev + 1) % totalItems);
-  };
-
-  const prevSlide = () => {
-    setCurrentIndex((prev) => (prev - 1 + totalItems) % totalItems);
-  };
-
-  // Touch handlers for mobile swipe
-  const handleTouchStart = (e: React.TouchEvent) => {
-    touchStartX.current = e.touches[0].clientX;
-    isUserInteractingRef.current = true;
-    // Pause auto-slide when user interacts
-    if (autoSlideIntervalRef.current) {
-      clearInterval(autoSlideIntervalRef.current);
-      autoSlideIntervalRef.current = null;
-    }
-  };
-
-  const handleTouchMove = (e: React.TouchEvent) => {
-    touchEndX.current = e.touches[0].clientX;
-  };
-
-  const handleTouchEnd = () => {
-    if (!touchStartX.current || !touchEndX.current) return;
-    const distance = touchStartX.current - touchEndX.current;
-    const minSwipeDistance = 50;
-
-    if (distance > minSwipeDistance) {
-      nextSlide();
-    } else if (distance < -minSwipeDistance) {
-      prevSlide();
-    }
-
-    touchStartX.current = null;
-    touchEndX.current = null;
-    
-    // Resume auto-slide after 3 seconds of no interaction
-    resumeAutoSlide();
-  };
-
-  // Get visible items (3 at a time on desktop, 1 on mobile)
-  const getVisibleItems = (isMobile: boolean = false) => {
-    const visible = [];
-    const items = isMobile ? mobileItemsToShow : itemsToShow;
-    for (let i = 0; i < items; i++) {
-      const index = (currentIndex + i) % totalItems;
-      visible.push({ item: posts[index], originalIndex: index });
-    }
-    return visible;
-  };
-
-  // Calculate current slide index for dots (mobile)
-  const getCurrentSlideIndex = () => {
-    return Math.floor(currentIndex / mobileItemsToShow);
-  };
-
-  // Resume auto-slide helper
-  const resumeAutoSlide = () => {
-    setTimeout(() => {
-      isUserInteractingRef.current = false;
-      // Restart auto-slide
-      if (typeof window !== 'undefined' && window.innerWidth < 768 && totalItems > mobileItemsToShow) {
-        if (autoSlideIntervalRef.current) {
-          clearInterval(autoSlideIntervalRef.current);
-        }
-        autoSlideIntervalRef.current = setInterval(() => {
-          if (!isUserInteractingRef.current) {
-            setCurrentIndex((prev) => (prev + 1) % totalItems);
-          }
-        }, 5000);
-      }
-    }, 3000);
-  };
-
-  // Set up auto-slide on mount and when currentIndex changes (mobile only)
+  
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const [isMobile, setIsMobile] = useState(false);
+  
+  // Constants
+  const BLOGS_PER_PAGE_DESKTOP = 12; // 3 columns × 4 rows
+  const BLOGS_PER_PAGE_MOBILE = 8; // 1 column × 8 rows
+  
+  // Handle responsive pagination
   useEffect(() => {
-    // Auto-slide function for mobile only
-    const startAutoSlide = () => {
-      // Check if mobile (window width < 768px)
-      if (typeof window !== 'undefined' && window.innerWidth < 768 && totalItems > mobileItemsToShow) {
-        if (autoSlideIntervalRef.current) {
-          clearInterval(autoSlideIntervalRef.current);
-        }
-        autoSlideIntervalRef.current = setInterval(() => {
-          if (!isUserInteractingRef.current) {
-            setCurrentIndex((prev) => (prev + 1) % totalItems);
-          }
-        }, 5000); // 5 seconds
-      }
+    const checkMobile = () => {
+      setIsMobile(globalThis.window.innerWidth < 768);
     };
-
-    startAutoSlide();
     
-    // Handle window resize
-    const handleResize = () => {
-      if (window.innerWidth >= 768) {
-        // Clear interval on desktop
-        if (autoSlideIntervalRef.current) {
-          clearInterval(autoSlideIntervalRef.current);
-          autoSlideIntervalRef.current = null;
-        }
-      } else {
-        startAutoSlide();
-      }
-    };
-
-    window.addEventListener('resize', handleResize);
-
+    checkMobile();
+    globalThis.window.addEventListener('resize', checkMobile);
+    
     return () => {
-      if (autoSlideIntervalRef.current) {
-        clearInterval(autoSlideIntervalRef.current);
-      }
-      window.removeEventListener('resize', handleResize);
+      globalThis.window.removeEventListener('resize', checkMobile);
     };
-  }, [currentIndex, totalItems, mobileItemsToShow]);
+  }, []);
+  
+  // Calculate pagination
+  const totalBlogs = posts.length;
+  const blogsPerPage = isMobile ? BLOGS_PER_PAGE_MOBILE : BLOGS_PER_PAGE_DESKTOP;
+  const totalPages = Math.ceil(totalBlogs / blogsPerPage);
+  const startIndex = (currentPage - 1) * blogsPerPage;
+  const endIndex = startIndex + blogsPerPage;
+  const displayedPosts = posts.slice(startIndex, endIndex);
+  
+  // Reset to page 1 when switching between mobile/desktop
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [isMobile]);
+  
+  // Pagination handlers
+  const goToPage = (page: number) => {
+    setCurrentPage(page);
+    globalThis.window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+  
+  const nextPage = () => {
+    if (currentPage < totalPages) {
+      goToPage(currentPage + 1);
+    }
+  };
+  
+  const prevPage = () => {
+    if (currentPage > 1) {
+      goToPage(currentPage - 1);
+    }
+  };
 
   return (
     <section className={`py-12 sm:py-16 md:py-24 px-4 sm:px-6 lg:px-8 ${background.className || ""}`} style={background.style}>
@@ -158,79 +85,51 @@ export default function BlogSection({ section }: BlogSectionProps) {
               {content.title}
             </h2>
             {content.description && (
-              <p
-                className="text-base sm:text-lg md:text-xl theme-text-black max-w-3xl mx-auto px-2"
-                style={{ opacity: 0.8 }}
-              >
+              <p className="text-base sm:text-lg md:text-xl theme-text-muted max-w-3xl mx-auto px-2">
                 {content.description}
               </p>
             )}
           </div>
         )}
 
-        {totalItems > 0 && (
-          <div className="relative">
-            {/* Left Arrow - Hidden on mobile */}
-            {totalItems > itemsToShow && (
-              <button
-                onClick={prevSlide}
-                className="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 w-12 h-12 bg-transparent border-2 theme-text-black rounded-full items-center justify-center shadow-md hover:scale-110 transition-all backdrop-blur-sm"
-                style={{ borderColor: "var(--color-border-default-20)" }}
-                aria-label="Previous"
-              >
-                <svg
-                  className="w-6 h-6"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M15 19l-7-7 7-7"
-                  />
-                </svg>
-              </button>
-            )}
-
-            {/* Carousel Container - Swipeable on mobile */}
-            <div
-              className="relative overflow-hidden"
-              onTouchStart={handleTouchStart}
-              onTouchMove={handleTouchMove}
-              onTouchEnd={handleTouchEnd}
-              style={{ touchAction: 'pan-y' }}
-            >
-              {/* Mobile: Show 1 item at a time */}
-              <div className="md:hidden overflow-hidden">
-                <div 
-                  className="flex transition-transform duration-500 ease-in-out"
-                  style={{
-                    transform: `translateX(-${currentIndex * 100}%)`
-                  }}
-                >
-                {posts.map((post, index) => (
+        {totalBlogs > 0 && (
+          <>
+            {/* Blog Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
+              {displayedPosts.map((post, index) => {
+                // Ensure unique key by combining index with post data
+                const uniqueKey = `post-${startIndex + index}-${post.link || post.title || index}`;
+                return (
                   <article
-                    key={index}
-                    className="group theme-bg-white rounded-xl overflow-hidden shadow-lg transition-all duration-300 flex-shrink-0 w-full px-4"
+                    key={uniqueKey}
+                    className="group bg-white rounded-2xl border shadow-sm transition-all duration-300 hover:shadow-md overflow-hidden"
+                    style={{ 
+                      borderColor: "var(--color-border-default-20)",
+                      boxShadow: "0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)"
+                    }}
                   >
-                    <div className="relative h-48 overflow-hidden theme-gradient">
-                      {isImageUrl(post.image) ? (
-                        <img
-                          src={post.image}
+                    {/* Post Image - Center of Attention */}
+                    {post.image && isImageUrl(post.image) ? (
+                      <div className="relative h-40 sm:h-44 md:h-48 overflow-hidden">
+                        <Image
+                          src={getImageUrl(post.image)}
                           alt={post.title || "Blog post"}
-                          className="w-full h-full object-cover transition-transform duration-500"
+                          fill
+                          className="object-cover group-hover:scale-110 transition-transform duration-500"
+                          sizes="(max-width: 768px) 100vw, 33vw"
                         />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center">
-                          <div className="theme-text-white text-5xl">
-                            {post.image || "📝"}
-                          </div>
+                      </div>
+                    ) : post.image ? (
+                      <div className="relative h-40 sm:h-44 md:h-48 overflow-hidden theme-gradient flex items-center justify-center">
+                        <div className="theme-text-white text-4xl sm:text-5xl">
+                          {post.image}
                         </div>
-                      )}
-                    </div>
-                    <div className="p-6">
+                      </div>
+                    ) : null}
+
+                    {/* Post Content */}
+                    <div className="p-5 sm:p-6">
+                      {/* Category */}
                       {post.category && (
                         <span
                           className="inline-block px-3 py-1 text-xs font-semibold theme-primary-end rounded-full mb-3"
@@ -239,177 +138,162 @@ export default function BlogSection({ section }: BlogSectionProps) {
                           {post.category}
                         </span>
                       )}
+
+                      {/* Post Title */}
                       {post.title && (
-                        <h3 className="text-xl font-bold theme-text-black mb-3 line-clamp-2">
+                        <h3 className="text-lg sm:text-xl font-bold theme-text-primary mb-2 line-clamp-2">
                           {post.title}
                         </h3>
                       )}
+
+                      {/* Post Excerpt */}
                       {post.excerpt && (
                         <p
-                          className="theme-text-black mb-4 line-clamp-3"
-                          style={{ opacity: 0.8 }}
+                          className="theme-text-muted mb-3 sm:mb-4 leading-relaxed text-sm sm:text-base line-clamp-2"
+                          style={{ fontFamily: "var(--font-inter), sans-serif" }}
                         >
                           {post.excerpt}
                         </p>
                       )}
-                      <div
-                        className="flex items-center justify-between text-sm theme-text-black"
-                        style={{ opacity: 0.6 }}
-                      >
-                        <div className="flex items-center gap-4">
-                          {post.author && (
-                            <span className="flex items-center gap-1">
-                              <span>👤</span>
-                              {post.author}
-                            </span>
-                          )}
-                          {post.date && (
-                            <span className="flex items-center gap-1">
-                              <span>📅</span>
-                              {post.date}
-                            </span>
-                          )}
-                        </div>
-                        {post.link && (
-                          <Link
-                            href={post.link}
-                            className="theme-primary-end font-semibold hover:underline"
-                          >
-                            Read More →
-                          </Link>
-                        )}
-                      </div>
-                    </div>
-                  </article>
-                ))}
-                </div>
-              </div>
-              {/* Desktop: Show 3 items */}
-              <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-3 gap-8 px-8">
-                {getVisibleItems(false).map(({ item: post, originalIndex }) => (
-                <article
-                  key={originalIndex}
-                  className="group theme-bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2"
-                >
-                  {/* Post Image */}
-                  <div className="relative h-48 overflow-hidden theme-gradient">
-                    {isImageUrl(post.image) ? (
-                      <Image
-                        src={post.image}
-                        alt={post.title || "Blog post"}
-                        fill
-                        className="object-cover group-hover:scale-110 transition-transform duration-500"
-                        loading="lazy"
-                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                      />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center">
-                        <div className="theme-text-white text-5xl animate-float">
-                          {post.image || "📝"}
-                        </div>
-                      </div>
-                    )}
-                  </div>
 
-                  {/* Post Content */}
-                  <div className="p-6">
-                    {post.category && (
-                      <span
-                        className="inline-block px-3 py-1 text-xs font-semibold theme-primary-end rounded-full mb-3"
-                        style={{ backgroundColor: "var(--color-primary-end-rgba-10)" }}
-                      >
-                        {post.category}
-                      </span>
-                    )}
-                    {post.title && (
-                      <h3 className="text-xl font-bold theme-text-black mb-3 theme-hover-primary transition-colors line-clamp-2">
-                        {post.title}
-                      </h3>
-                    )}
-                    {post.excerpt && (
-                      <p
-                        className="theme-text-black mb-4 line-clamp-3"
-                        style={{ opacity: 0.8 }}
-                      >
-                        {post.excerpt}
-                      </p>
-                    )}
-                    <div
-                      className="flex items-center justify-between text-sm theme-text-black"
-                      style={{ opacity: 0.6 }}
-                    >
-                      <div className="flex items-center gap-4">
+                      {/* Author and Date */}
+                      <div className="flex items-center gap-4 mb-3">
                         {post.author && (
-                          <span className="flex items-center gap-1">
-                            <span>👤</span>
+                          <span
+                            className="text-xs sm:text-sm theme-text-muted"
+                            style={{ fontFamily: "var(--font-inter), sans-serif" }}
+                          >
                             {post.author}
                           </span>
                         )}
                         {post.date && (
-                          <span className="flex items-center gap-1">
-                            <span>📅</span>
+                          <span
+                            className="text-xs sm:text-sm theme-text-muted"
+                            style={{ fontFamily: "var(--font-inter), sans-serif" }}
+                          >
                             {post.date}
                           </span>
                         )}
                       </div>
+
+                      {/* Read More Link */}
                       {post.link && (
                         <Link
                           href={post.link}
-                          className="theme-primary-end font-semibold hover:underline theme-hover-primary"
+                          className="theme-primary-end font-semibold hover:underline theme-hover-primary text-sm sm:text-base"
                         >
                           Read More →
                         </Link>
                       )}
                     </div>
-                  </div>
-                </article>
-                ))}
-              </div>
+                  </article>
+                );
+              })}
             </div>
 
-            {/* Right Arrow - Hidden on mobile */}
-            {totalItems > itemsToShow && (
-              <button
-                onClick={nextSlide}
-                className="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 w-12 h-12 bg-transparent border-2 theme-text-black rounded-full items-center justify-center shadow-md hover:scale-110 transition-all backdrop-blur-sm"
-                style={{ borderColor: "var(--color-border-default-20)" }}
-                aria-label="Next"
-              >
-                <svg
-                  className="w-6 h-6"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
+            {/* Pagination */}
+            {totalPages > 1 && (
+              <div className="flex justify-center items-center gap-2 mt-12">
+                <button
+                  onClick={prevPage}
+                  disabled={currentPage === 1}
+                  className={`px-4 py-2 rounded-md transition-all ${
+                    currentPage === 1
+                      ? "bg-gray-200 text-gray-400 cursor-not-allowed"
+                      : "bg-white border-2 theme-text-black hover:bg-gray-50 shadow-md"
+                  }`}
+                  style={currentPage !== 1 ? { borderColor: "var(--color-border-default-20)" } : {}}
+                  aria-label="Previous page"
                 >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M9 5l7 7-7 7"
-                  />
-                </svg>
-              </button>
-            )}
+                  <svg
+                    className="w-5 h-5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M15 19l-7-7 7-7"
+                    />
+                  </svg>
+                </button>
 
-             {/* Dot Indicators - Only visible on mobile */}
-             {totalItems > mobileItemsToShow && (
-               <div className="flex justify-center gap-1.5 mt-8 md:hidden">
-                 {Array.from({ length: totalSlides }).map((_, index) => (
-                   <span
-                     key={index}
-                     className={`w-1.5 h-1.5 rounded-full transition-all ${
-                       getCurrentSlideIndex() === index
-                         ? 'theme-bg-primary-end'
-                         : 'bg-gray-400 opacity-40'
-                     }`}
-                   />
-                 ))}
-               </div>
-             )}
-          </div>
+                <div className="flex gap-1">
+                  {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => {
+                    // Show first page, last page, current page, and pages around current
+                    const showPage =
+                      page === 1 ||
+                      page === totalPages ||
+                      (page >= currentPage - 1 && page <= currentPage + 1);
+
+                    if (!showPage) {
+                      // Show ellipsis
+                      if (page === currentPage - 2 || page === currentPage + 2) {
+                        return (
+                          <span key={page} className="px-2 py-2 theme-text-black">
+                            ...
+                          </span>
+                        );
+                      }
+                      return null;
+                    }
+
+                    return (
+                      <button
+                        key={page}
+                        onClick={() => goToPage(page)}
+                        className={`px-4 py-2 rounded-md transition-all ${
+                          currentPage === page
+                            ? "theme-bg-primary-end text-white shadow-md"
+                            : "bg-white border-2 theme-text-black hover:bg-gray-50"
+                        }`}
+                        style={
+                          currentPage !== page
+                            ? { borderColor: "var(--color-border-default-20)" }
+                            : {}
+                        }
+                        aria-label={`Go to page ${page}`}
+                        aria-current={currentPage === page ? "page" : undefined}
+                      >
+                        {page}
+                      </button>
+                    );
+                  })}
+                </div>
+
+                <button
+                  onClick={nextPage}
+                  disabled={currentPage === totalPages}
+                  className={`px-4 py-2 rounded-md transition-all ${
+                    currentPage === totalPages
+                      ? "bg-gray-200 text-gray-400 cursor-not-allowed"
+                      : "bg-white border-2 theme-text-black hover:bg-gray-50 shadow-md"
+                  }`}
+                  style={currentPage !== totalPages ? { borderColor: "var(--color-border-default-20)" } : {}}
+                  aria-label="Next page"
+                >
+                  <svg
+                    className="w-5 h-5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M9 5l7 7-7 7"
+                    />
+                  </svg>
+                </button>
+              </div>
+            )}
+          </>
         )}
 
-        {posts.length === 0 && (
+        {totalBlogs === 0 && (
           <div className="text-center py-12">
             <p className="text-gray-500">No blog posts to display yet.</p>
           </div>

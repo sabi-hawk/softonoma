@@ -94,7 +94,7 @@ export default function FAQSection({ title, description, items, backgroundColor 
                 {isExpanded && (
                   <div className="overflow-hidden transition-all duration-300">
                     <div className="px-5 py-4 sm:px-6 sm:py-5 theme-bg-secondary rounded-b-xl">
-                      <p className="text-sm sm:text-base theme-text-primary leading-relaxed" style={{ opacity: 0.7 }}>
+                      <p className="text-sm sm:text-base theme-text-muted leading-relaxed">
                         {faq.answer || `Answer ${index + 1}`}
                       </p>
                     </div>

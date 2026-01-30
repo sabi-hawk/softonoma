@@ -3,6 +3,8 @@ import connectDB from "@/lib/mongodb";
 import Page from "@/models/Page";
 import Section from "@/models/Section";
 import SectionRenderer from "@/components/sections/SectionRenderer";
+import HeroSectionShell from "@/components/sections/HeroSectionShell";
+import AboutSectionShell from "@/components/sections/AboutSectionShell";
 import { getCanonicalUrl } from "@/lib/url-utils";
 
 // Cache homepage for 60 seconds to improve performance
@@ -81,15 +83,22 @@ export default async function Home() {
       <main className="min-h-screen">
       {/* Render sections if they exist */}
       {serializedSections && serializedSections.length > 0 ? (
-        <div>
-          {serializedSections.map((section) => (
-            <SectionRenderer
-              key={section._id}
-              section={
-                section as unknown as import("@/models/Section").ISection
-              }
-            />
-          ))}
+        <div className="flex flex-col space-y-6 sm:space-y-0">
+          {serializedSections.map((section) => {
+            const sectionData =
+              section as unknown as import("@/models/Section").ISection;
+            if (section.type === "hero") {
+              return <HeroSectionShell key={section._id} section={sectionData} />;
+            }
+            if (section.type === "about") {
+              return (
+                <AboutSectionShell key={section._id} section={sectionData} />
+              );
+            }
+            return (
+              <SectionRenderer key={section._id} section={sectionData} />
+            );
+          })}
         </div>
       ) : (
         /* Fallback to traditional content if no sections */

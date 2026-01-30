@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { ISection } from "@/models/Section";
 import { getBackgroundStyle, getDefaultBackground } from "@/lib/section-helpers";
+import { getImageUrl } from "@/lib/image-utils";
 
 interface IndustriesSectionProps {
   section: ISection;
@@ -46,12 +47,12 @@ export default function IndustriesSection({ section }: IndustriesSectionProps) {
                   <div className="text-3xl sm:text-4xl md:text-5xl mb-3 sm:mb-4 theme-primary-end">
                     {isIconUrl(industry.icon) ? (
                       <Image
-                        src={industry.icon}
+                        src={getImageUrl(industry.icon)}
                         alt={industry.name || "Icon"}
                         width={64}
                         height={64}
+                        sizes="64px"
                         className="object-contain w-12 h-12 sm:w-16 sm:h-16"
-                        unoptimized
                         onError={(e) => {
                           e.currentTarget.style.display = "none";
                         }}

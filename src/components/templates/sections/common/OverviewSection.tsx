@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { getBackgroundStyle, getDefaultBackground } from "@/lib/section-helpers";
+import { getImageUrl } from "@/lib/image-utils";
 
 interface OverviewSectionProps {
   title: string;

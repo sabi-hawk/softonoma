@@ -7,9 +7,10 @@ import {
   getBackgroundStyle,
   getDefaultBackground,
 } from "@/lib/section-helpers";
+import { getImageUrl } from "@/lib/image-utils";
 
 interface TechnologiesSectionProps {
-  section: ISection;
+  readonly section: ISection;
 }
 
 // Helper to check if icon is a URL
@@ -78,13 +79,6 @@ export default function TechnologiesSection({
     
     // Resume auto-slide after 3 seconds of no interaction
     resumeAutoSlide();
-  };
-
-  // Get visible items for mobile carousel
-  const getVisibleMobileItems = () => {
-    const start = currentIndex * mobileItemsToShow;
-    const end = Math.min(start + mobileItemsToShow, totalItems);
-    return technologies.slice(start, end);
   };
 
   // Calculate current slide index for dots (mobile)
@@ -213,10 +207,7 @@ export default function TechnologiesSection({
               )}
             </h2>
             {content.description && (
-              <p
-                className="text-base sm:text-lg md:text-xl theme-text-black max-w-3xl mx-auto px-2"
-                style={{ opacity: 0.8 }}
-              >
+<p className="text-base sm:text-lg md:text-xl theme-text-muted max-w-3xl mx-auto px-2">
                 {content.description}
               </p>
             )}
@@ -224,7 +215,7 @@ export default function TechnologiesSection({
         )}
 
         {technologies.length > 0 && (
-          <div className="max-w-5xl mx-auto px-4 sm:px-6 md:px-12 lg:px-16">
+          <div className="max-w-6xl mx-auto">
             {/* Mobile: Horizontal Scrollable Carousel - Shows 4 items at a time */}
             <div className="md:hidden">
               <div
@@ -242,7 +233,7 @@ export default function TechnologiesSection({
                   }}
                 >
                   {Array.from({ length: totalSlides }).map((_, slideIndex) => (
-                    <div key={slideIndex} className="flex gap-2 sm:gap-3 flex-shrink-0 w-full px-1">
+                    <div key={slideIndex} className="flex gap-3 shrink-0 w-full px-2">
                       {technologies
                         .slice(slideIndex * mobileItemsToShow, (slideIndex + 1) * mobileItemsToShow)
                         .map(
@@ -256,21 +247,23 @@ export default function TechnologiesSection({
                           ) => (
                             <div
                               key={`${slideIndex}-${itemIndex}`}
-                              className="group theme-bg-white rounded-lg flex flex-col items-center justify-center transition-all duration-300 flex-shrink-0"
+                              className="group bg-white rounded-xl border flex flex-col items-center justify-center transition-all duration-300 shrink-0 hover:shadow-md"
                               style={{ 
                                 aspectRatio: "1/1", 
-                                minHeight: "80px",
-                                width: `calc((100% - ${(mobileItemsToShow - 1) * 8}px) / ${mobileItemsToShow})`
+                                minHeight: "90px",
+                                width: `calc((100% - ${(mobileItemsToShow - 1) * 12}px) / ${mobileItemsToShow})`,
+                                borderColor: "var(--color-border-default-20)",
+                                boxShadow: "0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)"
                               }}
                             >
-                              <div className="w-full h-full flex items-center justify-center relative p-2">
+                              <div className="w-full h-full flex items-center justify-center relative p-3">
                                 {isIconUrl(tech.icon) && tech.icon ? (
-                                  <div className="relative w-12 h-12">
+                                  <div className="relative w-10 h-10 sm:w-12 sm:h-12">
                                     <Image
                                       src={tech.icon}
                                       alt={tech.name || "Technology"}
                                       fill
-                                      className="object-contain transition-all duration-300 group-hover:scale-105"
+                                      className="object-contain transition-all duration-300 group-hover:scale-110"
                                       unoptimized
                                       onError={(e) => {
                                         const target = e.currentTarget;
@@ -279,10 +272,10 @@ export default function TechnologiesSection({
                                         if (parent) {
                                           const fallback = document.createElement("div");
                                           if (tech.icon && !isIconUrl(tech.icon)) {
-                                            fallback.className = "text-lg";
+                                            fallback.className = "text-2xl";
                                             fallback.textContent = tech.icon;
                                           } else if (tech.name) {
-                                            fallback.className = "text-xs font-bold theme-text-black text-center";
+                                            fallback.className = "text-xs font-semibold theme-text-primary text-center";
                                             fallback.textContent = tech.name;
                                           }
                                           parent.appendChild(fallback);
@@ -291,9 +284,9 @@ export default function TechnologiesSection({
                                     />
                                   </div>
                                 ) : tech.icon ? (
-                                  <div className="text-lg">{tech.icon}</div>
+                                  <div className="text-2xl">{tech.icon}</div>
                                 ) : tech.name ? (
-                                  <div className="text-xs font-semibold theme-text-black text-center px-1">
+                                  <div className="text-xs font-semibold theme-text-primary text-center px-2">
                                     {tech.name}
                                   </div>
                                 ) : null}
@@ -323,8 +316,8 @@ export default function TechnologiesSection({
               )}
             </div>
 
-            {/* Desktop: Grid Layout */}
-            <div className="hidden md:grid md:grid-cols-4 lg:grid-cols-5 gap-3">
+            {/* Desktop: Flex Layout - Centered */}
+            <div className="hidden md:flex md:flex-wrap md:justify-center gap-4 lg:gap-6">
               {technologies.map(
                 (
                   tech: {
@@ -336,19 +329,26 @@ export default function TechnologiesSection({
                 ) => (
                   <div
                     key={index}
-                    className="group theme-bg-white rounded-lg flex flex-col items-center justify-center transition-all duration-300 hover:shadow-xl hover:-translate-y-1 overflow-hidden p-3"
-                    style={{ aspectRatio: "1/1", minHeight: "60px" }}
+                    className="group bg-white rounded-xl border flex flex-col items-center justify-center transition-all duration-300 hover:shadow-lg hover:-translate-y-1 overflow-hidden p-4 lg:p-5"
+                    style={{ 
+                      aspectRatio: "1/1", 
+                      width: "120px",
+                      height: "120px",
+                      minHeight: "100px",
+                      borderColor: "var(--color-border-default-20)",
+                      boxShadow: "0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)"
+                    }}
                   >
-                    {/* Tech Logo/Icon - Only Logo, No Text */}
+                    {/* Tech Logo/Icon */}
                     <div className="w-full h-full flex items-center justify-center relative">
                       {isIconUrl(tech.icon) && tech.icon ? (
-                        <div className="relative w-14 h-14">
+                        <div className="relative w-16 h-16 lg:w-20 lg:h-20">
                           <Image
-                            src={tech.icon}
+                            src={getImageUrl(tech.icon)}
                             alt={tech.name || "Technology"}
                             fill
-                            className="object-contain transition-all duration-300 group-hover:scale-105"
-                            unoptimized
+                            sizes="120px"
+                            className="object-contain transition-all duration-300 group-hover:scale-110"
                             onError={(e) => {
                               // Fallback to emoji or name if image fails
                               const target = e.currentTarget;
@@ -357,11 +357,11 @@ export default function TechnologiesSection({
                               if (parent) {
                                 const fallback = document.createElement("div");
                                 if (tech.icon && !isIconUrl(tech.icon)) {
-                                  fallback.className = "text-lg";
+                                  fallback.className = "text-3xl";
                                   fallback.textContent = tech.icon;
                                 } else if (tech.name) {
                                   fallback.className =
-                                    "text-sm font-bold theme-text-black text-center";
+                                    "text-sm font-semibold theme-text-primary text-center px-2";
                                   fallback.textContent = tech.name;
                                 }
                                 parent.appendChild(fallback);
@@ -370,9 +370,9 @@ export default function TechnologiesSection({
                           />
                         </div>
                       ) : tech.icon ? (
-                        <div className="text-base">{tech.icon}</div>
+                        <div className="text-3xl">{tech.icon}</div>
                       ) : tech.name ? (
-                        <div className="text-sm font-semibold theme-text-black text-center px-1">
+                        <div className="text-sm font-semibold theme-text-primary text-center px-2">
                           {tech.name}
                         </div>
                       ) : null}
@@ -386,7 +386,7 @@ export default function TechnologiesSection({
 
         {technologies.length === 0 && (
           <div className="text-center py-12">
-            <p className="theme-text-black" style={{ opacity: 0.7 }}>
+            <p className="theme-text-muted">
               No technologies to display yet.
             </p>
           </div>

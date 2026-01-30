@@ -1,8 +1,8 @@
 import { ISection } from "@/models/Section";
 import dynamic from "next/dynamic";
+import HeroSection from "./HeroSection";
 
-// Lazy load section components for better code splitting
-const HeroSection = dynamic(() => import("./HeroSection"));
+// Lazy load section components (HeroSection is static for LCP)
 const ServicesSection = dynamic(() => import("./ServicesSection"));
 const StatsSection = dynamic(() => import("./StatsSection"));
 const IndustriesSection = dynamic(() => import("./IndustriesSection"));

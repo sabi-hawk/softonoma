@@ -14,36 +14,28 @@ const nextConfig: NextConfig = {
     ];
   },
   
-  // Optimize images
+  // Image: CloudFront as origin; Next.js does resize/format unless CloudFront serves optimized
   images: {
+    // Skip optimization when CloudFront/Lambda@Edge serves AVIF/WebP/resized (set NEXT_PUBLIC_IMAGE_UNOPTIMIZED=true)
+    unoptimized: process.env.NEXT_PUBLIC_IMAGE_UNOPTIMIZED === 'true',
     formats: ['image/avif', 'image/webp'],
+    // Breakpoints for srcset; covers common viewports and retina
     deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
-    minimumCacheTTL: 60,
+    minimumCacheTTL: 31536000, // Match Cache-Control: max-age=31536000, immutable on origin
     qualities: [75, 85],
     remotePatterns: [
-      {
-        protocol: 'https',
-        hostname: 'ik.imagekit.io',
-        pathname: '/**',
-      },
-      {
-        protocol: 'https',
-        hostname: 'cloud.appwrite.io',
-        pathname: '/**',
-      },
-      {
-        protocol: 'https',
-        hostname: 'softonoma-s3-bucket.s3.eu-north-1.amazonaws.com',
-        pathname: '/**',
-      },
-      {
-        protocol: 'https',
-        hostname: 'images.unsplash.com',
-        pathname: '/**',
-      },
-      // Add more S3 hostnames here if you use multiple buckets or regions
-      // Format: bucket-name.s3.region.amazonaws.com
+      // Production: images served via CloudFront (required; set NEXT_PUBLIC_CDN_HOSTNAME)
+      ...(process.env.NEXT_PUBLIC_CDN_HOSTNAME
+        ? [{ protocol: 'https' as const, hostname: process.env.NEXT_PUBLIC_CDN_HOSTNAME, pathname: '/**' as const }]
+        : []),
+      // CloudFront CDN (explicit hostname so next/image works without env)
+      { protocol: 'https', hostname: 'd3tfd0wde8b9wy.cloudfront.net', pathname: '/**' },
+      { protocol: 'https', hostname: 'ik.imagekit.io', pathname: '/**' },
+      { protocol: 'https', hostname: 'cloud.appwrite.io', pathname: '/**' },
+      { protocol: 'https', hostname: 'images.unsplash.com', pathname: '/**' },
+      // Fallback for dev without CDN; remove in prod or keep for local S3
+      { protocol: 'https', hostname: 'softonoma-s3-bucket.s3.eu-north-1.amazonaws.com', pathname: '/**' },
     ],
   },
   

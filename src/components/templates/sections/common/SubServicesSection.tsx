@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { getBackgroundStyle, getDefaultBackground } from "@/lib/section-helpers";
+import { getImageUrl } from "@/lib/image-utils";
 import { isIconUrl } from "../../utils/helpers";
 
 interface SubServiceItem {
@@ -51,12 +52,12 @@ export default function SubServicesSection({
                   <div className="shrink-0 w-10 h-10 sm:w-12 sm:h-12 theme-bg-primary-mid-dark rounded-lg flex items-center justify-center text-xl sm:text-2xl">
                     {isIconUrl(item.icon) ? (
                       <Image
-                        src={item.icon}
+                        src={getImageUrl(item.icon)}
                         alt={item.title}
                         width={32}
                         height={32}
+                        sizes="32px"
                         className="object-contain"
-                        unoptimized
                       />
                     ) : (
                       item.icon

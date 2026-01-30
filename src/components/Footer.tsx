@@ -32,7 +32,7 @@ interface FooterProps {
 }
 
 function Footer({
-  companyName = "IT Solutions",
+  companyName = "Softonoma",
   companyDescription = "Leading IT solutions provider delivering innovative technology services to businesses worldwide.",
   email = "contact@softonoma.com",
   phone = "+1 (555) 123-4567",

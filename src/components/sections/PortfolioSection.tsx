@@ -7,9 +7,10 @@ import {
   getBackgroundStyle,
   getDefaultBackground,
 } from "@/lib/section-helpers";
+import { getImageUrl } from "@/lib/image-utils";
 
 interface PortfolioSectionProps {
-  section: ISection;
+  readonly section: ISection;
 }
 
 // Helper to check if image is a URL
@@ -165,22 +166,35 @@ export default function PortfolioSection({ section }: PortfolioSectionProps) {
 
   return (
     <section
-      className={`py-12 sm:py-16 md:py-24 px-4 sm:px-6 lg:px-8 ${
+      className={`py-12 sm:py-16 md:py-24 px-4 sm:px-6 lg:px-8 relative overflow-hidden ${
         background.className || ""
       }`}
       style={background.style}
     >
-      <div className="max-w-7xl mx-auto">
+      {/* Subtle background decoration */}
+      <div className="absolute inset-0 opacity-[0.03] pointer-events-none">
+        <div 
+          className="absolute top-0 left-1/4 w-96 h-96 rounded-full blur-3xl"
+          style={{
+            background: "var(--color-primary-gradient)"
+          }}
+        />
+        <div 
+          className="absolute bottom-0 right-1/4 w-96 h-96 rounded-full blur-3xl"
+          style={{
+            background: "var(--color-primary-gradient)"
+          }}
+        />
+      </div>
+
+      <div className="max-w-7xl mx-auto relative z-10">
         {content.title && (
-          <div className="text-center mb-8 sm:mb-12 md:mb-16">
+          <div className="text-center mb-8 sm:mb-10 md:mb-12">
             <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold theme-text-black mb-3 sm:mb-4 px-2">
               {content.title}
             </h2>
             {content.description && (
-              <p
-                className="text-base sm:text-lg md:text-xl theme-text-black max-w-3xl mx-auto px-2"
-                style={{ opacity: 0.8 }}
-              >
+              <p className="text-base sm:text-lg md:text-xl theme-text-muted max-w-3xl mx-auto px-2">
                 {content.description}
               </p>
             )}
@@ -189,16 +203,19 @@ export default function PortfolioSection({ section }: PortfolioSectionProps) {
 
         {totalItems > 0 && (
           <div className="relative">
-            {/* Left Arrow - Hidden on mobile */}
+            {/* Left Arrow - Enhanced styling */}
             {totalItems > itemsToShow && (
               <button
                 onClick={prevSlide}
-                className="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 w-12 h-12 bg-transparent border-2 theme-text-black rounded-full items-center justify-center shadow-md hover:scale-110 transition-all backdrop-blur-sm"
-                style={{ borderColor: "var(--color-border-default-20)" }}
+                className="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 -translate-x-6 z-20 w-12 h-12 backdrop-blur-md border theme-text-black rounded-full items-center justify-center shadow-md hover:shadow-lg hover:scale-110 transition-all duration-300 group"
+                style={{ 
+                  borderColor: "var(--color-border-default-20)",
+                  backgroundColor: "var(--color-bg-overlay)"
+                }}
                 aria-label="Previous"
               >
                 <svg
-                  className="w-6 h-6"
+                  className="w-6 h-6 transition-transform group-hover:-translate-x-0.5"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -206,7 +223,7 @@ export default function PortfolioSection({ section }: PortfolioSectionProps) {
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
-                    strokeWidth={2}
+                    strokeWidth={2.5}
                     d="M15 19l-7-7 7-7"
                   />
                 </svg>
@@ -222,7 +239,7 @@ export default function PortfolioSection({ section }: PortfolioSectionProps) {
               style={{ touchAction: "pan-y" }}
             >
               {/* Mobile: Show 1 item at a time */}
-              <div className="md:hidden overflow-hidden">
+              <div className="md:hidden overflow-hidden px-1">
                 <div
                   className="flex transition-transform duration-500 ease-in-out"
                   style={{
@@ -231,66 +248,92 @@ export default function PortfolioSection({ section }: PortfolioSectionProps) {
                 >
                   {projects.map((project, index) => (
                     <div
-                      key={index}
-                      className="group relative theme-bg-white rounded-xl overflow-hidden shadow-lg transition-all duration-300 shrink-0 w-full px-4"
+                      key={`portfolio-mobile-${index}-${project.title || index}`}
+                      className="group relative bg-white rounded-2xl border overflow-hidden transition-all duration-300 shrink-0 w-full mx-2 hover:shadow-lg"
+                      style={{ 
+                        borderColor: "var(--color-border-default-20)",
+                        boxShadow: "0 1px 3px 0 var(--color-text-primary-rgba-10), 0 1px 2px 0 var(--color-text-primary-rgba-10)",
+                        width: "calc(100% - 1rem)"
+                      }}
                     >
-                      <div className="relative h-64 overflow-hidden theme-bg-primary-mid">
+                      <div className="relative h-48 sm:h-56 overflow-hidden rounded-t-2xl theme-bg-secondary">
                         {isImageUrl(project.image) && project.image ? (
                           <Image
-                            src={project.image}
+                            src={getImageUrl(project.image)}
                             alt={project.title || "Project"}
                             fill
-                            className="object-cover transition-transform duration-500"
-                            unoptimized
+                            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                            className="object-cover transition-transform duration-700 group-hover:scale-110"
                           />
                         ) : (
-                          <div className="w-full h-full flex items-center justify-center">
-                            <div className="theme-text-white text-6xl">
+                          <div className="w-full h-full flex items-center justify-center theme-bg-secondary">
+                            <div className="text-5xl">
                               {project.image || "💼"}
                             </div>
                           </div>
                         )}
-                      </div>
-                      <div className="p-6">
+                        {/* Gradient overlay */}
+                        <div 
+                          className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                          style={{
+                            background: "linear-gradient(to top, var(--color-text-primary-rgba-50), transparent)"
+                          }}
+                        />
+                        
+                        {/* Floating category badge */}
                         {project.category && (
-                          <span
-                            className="inline-block px-3 py-1 text-xs font-semibold rounded-full mb-3"
-                            style={{
-                              color: "var(--color-primary-start)",
-                              backgroundColor: "rgba(74, 111, 28, 0.1)",
-                            }}
-                          >
-                            {project.category}
-                          </span>
+                          <div className="absolute top-3 right-3">
+                            <span
+                              className="inline-block px-3 py-1.5 text-xs font-semibold rounded-full backdrop-blur-md shadow-md"
+                              style={{
+                                color: "var(--color-text-primary)",
+                                backgroundColor: "var(--color-bg-overlay)",
+                                border: "1px solid var(--color-border-default-20)"
+                              }}
+                            >
+                              {project.category}
+                            </span>
+                          </div>
                         )}
+                      </div>
+                      
+                      <div className="p-5 sm:p-6">
                         {project.title && (
-                          <h3 className="text-xl font-bold theme-text-black mb-3">
+                          <h3 className="text-lg sm:text-xl font-bold theme-text-primary mb-2 group-hover:text-[var(--color-primary-end)] transition-colors">
                             {project.title}
                           </h3>
                         )}
                         {project.description && (
-                          <p
-                            className="theme-text-black mb-4 line-clamp-3"
-                            style={{ opacity: 0.8 }}
-                          >
+                          <p className="theme-text-muted mb-3 line-clamp-2 text-sm leading-relaxed">
                             {project.description}
                           </p>
                         )}
                         {Array.isArray(project.technologies) &&
                           project.technologies.length > 0 && (
-                            <div className="flex flex-wrap gap-2">
-                              {project.technologies.map(
+                            <div className="flex flex-wrap gap-2 pt-3 border-t"
+                              style={{ borderColor: "var(--color-border-default-20)" }}
+                            >
+                              {project.technologies.slice(0, 3).map(
                                 (tech: string, techIndex: number) => (
                                   <span
-                                    key={techIndex}
-                                    className="px-2 py-1 text-xs font-medium theme-text-black rounded"
+                                    key={`tech-${techIndex}-${tech}`}
+                                    className="px-2.5 py-1 text-xs font-medium theme-text-primary rounded-md"
                                     style={{
-                                      backgroundColor: "var(--color-text-primary-rgba-10)",
+                                      backgroundColor: "var(--color-bg-secondary)",
                                     }}
                                   >
                                     {tech}
                                   </span>
                                 )
+                              )}
+                              {project.technologies.length > 3 && (
+                                <span className="px-2.5 py-1 text-xs font-medium theme-text-muted rounded-md"
+                                  style={{
+                                    backgroundColor: "var(--color-bg-secondary)",
+                                  }}
+                                >
+                                  +{project.technologies.length - 3}
+                                </span>
                               )}
                             </div>
                           )}
@@ -299,86 +342,99 @@ export default function PortfolioSection({ section }: PortfolioSectionProps) {
                   ))}
                 </div>
               </div>
+              
               {/* Desktop: Show 3 items */}
-              <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-3 gap-8 px-8">
+              <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 px-8">
                 {getVisibleItems(false).map(
                   ({ item: project, originalIndex }) => (
                     <div
-                      key={originalIndex}
-                      className="group relative theme-bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2"
+                      key={`portfolio-desktop-${originalIndex}-${project.title || originalIndex}`}
+                      className="group relative bg-white rounded-2xl border overflow-hidden hover:shadow-lg transition-all duration-300 hover:-translate-y-1 cursor-pointer"
+                      style={{ 
+                        borderColor: "var(--color-border-default-20)",
+                        boxShadow: "0 1px 3px 0 var(--color-text-primary-rgba-10), 0 1px 2px 0 var(--color-text-primary-rgba-10)"
+                      }}
                     >
                       {/* Project Image */}
-                      <div className="relative h-64 overflow-hidden theme-bg-primary-mid">
+                      <div className="relative h-56 sm:h-64 overflow-hidden rounded-t-2xl theme-bg-secondary">
                         {isImageUrl(project.image) && project.image ? (
                           <Image
-                            src={project.image}
+                            src={getImageUrl(project.image)}
                             alt={project.title || "Project"}
                             fill
-                            className="object-cover group-hover:scale-110 transition-transform duration-500"
-                            loading="lazy"
+                            className="object-cover group-hover:scale-110 transition-transform duration-700"
                             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                           />
                         ) : (
-                          <div className="w-full h-full flex items-center justify-center">
-                            <div className="theme-text-white text-6xl animate-float">
+                          <div className="w-full h-full flex items-center justify-center theme-bg-secondary">
+                            <div className="text-6xl">
                               {project.image || "💼"}
                             </div>
                           </div>
                         )}
-                        {/* Overlay on hover */}
-                        {/* <div className=" absolute inset-0 bg-linear-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-6">
-                      {project.link && (
-                        <Link
-                          href={project.link}
-                          className="theme-text-white font-semibold hover:underline"
-                        >
-                          View Project →
-                        </Link>
-                      )}
-                    </div> */}
+                        {/* Gradient overlay */}
+                        <div 
+                          className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                          style={{
+                            background: "linear-gradient(to top, var(--color-text-primary-rgba-50), transparent)"
+                          }}
+                        />
+                        
+                        {/* Floating category badge */}
+                        {project.category && (
+                          <div className="absolute top-3 right-3">
+                            <span
+                              className="inline-block px-3 py-1.5 text-xs font-semibold rounded-full backdrop-blur-md shadow-md"
+                              style={{
+                                color: "var(--color-text-primary)",
+                                backgroundColor: "var(--color-bg-overlay)",
+                                border: "1px solid var(--color-border-default-20)"
+                              }}
+                            >
+                              {project.category}
+                            </span>
+                          </div>
+                        )}
                       </div>
 
                       {/* Project Content */}
-                      <div className="p-6">
-                        {project.category && (
-                          <span
-                            className="inline-block px-3 py-1 text-xs font-semibold rounded-full mb-3"
-                            style={{
-                              color: "var(--color-primary-start)",
-                              backgroundColor: "rgba(74, 111, 28, 0.1)",
-                            }}
-                          >
-                            {project.category}
-                          </span>
-                        )}
+                      <div className="p-5 sm:p-6">
                         {project.title && (
-                          <h3 className="text-xl font-bold theme-text-black mb-3 theme-hover-primary-mid transition-colors">
+                          <h3 className="text-xl sm:text-2xl font-bold theme-text-primary mb-3 group-hover:text-[var(--color-primary-end)] transition-colors">
                             {project.title}
                           </h3>
                         )}
                         {project.description && (
-                          <p
-                            className="theme-text-black mb-4 line-clamp-3"
-                            style={{ opacity: 0.8 }}
-                          >
+                          <p className="theme-text-muted mb-4 line-clamp-2 text-sm sm:text-base leading-relaxed">
                             {project.description}
                           </p>
                         )}
                         {Array.isArray(project.technologies) &&
                           project.technologies.length > 0 && (
-                            <div className="flex flex-wrap gap-2">
-                              {project.technologies.map(
+                            <div className="flex flex-wrap gap-2 pt-3 border-t"
+                              style={{ borderColor: "var(--color-border-default-20)" }}
+                            >
+                              {project.technologies.slice(0, 4).map(
                                 (tech: string, techIndex: number) => (
                                   <span
-                                    key={techIndex}
-                                    className="px-2 py-1 text-xs font-medium theme-text-black rounded"
+                                    key={`tech-${techIndex}-${tech}-${originalIndex}`}
+                                    className="px-2.5 py-1 text-xs font-medium theme-text-primary rounded-md"
                                     style={{
-                                      backgroundColor: "var(--color-text-primary-rgba-10)",
+                                      backgroundColor: "var(--color-bg-secondary)",
                                     }}
                                   >
                                     {tech}
                                   </span>
                                 )
+                              )}
+                              {project.technologies.length > 4 && (
+                                <span className="px-2.5 py-1 text-xs font-medium theme-text-muted rounded-md"
+                                  style={{
+                                    backgroundColor: "var(--color-bg-secondary)",
+                                  }}
+                                >
+                                  +{project.technologies.length - 4}
+                                </span>
                               )}
                             </div>
                           )}
@@ -389,16 +445,19 @@ export default function PortfolioSection({ section }: PortfolioSectionProps) {
               </div>
             </div>
 
-            {/* Right Arrow - Hidden on mobile */}
+            {/* Right Arrow - Enhanced styling */}
             {totalItems > itemsToShow && (
               <button
                 onClick={nextSlide}
-                className="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 w-12 h-12 bg-transparent border-2 theme-text-black rounded-full items-center justify-center shadow-md hover:scale-110 transition-all backdrop-blur-sm"
-                style={{ borderColor: "var(--color-border-default-20)" }}
+                className="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 translate-x-6 z-20 w-12 h-12 backdrop-blur-md border theme-text-black rounded-full items-center justify-center shadow-md hover:shadow-lg hover:scale-110 transition-all duration-300 group"
+                style={{ 
+                  borderColor: "var(--color-border-default-20)",
+                  backgroundColor: "var(--color-bg-overlay)"
+                }}
                 aria-label="Next"
               >
                 <svg
-                  className="w-6 h-6"
+                  className="w-6 h-6 transition-transform group-hover:translate-x-0.5"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -406,24 +465,29 @@ export default function PortfolioSection({ section }: PortfolioSectionProps) {
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
-                    strokeWidth={2}
+                    strokeWidth={2.5}
                     d="M9 5l7 7-7 7"
                   />
                 </svg>
               </button>
             )}
 
-            {/* Dot Indicators - Only visible on mobile */}
+            {/* Enhanced Dot Indicators - Only visible on mobile */}
             {totalItems > mobileItemsToShow && (
-              <div className="flex justify-center gap-1.5 mt-8 md:hidden">
+              <div className="flex justify-center gap-2 mt-10 md:hidden">
                 {Array.from({ length: totalSlides }).map((_, index) => (
-                  <span
+                  <button
                     key={index}
-                    className={`w-1.5 h-1.5 rounded-full transition-all ${
+                    onClick={() => setCurrentIndex(index * mobileItemsToShow)}
+                    className={`transition-all duration-300 rounded-full ${
                       getCurrentSlideIndex() === index
-                        ? 'theme-bg-primary-end'
-                        : 'bg-gray-400 opacity-40'
+                        ? 'w-8 h-2 theme-bg-primary-end'
+                        : 'w-2 h-2 opacity-40 hover:opacity-60'
                     }`}
+                    style={getCurrentSlideIndex() !== index ? {
+                      backgroundColor: "var(--color-text-primary-rgba-20)"
+                    } : {}}
+                    aria-label={`Go to slide ${index + 1}`}
                   />
                 ))}
               </div>
@@ -432,8 +496,11 @@ export default function PortfolioSection({ section }: PortfolioSectionProps) {
         )}
 
         {projects.length === 0 && (
-          <div className="text-center py-12">
-            <p className="text-gray-500">No projects to display yet.</p>
+          <div className="text-center py-20">
+            <div className="text-6xl mb-6 opacity-20">📂</div>
+            <p className="theme-text-muted text-lg">
+              No projects to display yet.
+            </p>
           </div>
         )}
       </div>

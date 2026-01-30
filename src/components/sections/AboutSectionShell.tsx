@@ -7,11 +7,15 @@ import {
 } from "@/lib/section-helpers";
 import { getImageUrl } from "@/lib/image-utils";
 
-interface AboutSectionProps {
+interface AboutSectionShellProps {
   section: ISection;
 }
 
-export default function AboutSection({ section }: AboutSectionProps) {
+/**
+ * Server component: About section rendered on the server for better mobile performance
+ * (content in initial HTML, no wait for hydration).
+ */
+export default function AboutSectionShell({ section }: AboutSectionShellProps) {
   const { content } = section;
   const backgroundColor =
     (content.backgroundColor as string) || getDefaultBackground("about");
@@ -73,7 +77,7 @@ export default function AboutSection({ section }: AboutSectionProps) {
           <div className="relative order-1 lg:order-2">
             {content.aboutImage && (
               <div className="relative rounded-xl sm:rounded-2xl overflow-hidden shadow-xl sm:shadow-2xl">
-                <div className="absolute inset-0 theme-gradient opacity-10"></div>
+                <div className="absolute inset-0 theme-gradient opacity-10" />
                 <Image
                   src={getImageUrl(content.aboutImage as string)}
                   alt={content.title || "About us"}

@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { getBackgroundStyle, getDefaultBackground } from "@/lib/section-helpers";
+import { getImageUrl } from "@/lib/image-utils";
 import { isIconUrl } from "../../utils/helpers";
 
 interface TechItem {
@@ -118,7 +119,7 @@ export default function TechnologiesSection({
                       {isIconUrl(tech.icon) && tech.icon ? (
                         <div className="relative w-10 h-10">
                           <Image
-                            src={tech.icon}
+                            src={getImageUrl(tech.icon)}
                             alt={tech.name || "Technology"}
                             fill
                             className="object-contain transition-all duration-300 group-hover:scale-105"
@@ -177,11 +178,11 @@ export default function TechnologiesSection({
                   {isIconUrl(tech.icon) && tech.icon ? (
                     <div className="relative w-12 h-12 md:w-14 md:h-14">
                       <Image
-                        src={tech.icon}
+                        src={getImageUrl(tech.icon)}
                         alt={tech.name || "Technology"}
                         fill
+                        sizes="120px"
                         className="object-contain transition-all duration-300 group-hover:scale-105"
-                        unoptimized
                         onError={(e) => {
                           const target = e.currentTarget;
                           target.style.display = "none";

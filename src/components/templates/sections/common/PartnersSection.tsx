@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { getBackgroundStyle, getDefaultBackground } from "@/lib/section-helpers";
+import { getImageUrl } from "@/lib/image-utils";
 import { isIconUrl } from "../../utils/helpers";
 
 interface Partner {

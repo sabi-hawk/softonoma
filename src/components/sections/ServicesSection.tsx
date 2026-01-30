@@ -2,13 +2,15 @@
 
 import { ISection } from "@/models/Section";
 import { useState, useRef, useEffect } from "react";
+import Image from "next/image";
 import {
   getBackgroundStyle,
   getDefaultBackground,
 } from "@/lib/section-helpers";
+import { getImageUrl } from "@/lib/image-utils";
 
 interface ServicesSectionProps {
-  section: ISection;
+  readonly section: ISection;
 }
 
 // Helper to check if icon is a URL
@@ -178,10 +180,7 @@ export default function ServicesSection({ section }: ServicesSectionProps) {
               {content.title}
             </h2>
             {content.description && (
-              <p
-                className="text-base sm:text-lg md:text-xl theme-text-black max-w-3xl mx-auto px-2"
-                style={{ opacity: 0.8 }}
-              >
+              <p className="text-base sm:text-lg md:text-xl theme-text-muted max-w-3xl mx-auto px-2">
                 {content.description}
               </p>
             )}
@@ -232,38 +231,51 @@ export default function ServicesSection({ section }: ServicesSectionProps) {
                 >
                   {services.map((service, index) => (
                     <div
-                      key={index}
-                      className="group relative p-6 rounded-xl theme-bg-white border border-gray-200 transition-all duration-300 overflow-hidden shrink-0 w-full px-4"
-                      style={{ borderColor: "var(--color-border-default)" }}
+                      key={`service-mobile-${index}-${service.title || index}`}
+                      className="group relative bg-white rounded-2xl border transition-all duration-300 overflow-hidden shrink-0 w-full mx-2 hover:shadow-lg"
+                      style={{ 
+                        borderColor: "var(--color-border-default-20)",
+                        boxShadow: "0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)",
+                        width: "calc(100% - 1rem)"
+                      }}
                     >
-                      <div className="relative z-10">
+                      <div className="relative z-10 p-5 sm:p-6">
                         {service.icon && (
-                          <div className="w-16 h-16 mb-6 rounded-xl theme-bg-secondary flex items-center justify-center text-3xl transform transition-all duration-300 shadow-sm border border-gray-200">
+                          <div className="w-14 h-14 mb-5 rounded-lg theme-bg-secondary flex items-center justify-center transform transition-all duration-300 group-hover:scale-105">
                             {isIconUrl(service.icon) ? (
-                              <img
-                                src={service.icon}
-                                alt={service.title || "Icon"}
-                                className="w-10 h-10 object-contain"
-                                onError={(e) => {
-                                  e.currentTarget.style.display = "none";
-                                }}
-                              />
+                              <div className="relative w-8 h-8">
+                                <Image
+                                  src={getImageUrl(service.icon)}
+                                  alt={service.title || "Service icon"}
+                                  fill
+                                  sizes="64px"
+                                  className="object-contain"
+                                  style={{
+                                    filter: "grayscale(100%) brightness(0.7) sepia(100%) saturate(1800%) hue-rotate(20deg) brightness(1.25) contrast(1.05)"
+                                  }}
+                                  onError={(e) => {
+                                    e.currentTarget.style.display = "none";
+                                  }}
+                                />
+                              </div>
                             ) : (
-                              <span className="theme-text-black text-3xl">
+                              <span 
+                                className="text-2xl"
+                                style={{ color: "var(--color-primary-end)" }}
+                              >
                                 {service.icon}
                               </span>
                             )}
                           </div>
                         )}
                         {service.title && (
-                          <h3 className="text-xl font-bold theme-text-black mb-3">
+                          <h3 className="text-lg sm:text-xl font-bold theme-text-primary mb-2 sm:mb-3 group-hover:text-[var(--color-primary-end)] transition-colors">
                             {service.title}
                           </h3>
                         )}
                         {service.description && (
                           <p
-                            className="theme-text-black leading-relaxed text-sm"
-                            style={{ opacity: 0.8 }}
+                            className="theme-text-muted leading-relaxed text-sm sm:text-base"
                           >
                             {service.description}
                           </p>
@@ -274,45 +286,54 @@ export default function ServicesSection({ section }: ServicesSectionProps) {
                 </div>
               </div>
               {/* Desktop: Show 3 items */}
-              <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-3 gap-6 px-8">
+              <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 px-8">
                 {getVisibleItems(false).map(
                   ({ item: service, originalIndex }) => (
                     <div
                       key={originalIndex}
-                      className="group relative p-8 rounded-xl theme-bg-white border border-gray-200 transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 overflow-hidden"
-                      style={{ borderColor: "var(--color-border-default)" }}
+                      className="group relative bg-white rounded-2xl border transition-all duration-300 hover:shadow-xl hover:-translate-y-1 overflow-hidden"
+                      style={{ 
+                        borderColor: "var(--color-border-default-20)",
+                        boxShadow: "0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)"
+                      }}
                     >
-                      {/* Gradient overlay on hover */}
-                      <div className="absolute inset-0 opacity-0 group-hover:opacity-10 theme-gradient transition-all duration-300"></div>
-
-                      <div className="relative z-10">
+                      <div className="relative z-10 p-6 sm:p-8">
                         {service.icon && (
-                          <div className="w-16 h-16 mb-6 rounded-xl bg-gray-100 flex items-center justify-center text-3xl transform group-hover:scale-110 transition-all duration-300 shadow-sm border border-gray-200">
+                          <div className="w-14 h-14 mb-5 sm:mb-6 rounded-lg theme-bg-secondary flex items-center justify-center transform transition-all duration-300 group-hover:scale-105">
                             {isIconUrl(service.icon) ? (
-                              <img
-                                src={service.icon}
-                                alt={service.title || "Icon"}
-                                className="w-10 h-10 object-contain"
-                                onError={(e) => {
-                                  e.currentTarget.style.display = "none";
-                                }}
-                              />
+                              <div className="relative w-8 h-8 sm:w-10 sm:h-10">
+                                <Image
+                                  src={getImageUrl(service.icon)}
+                                  alt={service.title || "Service icon"}
+                                  fill
+                                  sizes="80px"
+                                  className="object-contain"
+                                  style={{
+                                    filter: "grayscale(100%) brightness(0.7) sepia(100%) saturate(1800%) hue-rotate(20deg) brightness(1.25) contrast(1.05)"
+                                  }}
+                                  onError={(e) => {
+                                    e.currentTarget.style.display = "none";
+                                  }}
+                                />
+                              </div>
                             ) : (
-                              <span className="theme-text-black text-3xl">
+                              <span 
+                                className="text-2xl sm:text-3xl"
+                                style={{ color: "var(--color-primary-end)" }}
+                              >
                                 {service.icon}
                               </span>
                             )}
                           </div>
                         )}
                         {service.title && (
-                          <h3 className="text-xl font-bold theme-text-black mb-3 theme-hover-primary transition-colors">
+                          <h3 className="text-xl sm:text-2xl font-bold theme-text-primary mb-3 group-hover:text-[var(--color-primary-end)] transition-colors">
                             {service.title}
                           </h3>
                         )}
                         {service.description && (
                           <p
-                            className="theme-text-black leading-relaxed text-sm"
-                            style={{ opacity: 0.8 }}
+                            className="theme-text-muted leading-relaxed text-sm sm:text-base"
                           >
                             {service.description}
                           </p>

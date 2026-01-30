@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { getBackgroundStyle, getDefaultBackground } from "@/lib/section-helpers";
+import { getImageUrl } from "@/lib/image-utils";
 
 interface Project {
   image?: string;
@@ -106,7 +107,7 @@ export default function PortfolioSection({
                     {project.image && (
                       <div className="relative w-full h-48 overflow-hidden">
                         <Image
-                          src={project.image}
+                          src={getImageUrl(project.image)}
                           alt={project.title}
                           fill
                           className="object-cover group-hover:scale-110 transition-transform duration-300"
@@ -150,7 +151,7 @@ export default function PortfolioSection({
                   {project.image && (
                     <div className="relative w-full h-48 overflow-hidden">
                       <Image
-                        src={project.image}
+                        src={getImageUrl(project.image)}
                         alt={project.title}
                         fill
                         className="object-cover group-hover:scale-110 transition-transform duration-300"

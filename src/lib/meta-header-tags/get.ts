@@ -5,8 +5,8 @@ import Industry from "@/models/Industry";
 
 export async function getMetaHeaderTagsBySlug(slug: string): Promise<string | null> {
   try {
-    await connectDB();
-    
+    if (!(await connectDB())) return null;
+
     let page;
     if (slug === "home" || slug === "") {
       page = await Page.findOne({

@@ -13,10 +13,10 @@
   --color-black: #121e29;
   --color-white: #ffffff;
 
-  /* Text Colors */
+  /* Text Colors - WCAG AA contrast on white and light grey */
   --color-text-primary: #121e29; /* Dark text */
   --color-text-secondary: #ffffff; /* White text */
-  --color-text-muted: #666666;
+  --color-text-muted: #4a5568; /* Muted text, 4.5:1+ on white and #edf2f7 */
 
   /* Background Colors */
   --color-bg-primary: #ffffff; /* White */
@@ -165,6 +165,7 @@ a[class*="inline-block"][class*="px-"][class*="py-"][class*="rounded"] {
 
 .theme-bg-white {
   background-color: var(--color-white);
+  color: var(--color-text-primary);
 }
 
 .theme-text-black {
@@ -199,6 +200,7 @@ a[class*="inline-block"][class*="px-"][class*="py-"][class*="rounded"] {
 
 .theme-bg-light-gradient {
   background: var(--color-light-bg-gradient);
+  color: var(--color-text-primary);
 }
 
 /* Additional utility classes for common color patterns */
@@ -214,8 +216,13 @@ a[class*="inline-block"][class*="px-"][class*="py-"][class*="rounded"] {
   color: var(--color-text-primary);
 }
 
+.theme-text-muted {
+  color: var(--color-text-muted);
+}
+
 .theme-bg-secondary {
   background-color: var(--color-bg-secondary);
+  color: var(--color-text-primary);
 }
 
 /* Gradient utilities */

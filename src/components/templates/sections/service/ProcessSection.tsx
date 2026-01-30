@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { getBackgroundStyle, getDefaultBackground } from "@/lib/section-helpers";
+import { getImageUrl } from "@/lib/image-utils";
 import { isIconUrl } from "../../utils/helpers";
 
 interface Step {
@@ -45,11 +46,11 @@ export default function ProcessSection({ title, description, steps, backgroundCo
                     {step.icon && isIconUrl(step.icon) ? (
                       <div className="relative w-6 h-6 sm:w-8 sm:h-8">
                         <Image
-                          src={step.icon}
+                          src={getImageUrl(step.icon)}
                           alt={step.title || `Step ${index + 1}`}
                           fill
+                          sizes="32px"
                           className="object-contain p-1 sm:p-1.5"
-                          unoptimized
                           onError={(e) => {
                             const target = e.currentTarget;
                             target.style.display = "none";

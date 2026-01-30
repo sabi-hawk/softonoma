@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { getBackgroundStyle, getDefaultBackground } from "@/lib/section-helpers";
+import { getImageUrl } from "@/lib/image-utils";
 
 interface WhyChooseUsSectionProps {
   title: string;
@@ -56,7 +57,7 @@ export default function WhyChooseUsSection({
           <div>
             {image && (
               <div className="relative w-full h-[300px] sm:h-[400px] md:h-[500px] rounded-lg overflow-hidden shadow-xl">
-                <Image src={image} alt={title} fill className="object-contain" unoptimized />
+                <Image src={getImageUrl(image)} alt={title} fill sizes="(max-width: 768px) 100vw, 50vw" className="object-contain" />
               </div>
             )}
           </div>
@@ -68,7 +69,7 @@ export default function WhyChooseUsSection({
               <div key={index} className="bg-gray-50 p-3 sm:p-4 rounded-lg flex items-center justify-center">
                 {cert.image ? (
                   <div className="relative w-full h-16 sm:h-20">
-                    <Image src={cert.image} alt={cert.name} fill className="object-contain" unoptimized />
+                    <Image src={getImageUrl(cert.image)} alt={cert.name} fill sizes="120px" className="object-contain" />
                   </div>
                 ) : (
                   <span className="text-xs sm:text-sm text-gray-600 text-center">{cert.name}</span>
