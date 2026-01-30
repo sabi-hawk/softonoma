@@ -3,10 +3,12 @@ import connectDB from "@/lib/mongodb";
 import Page from "@/models/Page";
 import Section from "@/models/Section";
 import SectionRenderer from "@/components/sections/SectionRenderer";
+import HeroSectionShell from "@/components/sections/HeroSectionShell";
+import AboutSectionShell from "@/components/sections/AboutSectionShell";
+import { getCanonicalUrl } from "@/lib/url-utils";
 
-// Force dynamic rendering to always fetch fresh data from MongoDB
-export const dynamic = "force-dynamic";
-export const revalidate = 0;
+// Cache homepage for 60 seconds to improve performance
+export const revalidate = 60;
 
 export default async function Home() {
   await connectDB();
@@ -17,7 +19,7 @@ export default async function Home() {
     $or: [{ slug: "home" }, { slug: "" }],
     isPublished: true,
   })
-    .select("_id title slug content")
+    .select("_id title slug content metaHeaderTags")
     .lean();
 
   // If no home page exists, try to create it or show a message
@@ -26,13 +28,13 @@ export default async function Home() {
     page = await Page.findOne({
       $or: [{ slug: "home" }, { slug: "" }],
     })
-      .select("_id title slug content")
+      .select("_id title slug content metaHeaderTags")
       .lean();
 
     if (!page) {
       // No home page at all - redirect to admin or show setup message
       return (
-        <div className="min-h-screen bg-white dark:bg-gray-900 flex items-center justify-center">
+        <main className="min-h-screen bg-white dark:bg-gray-900 flex items-center justify-center">
           <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
               Welcome to Your IT Company Website
@@ -54,7 +56,7 @@ export default async function Home() {
               Go to Admin Panel
             </Link>
           </div>
-        </div>
+        </main>
       );
     }
   }
@@ -77,22 +79,30 @@ export default async function Home() {
   }));
 
   return (
-    <div className="min-h-screen">
+    <>
+      <main className="min-h-screen">
       {/* Render sections if they exist */}
       {serializedSections && serializedSections.length > 0 ? (
-        <div>
-          {serializedSections.map((section) => (
-            <SectionRenderer
-              key={section._id}
-              section={
-                section as unknown as import("@/models/Section").ISection
-              }
-            />
-          ))}
+        <div className="flex flex-col space-y-6 sm:space-y-0">
+          {serializedSections.map((section) => {
+            const sectionData =
+              section as unknown as import("@/models/Section").ISection;
+            if (section.type === "hero") {
+              return <HeroSectionShell key={section._id} section={sectionData} />;
+            }
+            if (section.type === "about") {
+              return (
+                <AboutSectionShell key={section._id} section={sectionData} />
+              );
+            }
+            return (
+              <SectionRenderer key={section._id} section={sectionData} />
+            );
+          })}
         </div>
       ) : (
         /* Fallback to traditional content if no sections */
-        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <article>
             <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-6">
               {page.title}
@@ -104,9 +114,10 @@ export default async function Home() {
               </p>
             </div>
           </article>
-        </main>
+        </div>
       )}
-    </div>
+        </main>
+    </>
   );
 }
 
@@ -132,21 +143,28 @@ export async function generateMetadata() {
   }
 
   const title = page.seoTitle || page.title;
-  const description = page.seoDescription || "";
+  const description = page.seoDescription || page.content?.substring(0, 160).replace(/<[^>]*>/g, "") || "Leading IT solutions provider offering cutting-edge technology services, software development, cloud services, and digital transformation solutions.";
   const keywords = page.seoKeywords || "";
   const ogTitle = page.ogTitle || page.seoTitle || page.title;
-  const ogDescription = page.ogDescription || page.seoDescription || "";
+  const ogDescription = page.ogDescription || page.seoDescription || description;
   const ogImage = page.ogImage || "";
+  const canonicalUrl = getCanonicalUrl("/");
+  const allowIndexing = page.allowIndexing !== undefined ? page.allowIndexing : true;
 
   return {
     title,
-    description,
+    description: description.substring(0, 160),
     keywords: keywords ? keywords.split(",").map((k) => k.trim()) : undefined,
+    robots: allowIndexing ? undefined : { index: false, follow: false },
+    alternates: {
+      canonical: canonicalUrl,
+    },
     openGraph: {
       title: ogTitle,
       description: ogDescription,
       images: ogImage ? [{ url: ogImage }] : undefined,
       type: "website",
+      url: canonicalUrl,
     },
     twitter: {
       card: "summary_large_image",

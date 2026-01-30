@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { ISection } from "@/models/Section";
 import { getBackgroundStyle, getDefaultBackground } from "@/lib/section-helpers";
+import { getImageUrl } from "@/lib/image-utils";
 
 interface ProcessSectionProps {
   section: ISection;
@@ -37,10 +38,7 @@ export default function ProcessSection({
               {content.title}
             </h2>
             {content.description && (
-              <p
-                className="text-base sm:text-lg md:text-xl theme-text-black max-w-3xl mx-auto px-2"
-                style={{ opacity: 0.8 }}
-              >
+<p className="text-base sm:text-lg md:text-xl theme-text-muted max-w-3xl mx-auto px-2">
                 {content.description}
               </p>
             )}
@@ -73,11 +71,11 @@ export default function ProcessSection({
                         {step.icon && isIconUrl(step.icon) ? (
                           <div className="relative w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12">
                             <Image
-                              src={step.icon}
+                              src={getImageUrl(step.icon)}
                               alt={step.title || `Step ${index + 1}`}
                               fill
+                              sizes="48px"
                               className="object-contain p-1 sm:p-1.5"
-                              unoptimized
                               onError={(e) => {
                                 const target = e.currentTarget;
                                 target.style.display = "none";
@@ -106,15 +104,12 @@ export default function ProcessSection({
                     {/* Text Content */}
                     <div className="flex-1 pt-0.5 sm:pt-1">
                       {step.title && (
-                        <h3 className="text-lg sm:text-xl font-bold theme-text-black mb-2 sm:mb-3 group-hover:text-[#5c8c24] transition-colors">
+                        <h3 className="text-lg sm:text-xl font-bold theme-text-black mb-2 sm:mb-3 theme-hover-primary-end transition-colors">
                           {step.title}
                         </h3>
                       )}
                       {step.description && (
-                        <p
-                          className="text-sm sm:text-base theme-text-black leading-relaxed wrap-break-word"
-                          style={{ opacity: 0.8 }}
-                        >
+                        <p className="text-sm sm:text-base theme-text-muted leading-relaxed wrap-break-word">
                           {step.description}
                         </p>
                       )}

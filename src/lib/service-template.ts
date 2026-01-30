@@ -1,4 +1,105 @@
-import { ServiceTemplateData } from "@/components/ServiceTemplate";
+export interface ServiceTemplateData {
+  hero: {
+    breadcrumbs?: string;
+    title: string;
+    subtitle?: string;
+    description: string;
+    primaryButtonText: string;
+    primaryButtonLink: string;
+    backgroundImage?: string;
+    backgroundVideo?: string;
+    backgroundOpacity?: number;
+  };
+  overview: {
+    title: string;
+    paragraphs: Array<{ text: string }>;
+    image?: string;
+    backgroundColor?: string;
+    isActive?: boolean;
+  };
+  stats?: {
+    items: Array<{ icon?: string; value: string; label: string }>;
+    backgroundColor?: string;
+    isActive?: boolean;
+  };
+  subServices?: {
+    title: string;
+    description?: string;
+    items: Array<{ icon?: string; title: string; description: string }>;
+    ctaButtonText?: string;
+    ctaButtonLink?: string;
+    backgroundColor?: string;
+    isActive?: boolean;
+  };
+  whyChooseUs?: {
+    title: string;
+    subtitle?: string;
+    items: Array<{ text: string }>;
+    image?: string;
+    certifications?: Array<{ name: string; image?: string }>;
+    backgroundColor?: string;
+    isActive?: boolean;
+  };
+  technologies?: {
+    title: string;
+    description: string;
+    items: Array<{ name: string; icon?: string }>;
+    backgroundColor?: string;
+    isActive?: boolean;
+  };
+  process?: {
+    title: string;
+    description: string;
+    steps: Array<{ number: string; title: string; description: string }>;
+    backgroundColor?: string;
+    isActive?: boolean;
+  };
+  portfolio?: {
+    title: string;
+    description?: string;
+    projects: Array<{
+      image?: string;
+      category?: string;
+      title: string;
+      description: string;
+      link?: string;
+      technologies?: string[];
+    }>;
+    backgroundColor?: string;
+    isActive?: boolean;
+  };
+  partners?: {
+    title: string;
+    description?: string;
+    partners: Array<{ name?: string; logo?: string }>;
+    backgroundColor?: string;
+    isActive?: boolean;
+  };
+  cards?: {
+    title: string;
+    description?: string;
+    showStars?: boolean;
+    items: Array<{ quote?: string; author?: string; role?: string; company?: string }>;
+    backgroundColor?: string;
+    isActive?: boolean;
+  };
+  faq?: {
+    title: string;
+    description?: string;
+    items: Array<{ question: string; answer: string }>;
+    backgroundColor?: string;
+    isActive?: boolean;
+  };
+  cta?: {
+    title: string;
+    description: string;
+    buttonText: string;
+    buttonLink: string;
+    backgroundColor?: string;
+    isActive?: boolean;
+  };
+  sectionOrder?: string[];
+}
 
 export const defaultServiceTemplateData: ServiceTemplateData = {
   hero: {
@@ -167,43 +268,43 @@ export const defaultServiceTemplateData: ServiceTemplateData = {
     partners: [
       {
         name: "Partner 1",
-        logo: "https://cloud.appwrite.io/v1/storage/buckets/694cc45b003184dc8584/files/6954ba5d003008864d7b/view?project=694cc43b00225b94d30d",
+        logo: "6954ba5d003008864d7b",
       },
       {
         name: "Partner 2",
-        logo: "https://cloud.appwrite.io/v1/storage/buckets/694cc45b003184dc8584/files/6954ba62001457f024ef/view?project=694cc43b00225b94d30d",
+        logo: "6954ba62001457f024ef",
       },
       {
         name: "Partner 3",
-        logo: "https://cloud.appwrite.io/v1/storage/buckets/694cc45b003184dc8584/files/6954ba6700016cac0e12/view?project=694cc43b00225b94d30d",
+        logo: "6954ba6700016cac0e12",
       },
       {
         name: "Partner 4",
-        logo: "https://cloud.appwrite.io/v1/storage/buckets/694cc45b003184dc8584/files/6954ba6b0032b310923f/view?project=694cc43b00225b94d30d",
+        logo: "6954ba6b0032b310923f",
       },
       {
         name: "Partner 5",
-        logo: "https://cloud.appwrite.io/v1/storage/buckets/694cc45b003184dc8584/files/6954ba7100113ef921e4/view?project=694cc43b00225b94d30d",
+        logo: "6954ba7100113ef921e4",
       },
       {
         name: "Partner 6",
-        logo: "https://cloud.appwrite.io/v1/storage/buckets/694cc45b003184dc8584/files/6954ba7c0012eee875af/view?project=694cc43b00225b94d30d",
+        logo: "6954ba7c0012eee875af",
       },
       {
         name: "Partner 7",
-        logo: "https://cloud.appwrite.io/v1/storage/buckets/694cc45b003184dc8584/files/6954ba760029ccc019e4/view?project=694cc43b00225b94d30d",
+        logo: "6954ba760029ccc019e4",
       },
       {
         name: "Partner 8",
-        logo: "https://cloud.appwrite.io/v1/storage/buckets/694cc45b003184dc8584/files/6954ba810038059a3274/view?project=694cc43b00225b94d30d",
+        logo: "6954ba810038059a3274",
       },
       {
         name: "Partner 9",
-        logo: "https://cloud.appwrite.io/v1/storage/buckets/694cc45b003184dc8584/files/6954ba900020801ed88d/view?project=694cc43b00225b94d30d",
+        logo: "6954ba900020801ed88d",
       },
       {
         name: "Partner 10",
-        logo: "https://cloud.appwrite.io/v1/storage/buckets/694cc45b003184dc8584/files/6954ba94003bdd021354/view?project=694cc43b00225b94d30d",
+        logo: "6954ba94003bdd021354",
       },
     ],
     isActive: true,

@@ -7,9 +7,10 @@ import {
   getBackgroundStyle,
   getDefaultBackground,
 } from "@/lib/section-helpers";
+import { getImageUrl } from "@/lib/image-utils";
 
 interface PartnershipsSectionProps {
-  section: ISection;
+  readonly section: ISection;
 }
 
 // Helper to check if image is a URL
@@ -173,10 +174,7 @@ export default function PartnershipsSection({
               {content.title}
             </h2>
             {content.description && (
-              <p
-                className="text-base sm:text-lg md:text-xl theme-text-black max-w-3xl mx-auto px-2"
-                style={{ opacity: 0.8 }}
-              >
+<p className="text-base sm:text-lg md:text-xl theme-text-muted max-w-3xl mx-auto px-2">
                 {content.description}
               </p>
             )}
@@ -190,7 +188,7 @@ export default function PartnershipsSection({
               <button
                 onClick={prevSlide}
                 className="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 w-12 h-12 bg-transparent border-2 theme-text-black rounded-full items-center justify-center shadow-md hover:scale-110 transition-all backdrop-blur-sm"
-                style={{ borderColor: "rgba(0, 0, 0, 0.2)" }}
+                style={{ borderColor: "var(--color-border-default-20)" }}
                 aria-label="Previous"
               >
                 <svg
@@ -225,110 +223,204 @@ export default function PartnershipsSection({
                     transform: `translateX(-${currentIndex * 100}%)`
                   }}
                 >
-                {partnerships.map((partnership, index) => (
-                  <div
-                    key={index}
-                    className="group relative p-6 rounded-xl backdrop-blur-sm border transition-all duration-300 overflow-hidden theme-bg-white flex-shrink-0 w-full px-4"
-                    style={{ borderColor: "rgba(0, 0, 0, 0.1)" }}
-                  >
-                    <div className="relative z-10">
-                      {partnership.image && (
-                        <div
-                          className="w-20 h-20 mb-6 rounded-xl backdrop-blur-sm flex items-center justify-center transform transition-all duration-300 shadow-lg theme-bg-primary-mid"
-                          style={{ borderColor: "rgba(0, 0, 0, 0.1)" }}
-                        >
-                          {isImageUrl(partnership.image) ? (
-                            <Image
-                              src={partnership.image}
-                              alt={partnership.title || "Partnership"}
-                              width={56}
-                              height={56}
-                              className="object-contain p-2"
-                              unoptimized
-                              onError={(e) => {
-                                e.currentTarget.style.display = "none";
-                              }}
-                            />
-                          ) : (
-                            <span className="theme-text-white text-4xl">
-                              {partnership.image}
-                            </span>
+                {partnerships.map((partnership, index) => {
+                  const isEven = index % 2 === 1; // 0-indexed: 0=odd(1st), 1=even(2nd), etc.
+                  
+                  return (
+                    <div
+                      key={index}
+                      className="group relative bg-white rounded-xl border transition-all duration-300 overflow-hidden flex-shrink-0 w-full mx-2 p-3"
+                      style={{ 
+                        borderColor: "var(--color-border-default)",
+                        boxShadow: "0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)",
+                        width: "calc(100% - 1rem)"
+                      }}
+                    >
+                      {/* Content Section - First for even cards */}
+                      {isEven && (
+                        <div className="relative z-10 pb-3">
+                          {partnership.title && (
+                            <h3 className="text-xl font-bold theme-text-primary mb-3">
+                              {partnership.title}
+                            </h3>
+                          )}
+                          {partnership.description && (
+                            <p
+                              className="theme-text-muted leading-relaxed text-sm"
+                            >
+                              {partnership.description}
+                            </p>
                           )}
                         </div>
                       )}
-                      {partnership.title && (
-                        <h3 className="text-xl font-bold theme-text-black mb-3">
-                          {partnership.title}
-                        </h3>
+
+                      {/* Image Section with Gradient Background */}
+                      {partnership.image && (
+                        <div className={`relative h-48 overflow-hidden ${isEven ? 'rounded-b-xl' : 'rounded-t-xl'} ${!isEven ? 'pb-3' : ''}`}>
+                          {/* Gradient Background Container with padding */}
+                          <div className="relative h-full w-full rounded-xl overflow-hidden">
+                            {/* Gradient Background - extends behind image, visible on left and right */}
+                            <div 
+                              className="absolute inset-0"
+                              style={{
+                                background: "linear-gradient(to bottom, var(--color-primary-start), var(--color-primary-end))",
+                                opacity: 0.9
+                              }}
+                            />
+                            
+                            {/* White Image Container - centered, overlaps gradient from bottom, leaves sides visible */}
+                            <div 
+                              className="absolute bottom-0 left-1/2 -translate-x-1/2 bg-white rounded-t-xl"
+                              style={{
+                                width: "90%",
+                                height: "90%",
+                              }}
+                            >
+                              <div className="relative w-full h-full flex items-center justify-center">
+                                {isImageUrl(partnership.image) ? (
+                                  <Image
+                                    src={getImageUrl(partnership.image)}
+                                    alt={partnership.title || "Partnership"}
+                                    fill
+                                    className="object-contain"
+                                    unoptimized
+                                    onError={(e) => {
+                                      e.currentTarget.style.display = "none";
+                                    }}
+                                  />
+                                ) : (
+                                  <span className="text-4xl">
+                                    {partnership.image}
+                                  </span>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
                       )}
-                      {partnership.description && (
-                        <p
-                          className="theme-text-black leading-relaxed text-sm"
-                          style={{ opacity: 0.8 }}
-                        >
-                          {partnership.description}
-                        </p>
+
+                      {/* Content Section - Last for odd cards */}
+                      {!isEven && (
+                        <div className="relative z-10">
+                          {partnership.title && (
+                            <h3 className="text-xl font-bold theme-text-primary mb-3">
+                              {partnership.title}
+                            </h3>
+                          )}
+                          {partnership.description && (
+                            <p
+                              className="theme-text-muted leading-relaxed text-sm"
+                            >
+                              {partnership.description}
+                            </p>
+                          )}
+                        </div>
                       )}
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
                 </div>
               </div>
               {/* Desktop: Show 3 items */}
               <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-3 gap-8 px-8">
                 {getVisibleItems(false).map(
-                  ({ item: partnership, originalIndex }, visibleIndex) => (
-                    <div
-                      key={`partnership-${originalIndex}-${visibleIndex}-${
-                        partnership.title || visibleIndex
-                      }`}
-                      className="group relative p-8 rounded-xl backdrop-blur-sm border transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 overflow-hidden theme-bg-white"
-                      style={{ borderColor: "rgba(0, 0, 0, 0.1)" }}
-                    >
-                      {/* Light gradient overlay on hover */}
-                      <div className="absolute inset-0 opacity-0 group-hover:opacity-5 theme-gradient transition-all duration-300"></div>
-
-                      <div className="relative z-10">
-                        {partnership.image && (
-                          <div
-                            className="w-20 h-20 mb-6 rounded-xl backdrop-blur-sm flex items-center justify-center transform group-hover:scale-110 transition-all duration-300 shadow-lg theme-bg-primary-mid"
-                            style={{ borderColor: "rgba(0, 0, 0, 0.1)" }}
-                          >
-                            {isImageUrl(partnership.image) ? (
-                              <Image
-                                src={partnership.image}
-                                alt={partnership.title || "Partnership"}
-                                width={56}
-                                height={56}
-                                className="object-contain p-2"
-                                unoptimized
-                                onError={(e) => {
-                                  e.currentTarget.style.display = "none";
-                                }}
-                              />
-                            ) : (
-                              <span className="theme-text-white text-4xl">
-                                {partnership.image}
-                              </span>
+                  ({ item: partnership, originalIndex }, visibleIndex) => {
+                    const isEven = originalIndex % 2 === 1; // 0-indexed: 0=odd(1st), 1=even(2nd), etc.
+                    
+                    return (
+                      <div
+                        key={`partnership-${originalIndex}-${visibleIndex}-${
+                          partnership.title || visibleIndex
+                        }`}
+                        className="group relative bg-white rounded-xl border transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 overflow-hidden p-3 sm:p-4"
+                        style={{ 
+                          borderColor: "var(--color-border-default)",
+                          boxShadow: "0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)"
+                        }}
+                      >
+                        {/* Content Section - First for even cards */}
+                        {isEven && (
+                          <div className="relative z-10 pb-3 sm:pb-4">
+                            {partnership.title && (
+                              <h3 className="text-xl font-bold theme-text-primary mb-3 theme-hover-primary transition-colors">
+                                {partnership.title}
+                              </h3>
+                            )}
+                            {partnership.description && (
+                              <p
+                                className="theme-text-muted leading-relaxed text-sm"
+                              >
+                                {partnership.description}
+                              </p>
                             )}
                           </div>
                         )}
-                        {partnership.title && (
-                          <h3 className="text-xl font-bold theme-text-black mb-3 theme-hover-primary transition-colors">
-                            {partnership.title}
-                          </h3>
+
+                        {/* Image Section with Gradient Background */}
+                        {partnership.image && (
+                          <div className={`relative h-48 sm:h-56 overflow-hidden ${isEven ? 'rounded-b-xl' : 'rounded-t-xl'} ${!isEven ? 'pb-3 sm:pb-4' : ''}`}>
+                            {/* Gradient Background Container with padding */}
+                            <div className="relative h-full w-full rounded-xl overflow-hidden">
+                              {/* Gradient Background - extends behind image, visible on left and right */}
+                              <div 
+                                className="absolute inset-0"
+                                style={{
+                                  background: "linear-gradient(to bottom, var(--color-primary-start), var(--color-primary-end))",
+                                  opacity: 0.9
+                                }}
+                              />
+                              
+                              {/* White Image Container - centered, overlaps gradient from bottom, leaves sides visible */}
+                              <div 
+                                className="absolute bottom-0 left-1/2 -translate-x-1/2 bg-white rounded-t-xl"
+                                style={{
+                                  width: "90%",
+                                  height: "90%",
+                                }}
+                              >
+                                <div className="relative w-full h-full flex items-center justify-center">
+                                  {isImageUrl(partnership.image) ? (
+                                    <Image
+                                      src={getImageUrl(partnership.image)}
+                                      alt={partnership.title || "Partnership"}
+                                      fill
+                                      sizes="200px"
+                                      className="object-contain"
+                                      onError={(e) => {
+                                        e.currentTarget.style.display = "none";
+                                      }}
+                                    />
+                                  ) : (
+                                    <span className="text-4xl">
+                                      {partnership.image}
+                                    </span>
+                                  )}
+                                </div>
+                              </div>
+                            </div>
+                          </div>
                         )}
-                        {partnership.description && (
-                          <p
-                            className="theme-text-black leading-relaxed text-sm"
-                            style={{ opacity: 0.8 }}
-                          >
-                            {partnership.description}
-                          </p>
+
+                        {/* Content Section - Last for odd cards */}
+                        {!isEven && (
+                          <div className="relative z-10">
+                            {partnership.title && (
+                              <h3 className="text-xl font-bold theme-text-primary mb-3 theme-hover-primary transition-colors">
+                                {partnership.title}
+                              </h3>
+                            )}
+                            {partnership.description && (
+                              <p
+                                className="theme-text-muted leading-relaxed text-sm"
+                              >
+                                {partnership.description}
+                              </p>
+                            )}
+                          </div>
                         )}
                       </div>
-                    </div>
-                  )
+                    );
+                  }
                 )}
               </div>
             </div>
@@ -338,7 +430,7 @@ export default function PartnershipsSection({
               <button
                 onClick={nextSlide}
                 className="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 w-12 h-12 bg-transparent border-2 theme-text-black rounded-full items-center justify-center shadow-md hover:scale-110 transition-all backdrop-blur-sm"
-                style={{ borderColor: "rgba(0, 0, 0, 0.2)" }}
+                style={{ borderColor: "var(--color-border-default-20)" }}
                 aria-label="Next"
               >
                 <svg
@@ -359,17 +451,15 @@ export default function PartnershipsSection({
 
             {/* Dot Indicators - Only visible on mobile */}
             {totalItems > mobileItemsToShow && (
-              <div className="flex justify-center gap-2 mt-8 md:hidden">
+              <div className="flex justify-center gap-1.5 mt-8 md:hidden">
                 {Array.from({ length: totalSlides }).map((_, index) => (
-                  <button
+                  <span
                     key={index}
-                    onClick={() => setCurrentIndex(index * mobileItemsToShow)}
-                    className={`w-2 h-2 rounded-full transition-all ${
+                    className={`w-1.5 h-1.5 rounded-full transition-all ${
                       getCurrentSlideIndex() === index
-                        ? 'bg-[#79b246] w-8'
-                        : 'bg-gray-300'
+                        ? 'theme-bg-primary-end'
+                        : 'bg-gray-400 opacity-40'
                     }`}
-                    aria-label={`Go to slide ${index + 1}`}
                   />
                 ))}
               </div>

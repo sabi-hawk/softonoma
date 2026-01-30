@@ -77,7 +77,7 @@ export async function POST(request: NextRequest) {
                 border-radius: 8px;
               }
               .header {
-                background-color: #79b246;
+                background-color: #2a445e;
                 color: white;
                 padding: 20px;
                 border-radius: 8px 8px 0 0;
@@ -86,21 +86,21 @@ export async function POST(request: NextRequest) {
               .field {
                 margin-bottom: 15px;
                 padding: 10px;
-                background-color: #f9f9f9;
+                background-color: #edf2f7;
                 border-radius: 4px;
               }
               .field-label {
                 font-weight: bold;
-                color: #79b246;
+                color: #f3aa20;
                 margin-bottom: 5px;
               }
               .field-value {
-                color: #333;
+                color: #121e29;
               }
               .message-box {
                 padding: 15px;
-                background-color: #f0f0f0;
-                border-left: 4px solid #79b246;
+                background-color: #edf2f7;
+                border-left: 4px solid #f3aa20;
                 border-radius: 4px;
                 margin-top: 10px;
               }

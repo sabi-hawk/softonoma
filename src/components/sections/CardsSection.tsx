@@ -6,6 +6,8 @@ import {
   getBackgroundStyle,
   getDefaultBackground,
 } from "@/lib/section-helpers";
+import { getImageUrl } from "@/lib/image-utils";
+import Image from "next/image";
 
 interface CardsSectionProps {
   section: ISection;
@@ -156,29 +158,45 @@ export default function CardsSection({ section }: CardsSectionProps) {
       style={background.style}
     >
       <div className="max-w-7xl mx-auto">
-        <div className="text-center mb-8 sm:mb-12 md:mb-16">
+        {/* Header Section - Aligned with cards */}
+        <div className="mb-8 sm:mb-10 md:mb-12 text-left px-6 sm:px-8 md:px-8">
+          {/* Quote Icon */}
+          <div className="mb-4 sm:mb-5">
+            <Image
+              src="/Left-quote-traced.png"
+              alt="Quote icon"
+              width={60}
+              height={60}
+              className="w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14"
+            />
+          </div>
+
+          {/* Title */}
           {content.title && (
-            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold theme-text-black mb-3 sm:mb-4 px-2">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold theme-text-primary mb-3 sm:mb-4">
               {content.title}
             </h2>
           )}
+
+          {/* Description */}
           {content.description && (
             <p
-              className="text-base sm:text-lg md:text-xl theme-text-black max-w-3xl mx-auto px-2"
-              style={{ opacity: 0.8 }}
+              className="text-sm sm:text-base md:text-lg theme-text-muted leading-relaxed"
+              style={{ fontFamily: "var(--font-inter), sans-serif" }}
             >
               {content.description}
             </p>
           )}
         </div>
+
         {totalItems > 0 && (
           <div className="relative">
-            {/* Left Arrow - Hidden on mobile */}
+            {/* Left Arrow - Desktop Only */}
             {totalItems > itemsToShow && (
               <button
                 onClick={prevSlide}
-                className="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 w-12 h-12 bg-transparent border-2 theme-text-black rounded-full items-center justify-center shadow-md hover:scale-110 transition-all backdrop-blur-sm"
-                style={{ borderColor: "rgba(0, 0, 0, 0.2)" }}
+                className="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 lg:-translate-x-8 z-10 w-12 h-12 bg-white border-2 theme-text-primary rounded-full items-center justify-center shadow-md hover:scale-110 transition-all"
+                style={{ borderColor: "var(--color-border-default-20)" }}
                 aria-label="Previous"
               >
                 <svg
@@ -216,102 +234,125 @@ export default function CardsSection({ section }: CardsSectionProps) {
                 {items.map((item, index) => (
                   <div
                     key={index}
-                    className="group p-6 theme-bg-white rounded-xl border border-gray-200 shadow-lg transition-all duration-300 flex-shrink-0 w-full px-4"
-                    style={{ borderColor: "rgba(0, 0, 0, 0.1)" }}
+                    className="group p-6 sm:p-8 theme-bg-secondary rounded-2xl border shrink-0 shadow-sm transition-all duration-300 mx-2"
+                    style={{ 
+                      width: "calc(100% - 1rem)" as string,
+                      borderColor: "var(--color-border-default-20)",
+                      boxShadow: "0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)"
+                    }}
                   >
-                    {content.showStars !== false && (
-                      <div className="mb-4 text-lg" style={{ color: "#FFD700" }}>
-                        {"★★★★★".split("").map((star, i) => (
-                          <span key={i}>{star}</span>
-                        ))}
-                      </div>
-                    )}
-                    {item.quote && (
-                      <p
-                        className="theme-text-black mb-6 leading-relaxed italic text-sm"
-                        style={{ opacity: 0.8 }}
-                      >
-                        &ldquo;{item.quote}&rdquo;
+                    {/* Client Name */}
+                    {item.author && (
+                      <p className="text-lg sm:text-xl font-bold theme-text-primary mb-1">
+                        {item.author}
                       </p>
                     )}
-                    <div
-                      className="pt-4 border-t"
-                      style={{ borderColor: "rgba(0, 0, 0, 0.1)" }}
-                    >
-                      {item.author && (
-                        <p className="font-bold theme-text-black mb-1">
-                          {item.author}
-                        </p>
-                      )}
-                      {(item.role || item.company) && (
-                        <p
-                          className="text-xs theme-text-black"
-                          style={{ opacity: 0.6 }}
-                        >
-                          {item.role && `${item.role}`}
-                          {item.role && item.company && ", "}
-                          {item.company}
-                        </p>
-                      )}
-                    </div>
+
+                    {/* Client Title/Role */}
+                    {(item.role || item.company) && (
+                      <p
+                        className="text-xs sm:text-sm theme-text-muted mb-4 sm:mb-6 uppercase tracking-wide"
+                        style={{ fontFamily: "var(--font-inter), sans-serif" }}
+                      >
+                        {item.role && `${item.role}`}
+                        {item.role && item.company && " "}
+                        {item.company}
+                      </p>
+                    )}
+
+                    {/* Quote */}
+                    {item.quote && (
+                      <p
+                        className="theme-text-muted mb-6 sm:mb-8 leading-relaxed text-sm sm:text-base"
+                        style={{ fontFamily: "var(--font-inter), sans-serif" }}
+                      >
+                        {item.quote}
+                      </p>
+                    )}
+
+                    {/* Profile Picture */}
+                    {item.image && (
+                      <div className="mt-6">
+                        <Image
+                          src={getImageUrl(item.image)}
+                          alt={item.author || "Client"}
+                          width={48}
+                          height={48}
+                          sizes="48px"
+                          className="w-12 h-12 rounded-full object-cover"
+                        />
+                      </div>
+                    )}
                   </div>
                 ))}
                 </div>
               </div>
-              {/* Desktop: Show 3 items */}
-              <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 px-8">
+
+              {/* Desktop: Show 3 items with slider */}
+              <div className="hidden md:flex md:gap-6 lg:gap-8 px-8">
                 {getVisibleItems(false).map(({ item, originalIndex }) => (
                   <div
                     key={originalIndex}
-                    className="group p-8 theme-bg-white rounded-xl border border-gray-200 shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-1"
-                    style={{ borderColor: "rgba(0, 0, 0, 0.1)" }}
+                    className="group shrink-0 p-6 sm:p-8 theme-bg-secondary rounded-2xl border shadow-sm transition-all duration-300 hover:shadow-md"
+                    style={{ 
+                      width: "calc(33.333% - 1rem)",
+                      borderColor: "var(--color-border-default-20)",
+                      boxShadow: "0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)"
+                    }}
                   >
-                    {content.showStars !== false && (
-                      <div className="mb-4 text-lg" style={{ color: "#FFD700" }}>
-                        {"★★★★★".split("").map((star, i) => (
-                          <span key={i}>{star}</span>
-                        ))}
-                      </div>
-                    )}
-                    {item.quote && (
-                      <p
-                        className="theme-text-black mb-6 leading-relaxed italic text-sm"
-                        style={{ opacity: 0.8 }}
-                      >
-                        &ldquo;{item.quote}&rdquo;
+                    {/* Client Name */}
+                    {item.author && (
+                      <p className="text-lg sm:text-xl font-bold theme-text-primary mb-1">
+                        {item.author}
                       </p>
                     )}
-                    <div
-                      className="pt-4 border-t"
-                      style={{ borderColor: "rgba(0, 0, 0, 0.1)" }}
-                    >
-                      {item.author && (
-                        <p className="font-bold theme-text-black mb-1">
-                          {item.author}
-                        </p>
-                      )}
-                      {(item.role || item.company) && (
-                        <p
-                          className="text-xs theme-text-black"
-                          style={{ opacity: 0.6 }}
-                        >
-                          {item.role && `${item.role}`}
-                          {item.role && item.company && ", "}
-                          {item.company}
-                        </p>
-                      )}
-                    </div>
+
+                    {/* Client Title/Role */}
+                    {(item.role || item.company) && (
+                      <p
+                        className="text-xs sm:text-sm theme-text-muted mb-4 sm:mb-6 uppercase tracking-wide"
+                        style={{ fontFamily: "var(--font-inter), sans-serif" }}
+                      >
+                        {item.role && `${item.role}`}
+                        {item.role && item.company && " "}
+                        {item.company}
+                      </p>
+                    )}
+
+                    {/* Quote */}
+                    {item.quote && (
+                      <p
+                        className="theme-text-muted mb-6 sm:mb-8 leading-relaxed text-sm sm:text-base"
+                        style={{ fontFamily: "var(--font-inter), sans-serif" }}
+                      >
+                        {item.quote}
+                      </p>
+                    )}
+
+                    {/* Profile Picture */}
+                    {item.image && (
+                      <div className="mt-6">
+                        <Image
+                          src={getImageUrl(item.image)}
+                          alt={item.author || "Client"}
+                          width={48}
+                          height={48}
+                          sizes="48px"
+                          className="w-12 h-12 rounded-full object-cover"
+                        />
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>
             </div>
 
-            {/* Right Arrow - Hidden on mobile */}
+            {/* Right Arrow - Desktop Only */}
             {totalItems > itemsToShow && (
               <button
                 onClick={nextSlide}
-                className="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 w-12 h-12 bg-transparent border-2 theme-text-black rounded-full items-center justify-center shadow-md hover:scale-110 transition-all backdrop-blur-sm"
-                style={{ borderColor: "rgba(0, 0, 0, 0.2)" }}
+                className="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 lg:translate-x-8 z-10 w-12 h-12 bg-white border-2 theme-text-primary rounded-full items-center justify-center shadow-md hover:scale-110 transition-all"
+                style={{ borderColor: "var(--color-border-default-20)" }}
                 aria-label="Next"
               >
                 <svg
@@ -330,23 +371,21 @@ export default function CardsSection({ section }: CardsSectionProps) {
               </button>
             )}
 
-            {/* Dot Indicators - Only visible on mobile */}
-            {totalItems > mobileItemsToShow && (
-              <div className="flex justify-center gap-2 mt-8 md:hidden">
-                {Array.from({ length: totalSlides }).map((_, index) => (
-                  <button
-                    key={index}
-                    onClick={() => setCurrentIndex(index * mobileItemsToShow)}
-                    className={`w-2 h-2 rounded-full transition-all ${
-                      getCurrentSlideIndex() === index
-                        ? 'bg-[#79b246] w-8'
-                        : 'bg-gray-300'
-                    }`}
-                    aria-label={`Go to slide ${index + 1}`}
-                  />
-                ))}
-              </div>
-            )}
+             {/* Dot Indicators - Only visible on mobile */}
+             {totalItems > mobileItemsToShow && (
+               <div className="flex justify-center gap-1.5 mt-8 md:hidden">
+                 {Array.from({ length: totalSlides }).map((_, index) => (
+                   <span
+                     key={index}
+                     className={`w-1.5 h-1.5 rounded-full transition-all ${
+                       getCurrentSlideIndex() === index
+                         ? 'theme-bg-primary-end'
+                         : 'bg-gray-400 opacity-40'
+                     }`}
+                   />
+                 ))}
+               </div>
+             )}
           </div>
         )}
       </div>

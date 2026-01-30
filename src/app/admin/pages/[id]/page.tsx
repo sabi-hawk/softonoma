@@ -7,6 +7,7 @@ import SectionRenderer from "@/components/sections/SectionRenderer";
 import { ISection } from "@/models/Section";
 import FileUpload from "@/components/admin/FileUpload";
 import IconUpload from "@/components/admin/IconUpload";
+import ReactIconSelector from "@/components/admin/ReactIconSelector";
 import Loader from "@/components/admin/Loader";
 import { isContactPage } from "@/lib/about-page-templates";
 
@@ -53,7 +54,9 @@ interface Section {
     stats?: Array<{
       number: string;
       title: string;
-      description: string;
+      icon?: string;
+      image?: string;
+      label?: string;
     }>;
     leftContent?: string;
     rightContent?: string;
@@ -322,28 +325,24 @@ export default function PageSectionsAdmin() {
         backgroundColor: "white",
         stats: [
           {
-            number: "800+",
+            number: "10K+",
             title: "Projects Delivered",
-            description:
-              "Successfully completed projects across various industries and technologies, delivering exceptional results for our clients.",
+            icon: "FaProjectDiagram",
           },
           {
-            number: "400+",
-            title: "Expert Developers",
-            description:
-              "A talented team of software engineers, designers, and consultants dedicated to your success.",
+            number: "4.5",
+            title: "User Rating",
+            icon: "FaAward",
           },
           {
-            number: "13+",
-            title: "Years of Experience",
-            description:
-              "Over a decade of expertise in delivering innovative technology solutions and digital transformation services.",
+            number: "90%",
+            title: "Satisfaction Score",
+            icon: "FaChartPie",
           },
           {
-            number: "4.8",
-            title: "Client Satisfaction",
-            description:
-              "Consistently high ratings and positive feedback from clients who trust us with their technology needs.",
+            number: "7K+",
+            title: "Client Success",
+            icon: "FaUserFriends",
           },
         ],
       },
@@ -899,7 +898,7 @@ export default function PageSectionsAdmin() {
     const stats = Array.isArray(sectionForm.content.stats)
       ? [...sectionForm.content.stats]
       : [];
-    stats.push({ number: "", title: "", description: "" });
+    stats.push({ number: "", title: "", icon: "" });
     updateContentField("stats", stats);
   };
 
@@ -1557,10 +1556,36 @@ export default function PageSectionsAdmin() {
                               Remove
                             </button>
                           </div>
+                          <div className="mb-2">
+                            <ReactIconSelector
+                              label="Icon"
+                              value={stat.icon && !stat.icon.startsWith("http") && !stat.icon.startsWith("/") ? stat.icon : ""}
+                              onChange={(iconName) => updateStat(index, "icon", iconName)}
+                            />
+                            <div className="mt-2">
+                              <p className="text-xs text-gray-500 mb-1">Or use custom image/emoji:</p>
+                              <input
+                                type="text"
+                                placeholder="Enter emoji or paste image URL"
+                                value={stat.icon && (stat.icon.startsWith("http") || stat.icon.startsWith("/") || stat.icon.length <= 2) ? stat.icon : ""}
+                                onChange={(e) =>
+                                  updateStat(index, "icon", e.target.value)
+                                }
+                                className="w-full mb-2 px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600 text-sm"
+                              />
+                              <IconUpload
+                                label="Or upload image"
+                                value={stat.icon && (stat.icon.startsWith("http") || stat.icon.startsWith("/")) ? stat.icon : ""}
+                                onChange={(value) => updateStat(index, "icon", value)}
+                                folder="stats-icons"
+                                className="mb-2"
+                              />
+                            </div>
+                          </div>
                           <input
                             type="text"
-                            placeholder="Number (e.g., 250+)"
-                            value={stat.number}
+                            placeholder="Number (e.g., 10K+, 4.5, 90%)"
+                            value={stat.number || ""}
                             onChange={(e) =>
                               updateStat(index, "number", e.target.value)
                             }
@@ -1569,22 +1594,12 @@ export default function PageSectionsAdmin() {
                           />
                           <input
                             type="text"
-                            placeholder="Title"
-                            value={stat.title}
+                            placeholder="Title/Label"
+                            value={stat.title || ""}
                             onChange={(e) =>
                               updateStat(index, "title", e.target.value)
                             }
                             className="w-full mb-2 px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600"
-                            required
-                          />
-                          <textarea
-                            placeholder="Description"
-                            value={stat.description}
-                            onChange={(e) =>
-                              updateStat(index, "description", e.target.value)
-                            }
-                            rows={3}
-                            className="w-full px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600"
                             required
                           />
                         </div>
@@ -1595,6 +1610,77 @@ export default function PageSectionsAdmin() {
                 {/* CTA-specific fields */}
                 {sectionForm.type === "cta" && (
                   <>
+                    <FileUpload
+                      label="Background Image"
+                      value={
+                        (sectionForm.content.backgroundImage as string) || ""
+                      }
+                      onChange={(url) =>
+                        updateContentField("backgroundImage", url)
+                      }
+                      type="image"
+                      folder="cta-backgrounds"
+                    />
+                    <div>
+                      <label className="block text-sm font-medium mb-1">
+                        Background Image Opacity (0-1)
+                      </label>
+                      <input
+                        type="number"
+                        min="0"
+                        max="1"
+                        step="0.1"
+                        value={
+                          (sectionForm.content.backgroundOpacity as number) ??
+                          0.4
+                        }
+                        onChange={(e) =>
+                          updateContentField(
+                            "backgroundOpacity",
+                            parseFloat(e.target.value) || 0.4
+                          )
+                        }
+                        className="w-full px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600"
+                        placeholder="0.4"
+                      />
+                      <p className="text-xs text-gray-500 mt-1">
+                        Controls background image opacity (0 = transparent, 1 =
+                        opaque). Default: 0.4
+                      </p>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium mb-1">
+                        Text Color
+                      </label>
+                      <select
+                        value={(sectionForm.content.textColor as string) || "var(--color-text-primary)"}
+                        onChange={(e) =>
+                          updateContentField("textColor", e.target.value)
+                        }
+                        className="w-full px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600"
+                      >
+                        <option value="var(--color-text-primary)">Dark (#121e29)</option>
+                        <option value="white">White</option>
+                      </select>
+                      <p className="text-xs text-gray-500 mt-1">
+                        Choose text color: Dark (#121e29) or White
+                      </p>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium mb-1">
+                        Text Alignment
+                      </label>
+                      <select
+                        value={(sectionForm.content.textAlign as string) || "center"}
+                        onChange={(e) =>
+                          updateContentField("textAlign", e.target.value)
+                        }
+                        className="w-full px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600"
+                      >
+                        <option value="center">Center</option>
+                        <option value="left">Left</option>
+                      </select>
+                    </div>
                     <div>
                       <label className="block text-sm font-medium mb-1">
                         Button Text
@@ -1621,6 +1707,34 @@ export default function PageSectionsAdmin() {
                         }
                         className="w-full px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600"
                         placeholder="/contact"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium mb-1">
+                        Secondary Button Text (Optional)
+                      </label>
+                      <input
+                        type="text"
+                        value={sectionForm.content.secondaryButtonText || ""}
+                        onChange={(e) =>
+                          updateContentField("secondaryButtonText", e.target.value)
+                        }
+                        className="w-full px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600"
+                        placeholder="Learn More"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium mb-1">
+                        Secondary Button Link (Optional)
+                      </label>
+                      <input
+                        type="text"
+                        value={sectionForm.content.secondaryButtonLink || ""}
+                        onChange={(e) =>
+                          updateContentField("secondaryButtonLink", e.target.value)
+                        }
+                        className="w-full px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600"
+                        placeholder="/about"
                       />
                     </div>
                   </>

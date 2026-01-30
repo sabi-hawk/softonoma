@@ -3,14 +3,14 @@ import connectDB from "@/lib/mongodb";
 import Industry from "@/models/Industry";
 import IndustryTemplate from "@/components/IndustryTemplate";
 import { parseIndustryTemplateData } from "@/lib/industry-template";
+import { getCanonicalUrl } from "@/lib/url-utils";
 
 interface IndustryPageProps {
   params: Promise<{ slug: string }>;
 }
 
-// Force dynamic rendering to always fetch fresh data from MongoDB
-export const dynamic = 'force-dynamic';
-export const revalidate = 0;
+// Cache industry pages for 60 seconds to improve performance
+export const revalidate = 60;
 
 export default async function IndustryPage({ params }: IndustryPageProps) {
   await connectDB();
@@ -18,7 +18,9 @@ export default async function IndustryPage({ params }: IndustryPageProps) {
   const { slug } = await params;
 
   // Get industry
-  const industry = await Industry.findOne({ slug, isPublished: true }).lean();
+  const industry = await Industry.findOne({ slug, isPublished: true })
+    .select("title content description metaHeaderTags")
+    .lean();
 
   if (!industry) {
     notFound();
@@ -51,7 +53,11 @@ export default async function IndustryPage({ params }: IndustryPageProps) {
   }
 
   return (
+    <>
+      <main>
     <IndustryTemplate data={templateData} industryTitle={industry.title} />
+      </main>
+    </>
   );
 }
 
@@ -63,36 +69,65 @@ export async function generateMetadata({ params }: IndustryPageProps) {
   if (!industry) {
     return {
       title: "Industry Not Found",
+      description: "The requested industry page could not be found.",
     };
   }
 
   const title = industry.seoTitle || industry.title;
-  const description = industry.seoDescription || industry.description || "";
+  
+  // Ensure description is always a non-empty string
+  const seoDesc = (industry.seoDescription || "").trim();
+  const industryDesc = (industry.description || "").trim();
+  const defaultDesc = `Discover our solutions for the ${industry.title} industry. Expert services designed for your sector.`;
+  
+  // Build description with proper fallback chain
+  let description = seoDesc || industryDesc || defaultDesc;
+  
+  // Final safety check - ensure description is never empty
+  if (!description || description.trim().length === 0) {
+    description = defaultDesc;
+  }
+  
+  // Ensure description is properly formatted and within limits
+  const metaDescription = description.trim().substring(0, 160);
+  
+  // Final validation - ensure metaDescription is never empty
+  const finalDescription = metaDescription && metaDescription.length > 0 
+    ? metaDescription 
+    : defaultDesc.substring(0, 160);
+  
   const keywords = industry.seoKeywords || "";
   const ogTitle = industry.ogTitle || industry.seoTitle || industry.title;
   const ogDescription =
     industry.ogDescription ||
     industry.seoDescription ||
     industry.description ||
-    "";
+    finalDescription;
   const ogImage = industry.ogImage || "";
+  const canonicalUrl = getCanonicalUrl(`/industries/${slug}`);
+  const allowIndexing = industry.allowIndexing !== undefined ? industry.allowIndexing : true;
 
   return {
-    title,
-    description,
+    title: title || "Industry",
+    description: finalDescription,
     keywords: keywords
       ? keywords.split(",").map((k: string) => k.trim())
       : undefined,
+    robots: allowIndexing ? undefined : { index: false, follow: false },
+    alternates: {
+      canonical: canonicalUrl,
+    },
     openGraph: {
-      title: ogTitle,
-      description: ogDescription,
+      title: ogTitle || industry.title,
+      description: (ogDescription || finalDescription).substring(0, 160),
       images: ogImage ? [{ url: ogImage }] : undefined,
       type: "website",
+      url: canonicalUrl,
     },
     twitter: {
       card: "summary_large_image",
-      title: ogTitle,
-      description: ogDescription,
+      title: ogTitle || industry.title,
+      description: (ogDescription || finalDescription).substring(0, 160),
       images: ogImage ? [ogImage] : undefined,
     },
   };

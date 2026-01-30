@@ -13,6 +13,8 @@ export interface IPage extends Document {
   ogImage?: string;
   ogTitle?: string;
   ogDescription?: string;
+  metaHeaderTags?: string;
+  allowIndexing?: boolean;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -75,6 +77,14 @@ const PageSchema: Schema = new Schema(
     ogDescription: {
       type: String,
       trim: true,
+    },
+    metaHeaderTags: {
+      type: String,
+      trim: true,
+    },
+    allowIndexing: {
+      type: Boolean,
+      default: true,
     },
   },
   {

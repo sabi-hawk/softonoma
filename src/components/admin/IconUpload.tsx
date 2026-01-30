@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
+import { getImageUrl } from "@/lib/image-utils";
 
 interface IconUploadProps {
   label: string;
@@ -12,24 +13,37 @@ interface IconUploadProps {
   placeholder?: string;
 }
 
-// Helper function to extract file ID from Appwrite URL
-function extractFileIdFromUrl(url: string): string | null {
+// Helper function to extract S3 key from URL or return the key if it's already a key
+function extractS3KeyFromUrl(url: string): string | null {
   try {
-    const urlObj = new URL(url);
-    const pathParts = urlObj.pathname.split("/");
-    const filesIndex = pathParts.indexOf("files");
+    // If it's already a key (no http/https), return as-is
+    if (!url.startsWith("http://") && !url.startsWith("https://")) {
+      return url;
+    }
 
-    if (filesIndex !== -1 && filesIndex + 1 < pathParts.length) {
-      const fileId = pathParts[filesIndex + 1];
-      if (fileId && fileId.length > 10) {
-        return fileId;
-      }
+    const urlObj = new URL(url);
+    const bucketName = process.env.NEXT_PUBLIC_AWS_S3_BUCKET_NAME || "";
+    const region = process.env.NEXT_PUBLIC_AWS_REGION || "us-east-1";
+
+    // Check if it's an S3 URL
+    if (
+      urlObj.hostname === `${bucketName}.s3.${region}.amazonaws.com` ||
+      urlObj.hostname === `s3.${region}.amazonaws.com` ||
+      urlObj.hostname.includes("s3")
+    ) {
+      // Remove leading slash from pathname
+      return urlObj.pathname.substring(1);
     }
 
     return null;
   } catch {
-    return null;
+    // If URL parsing fails, might be a key already
+    return url.includes("/") || url.includes(".") ? url : null;
   }
+}
+
+function getDisplayUrl(urlOrKey: string): string {
+  return getImageUrl(urlOrKey);
 }
 
 export default function IconUpload({
@@ -43,12 +57,19 @@ export default function IconUpload({
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [previousValue, setPreviousValue] = useState<string>(value || "");
+  const [isClient, setIsClient] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Set client-side flag to prevent hydration mismatches
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   // Update previous value when value prop changes (but not from our own upload)
   useEffect(() => {
+    if (!isClient) return; // Only run on client to prevent hydration issues
     setPreviousValue(value || "");
-  }, [value]);
+  }, [value, isClient]);
 
   const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -98,20 +119,20 @@ export default function IconUpload({
     setUploading(true);
 
     try {
-      // Extract old file ID if previous value is an Appwrite URL
-      const oldFileId = previousValue
-        ? extractFileIdFromUrl(previousValue)
+      // Extract old file key if previous value is an S3 URL
+      const oldFileKey = previousValue
+        ? extractS3KeyFromUrl(previousValue)
         : null;
 
-      // Upload to Appwrite
+      // Upload to S3
       const formData = new FormData();
       formData.append("file", file);
       formData.append("expectedType", "image"); // Icons are always images
       if (folder) {
         formData.append("folder", folder);
       }
-      if (oldFileId) {
-        formData.append("oldFileId", oldFileId);
+      if (oldFileKey && (oldFileKey.includes("/") || oldFileKey.includes("."))) {
+        formData.append("oldFileKey", oldFileKey);
       }
 
       const response = await fetch("/api/upload", {
@@ -123,6 +144,7 @@ export default function IconUpload({
       const result = await response.json();
 
       if (result.success && result.url) {
+        // Store the S3 URL (which contains the key)
         onChange(result.url);
         setPreviousValue(result.url);
         setError(null);
@@ -143,6 +165,19 @@ export default function IconUpload({
 
   const isUrl = value && (value.startsWith("http") || value.startsWith("/"));
   const isEmoji = value && !isUrl && value.length <= 10;
+  const [displayUrl, setDisplayUrl] = useState<string | null>(null);
+
+  // Get permanent URL for S3 images (only on client to prevent hydration issues)
+  useEffect(() => {
+    if (!isClient) return; // Only run on client to prevent hydration issues
+    
+    if (isUrl && value) {
+      // Use permanent URL directly (files are public)
+      setDisplayUrl(getDisplayUrl(value));
+    } else {
+      setDisplayUrl(null);
+    }
+  }, [value, isUrl, isClient]);
 
   return (
     <div className={className}>
@@ -157,31 +192,35 @@ export default function IconUpload({
           onChange={(e) => {
             const newValue = e.target.value;
 
-            // If user is changing from Appwrite URL to external URL/emoji, delete old file
+            // If user is changing from S3 URL to external URL/emoji, delete old file
             if (previousValue && !newValue) {
-              const oldFileId = extractFileIdFromUrl(previousValue);
-              if (oldFileId) {
+              const oldFileKey = extractS3KeyFromUrl(previousValue);
+              if (oldFileKey && (oldFileKey.includes("/") || oldFileKey.includes("."))) {
                 // Delete old file asynchronously
                 fetch("/api/upload", {
                   method: "DELETE",
                   headers: { "Content-Type": "application/json" },
-                  body: JSON.stringify({ fileId: oldFileId }),
+                  body: JSON.stringify({ fileKey: oldFileKey }),
                   credentials: "include",
                 }).catch((error) => {
                   console.error("Error deleting old file:", error);
                 });
               }
             } else if (previousValue && newValue !== previousValue) {
-              // If changing from one Appwrite URL to another or to external URL
-              const oldFileId = extractFileIdFromUrl(previousValue);
-              const newFileId = extractFileIdFromUrl(newValue);
+              // If changing from one S3 URL to another or to external URL
+              const oldFileKey = extractS3KeyFromUrl(previousValue);
+              const newFileKey = extractS3KeyFromUrl(newValue);
 
-              // Only delete if old was Appwrite URL and new is not the same Appwrite URL
-              if (oldFileId && oldFileId !== newFileId) {
+              // Only delete if old was S3 URL and new is not the same S3 URL
+              if (
+                oldFileKey &&
+                (oldFileKey.includes("/") || oldFileKey.includes(".")) &&
+                oldFileKey !== newFileKey
+              ) {
                 fetch("/api/upload", {
                   method: "DELETE",
                   headers: { "Content-Type": "application/json" },
-                  body: JSON.stringify({ fileId: oldFileId }),
+                  body: JSON.stringify({ fileKey: oldFileKey }),
                   credentials: "include",
                 }).catch((error) => {
                   console.error("Error deleting old file:", error);
@@ -217,13 +256,13 @@ export default function IconUpload({
         className="hidden"
       />
 
-      {/* Preview */}
-      {value && (
+      {/* Preview - Only render on client to prevent hydration issues */}
+      {isClient && value && (
         <div className="mt-2">
-          {isUrl ? (
+          {isUrl && displayUrl ? (
             <div className="relative w-16 h-16 border rounded-md overflow-hidden bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
               <Image
-                src={value}
+                src={displayUrl}
                 alt="Icon preview"
                 width={64}
                 height={64}

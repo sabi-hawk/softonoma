@@ -1,9 +1,9 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { ServiceTemplateData } from "@/components/ServiceTemplate";
 import ServiceTemplate from "@/components/ServiceTemplate";
 import {
+  type ServiceTemplateData,
   defaultServiceTemplateData,
   parseServiceTemplateData,
 } from "@/lib/service-template";

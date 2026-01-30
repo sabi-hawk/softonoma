@@ -43,7 +43,9 @@ export interface ISectionContent {
   stats?: Array<{
     number: string;
     title: string;
-    description: string;
+    icon?: string;
+    image?: string; // Alias for icon for backward compatibility
+    label?: string; // Alias for title for backward compatibility
   }>;
 
   // TwoColumn section specific fields

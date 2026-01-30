@@ -7,6 +7,7 @@ import {
   getBackgroundStyle,
   getDefaultBackground,
 } from "@/lib/section-helpers";
+import { getImageUrl } from "@/lib/image-utils";
 
 interface PartnersSectionProps {
   section: ISection;
@@ -93,85 +94,73 @@ export default function PartnersSection({ section }: PartnersSectionProps) {
       style={background.style}
     >
       <div className="relative z-10 max-w-7xl mx-auto">
-        {content.title && (
-          <div className="text-center mb-8 sm:mb-10 md:mb-12">
-            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-3 sm:mb-4 px-2">
-              {titleParts ? (
-                <>
-                  <span className="theme-text-black">
-                    {titleParts.firstPart}
-                  </span>
-                  {titleParts.rest && (
-                    <span className="theme-primary-mid">
-                      {" "}
-                      {titleParts.rest}
-                    </span>
-                  )}
-                </>
-              ) : (
-                <span className="theme-text-black">{content.title}</span>
-              )}
-            </h2>
-            {content.description && (
-              <p
-                className="text-base sm:text-lg theme-text-black max-w-3xl mx-auto px-2"
-                style={{ opacity: 0.8 }}
-              >
-                {content.description}
-              </p>
+        {/* Rounded container with light grey background */}
+        <div className="relative rounded-xl sm:rounded-2xl theme-bg-secondary px-2 py-6 sm:py-12 md:py-16 shadow-sm w-full">
+          {/* Content */}
+          <div className="relative z-10 w-full">
+            {/* Heading */}
+            {content.title && (
+              <div className="text-center mb-6 sm:mb-10 md:mb-12">
+                <h2 className="text-xl sm:text-3xl md:text-4xl lg:text-5xl font-bold theme-text-primary mb-2 sm:mb-4 px-2">
+                  {content.title}
+                </h2>
+                {content.description && (
+                  <p className="text-sm sm:text-lg theme-text-muted max-w-3xl mx-auto px-1 sm:px-2">
+                    {content.description}
+                  </p>
+                )}
+              </div>
+            )}
+
+            {/* Auto-moving carousel */}
+            {partners.length > 0 && (
+              <div className="overflow-hidden w-full" style={{ width: '100%' }}>
+                <div
+                  ref={scrollContainerRef}
+                  className="flex items-center"
+                  style={{
+                    width: `${partners.length * 2 * 200}px`, // Duplicate for seamless loop
+                  }}
+                >
+                  {/* Render partners twice for seamless loop */}
+                  {[...partners, ...partners].map((partner, index) => (
+                    <div
+                      key={`partner-${index}-${
+                        partner.logo || partner.name || index
+                      }`}
+                      className="shrink-0 px-4 sm:px-8 flex items-center justify-center"
+                      style={{ width: "200px" }}
+                    >
+                      <div className="w-full flex items-center justify-center opacity-100 transition-opacity duration-300 max-w-[100px] sm:max-w-[120px]">
+                        {/* Logo/Icon */}
+                        {isLogoUrl(partner.logo) && partner.logo ? (
+                          <Image
+                            src={getImageUrl(partner.logo)}
+                            alt={partner.name || "Partner"}
+                            width={120}
+                            height={80}
+                            sizes="(max-width: 640px) 100px, 120px"
+                            className="max-w-full max-h-full object-contain"
+                          />
+                        ) : partner.logo ? (
+                          <div className="text-4xl sm:text-6xl">{partner.logo}</div>
+                        ) : null}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {partners.length === 0 && (
+              <div className="text-center py-8 sm:py-12">
+                <p className="text-sm sm:text-base theme-text-muted">
+                  No partners to display yet.
+                </p>
+              </div>
             )}
           </div>
-        )}
-
-        {partners.length > 0 && (
-          <div className="overflow-hidden">
-            <div
-              ref={scrollContainerRef}
-              className="flex items-center"
-              style={{
-                width: `${partners.length * 2 * 200}px`, // Duplicate for seamless loop
-              }}
-            >
-              {/* Render partners twice for seamless loop */}
-              {[...partners, ...partners].map((partner, index) => (
-                <div
-                  key={`partner-${index}-${
-                    partner.logo || partner.name || index
-                  }`}
-                  className="shrink-0 px-8 flex items-center justify-center"
-                  style={{ width: "200px" }}
-                >
-                  <div className="w-full h-32 flex items-center justify-center opacity-100 transition-opacity duration-300">
-                    {isLogoUrl(partner.logo) && partner.logo ? (
-                      <Image
-                        src={partner.logo}
-                        alt={partner.name || "Partner"}
-                        width={200}
-                        height={120}
-                        className="max-w-full max-h-full object-contain"
-                        unoptimized
-                      />
-                    ) : partner.logo ? (
-                      <div className="text-5xl">{partner.logo}</div>
-                    ) : partner.name ? (
-                      <div className="text-xl font-semibold theme-text-black text-center">
-                        {partner.name}
-                      </div>
-                    ) : null}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {partners.length === 0 && (
-          <div className="text-center py-12">
-            <p className="theme-text-black" style={{ opacity: 0.7 }}>
-              No partners to display yet.
-            </p>
-          </div>
-        )}
+        </div>
       </div>
     </section>
   );

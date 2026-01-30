@@ -15,6 +15,8 @@ export interface IIndustry extends Document {
   ogImage?: string;
   ogTitle?: string;
   ogDescription?: string;
+  metaHeaderTags?: string;
+  allowIndexing?: boolean;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -85,6 +87,14 @@ const IndustrySchema: Schema = new Schema(
     ogDescription: {
       type: String,
       trim: true,
+    },
+    metaHeaderTags: {
+      type: String,
+      trim: true,
+    },
+    allowIndexing: {
+      type: Boolean,
+      default: true,
     },
   },
   {
