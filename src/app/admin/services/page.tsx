@@ -194,13 +194,13 @@ export default function ServicesAdmin() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div className="min-h-screen bg-gray-900">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="mb-6">
+        <div className="mb-6 mt-20">
           <Link href="/admin" className="text-blue-600 hover:text-blue-800">
             ← Back to Admin
           </Link>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white mt-4">
+          <h1 className="text-3xl font-bold text-white mt-4">
             Services Management
           </h1>
           <p className="text-gray-600 dark:text-gray-400 mt-2">
@@ -210,7 +210,7 @@ export default function ServicesAdmin() {
         </div>
 
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-2xl font-semibold text-gray-900 dark:text-white">
+          <h2 className="text-2xl font-semibold text-white">
             Services ({services.length})
           </h2>
           <button
@@ -240,8 +240,8 @@ export default function ServicesAdmin() {
         </div>
 
         {showServiceForm && (
-          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow mb-6">
-            <h3 className="text-lg font-semibold mb-4">
+          <div className="bg-gray-800 text-gray-300 p-6 rounded-lg shadow mb-6">
+            <h3 className="text-lg font-semibold text-white mb-4">
               {editingService ? "Edit" : "Add"} Service
             </h3>
             <form onSubmit={handleServiceSubmit} className="space-y-4">
@@ -253,7 +253,7 @@ export default function ServicesAdmin() {
                   onChange={(e) =>
                     setServiceForm({ ...serviceForm, title: e.target.value })
                   }
-                  className="w-full px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600"
+                  className="w-full px-3 py-2 border rounded-md bg-gray-700 border-gray-600 text-white placeholder-gray-400"
                   required
                 />
                 <p className="text-xs text-gray-500 mt-1">
@@ -271,7 +271,7 @@ export default function ServicesAdmin() {
                       slug: e.target.value.toLowerCase().replace(/\s+/g, "-"),
                     })
                   }
-                  className="w-full px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600"
+                  className="w-full px-3 py-2 border rounded-md bg-gray-700 border-gray-600 text-white placeholder-gray-400"
                   required
                 />
                 <p className="text-xs text-gray-500 mt-1">
@@ -292,7 +292,7 @@ export default function ServicesAdmin() {
                     })
                   }
                   rows={3}
-                  className="w-full px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600"
+                  className="w-full px-3 py-2 border rounded-md bg-gray-700 border-gray-600 text-white placeholder-gray-400"
                   placeholder="Brief description of the service"
                 />
               </div>
@@ -314,7 +314,7 @@ export default function ServicesAdmin() {
                 </p>
               </div>
               <div className="border-t pt-4 mt-4">
-                <h4 className="text-md font-semibold mb-4 text-gray-900 dark:text-white">
+                <h4 className="text-md font-semibold mb-4 text-white">
                   SEO & Meta Information
                 </h4>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -331,7 +331,7 @@ export default function ServicesAdmin() {
                           seoTitle: e.target.value,
                         })
                       }
-                      className="w-full px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600"
+                      className="w-full px-3 py-2 border rounded-md bg-gray-700 border-gray-600 text-white placeholder-gray-400"
                     />
                   </div>
                   <div>
@@ -347,7 +347,7 @@ export default function ServicesAdmin() {
                         })
                       }
                       rows={2}
-                      className="w-full px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600"
+                      className="w-full px-3 py-2 border rounded-md bg-gray-700 border-gray-600 text-white placeholder-gray-400"
                     />
                   </div>
                   <div>
@@ -363,7 +363,7 @@ export default function ServicesAdmin() {
                           seoKeywords: e.target.value,
                         })
                       }
-                      className="w-full px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600"
+                      className="w-full px-3 py-2 border rounded-md bg-gray-700 border-gray-600 text-white placeholder-gray-400"
                       placeholder="keyword1, keyword2, keyword3"
                     />
                   </div>
@@ -392,7 +392,7 @@ export default function ServicesAdmin() {
                   </div>
 
               <div className="border-t pt-4 mt-4">
-                <h4 className="text-md font-semibold mb-4 text-gray-900 dark:text-white">
+                <h4 className="text-md font-semibold mb-4 text-white">
                   Meta Header Tags
                 </h4>
                   <div>
@@ -408,7 +408,7 @@ export default function ServicesAdmin() {
                         })
                       }
                     rows={12}
-                    className="w-full px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600 font-mono text-sm"
+                    className="w-full px-3 py-2 border rounded-md bg-gray-700 border-gray-600 text-white placeholder-gray-400 font-mono text-sm"
                     placeholder='<script type="application/ld+json">&#10;{&#10;  "@context": "https://schema.org",&#10;  "@type": "LocalBusiness",&#10;  "name": "Your Business Name"&#10;}&#10;</script>'
                     />
                   <p className="text-xs text-gray-500 mt-1">
@@ -430,7 +430,7 @@ export default function ServicesAdmin() {
                     }
                     className="mr-2"
                   />
-                  <span className="text-sm">Published</span>
+                  <span className="text-sm text-gray-300">Published</span>
                 </label>
                 <label className="flex items-center">
                   <input
@@ -444,7 +444,7 @@ export default function ServicesAdmin() {
                     }
                     className="mr-2"
                   />
-                  <span className="text-sm">
+                  <span className="text-sm text-gray-300">
                     Allow Search Engine Indexing (uncheck to add noindex meta tag)
                   </span>
                 </label>
@@ -462,7 +462,7 @@ export default function ServicesAdmin() {
                     setShowServiceForm(false);
                     setEditingService(null);
                   }}
-                  className="px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50 dark:border-gray-600 dark:hover:bg-gray-700"
+                  className="px-4 py-2 border border-gray-600 rounded-md hover:bg-gray-700 text-gray-200"
                 >
                   Cancel
                 </button>
@@ -471,33 +471,33 @@ export default function ServicesAdmin() {
           </div>
         )}
 
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden">
-          <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-            <thead className="bg-gray-50 dark:bg-gray-700">
+        <div className="bg-gray-800 rounded-lg shadow overflow-hidden">
+          <table className="min-w-full divide-y divide-gray-700">
+            <thead className="bg-gray-700">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
                   Order
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
                   Title
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
                   Slug
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
                   Status
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
                   Actions
                 </th>
               </tr>
             </thead>
-            <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+            <tbody className="bg-gray-800 divide-y divide-gray-700">
               {services.length === 0 ? (
                 <tr>
                   <td
                     colSpan={5}
-                    className="px-6 py-4 text-center text-gray-500"
+                    className="px-6 py-4 text-center text-gray-400"
                   >
                     No services yet. Click &quot;Add Service&quot; to get
                     started.
@@ -516,7 +516,7 @@ export default function ServicesAdmin() {
                         >
                           ↑
                         </button>
-                        <span className="text-sm text-gray-900 dark:text-white">
+                        <span className="text-sm text-white">
                           {service.order}
                         </span>
                         <button
@@ -529,18 +529,18 @@ export default function ServicesAdmin() {
                         </button>
                       </div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-white">
                       {service.title}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-400">
                       /services/{service.slug}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm">
                       <span
                         className={`px-2 py-1 rounded-full text-xs ${
                           service.isPublished
-                            ? "bg-green-100 text-green-800"
-                            : "bg-gray-100 text-gray-800"
+                            ? "bg-green-900/50 text-green-300"
+                            : "bg-gray-600 text-gray-300"
                         }`}
                       >
                         {service.isPublished ? "Published" : "Draft"}
@@ -550,7 +550,7 @@ export default function ServicesAdmin() {
                       <Link
                         href={`/services/${service.slug}`}
                         target="_blank"
-                        className="text-blue-600 hover:text-blue-900"
+                        className="text-blue-400 hover:text-blue-300"
                       >
                         View
                       </Link>
@@ -562,7 +562,7 @@ export default function ServicesAdmin() {
                       </Link>
                       <button
                         onClick={() => editService(service)}
-                        className="text-blue-600 hover:text-blue-900"
+                        className="text-blue-400 hover:text-blue-300"
                       >
                         Edit
                       </button>

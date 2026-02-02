@@ -82,7 +82,7 @@ function Navbar({ pages, services, industries }: NavbarProps) {
     return icon.startsWith("http") || icon.startsWith("/");
   }, []);
 
-  // Render dropdown item (used for both services and industries)
+  // Render dropdown item (used for both services and industries) - desktop, theme-aligned
   const renderDropdownItem = (
     item: Service | Industry,
     baseUrl: "/services" | "/industries"
@@ -92,32 +92,42 @@ function Navbar({ pages, services, industries }: NavbarProps) {
       href={`${baseUrl}/${item.slug}`}
       prefetch={true}
       onClick={handleLinkClick}
-      className="group flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 transition-all duration-200 border border-transparent hover:border-gray-200 hover:shadow-sm"
+      className="group flex items-center gap-4 p-4 rounded-xl transition-all duration-200 border border-transparent hover:border-[var(--color-primary-end-rgba-30)]"
+      style={{
+        backgroundColor: "rgba(255,255,255,0.06)",
+        color: "var(--color-text-secondary)",
+      }}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.backgroundColor = "rgba(255,255,255,0.12)";
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.backgroundColor = "rgba(255,255,255,0.06)";
+      }}
     >
-      {/* Icon Circle */}
-      <div className="shrink-0 w-12 h-12 rounded-xl flex items-center justify-center theme-bg-white border border-gray-200 shadow-sm group-hover:shadow-md transition-all duration-200"
-        onMouseEnter={(e) => {
-          e.currentTarget.style.borderColor = 'var(--color-primary-end-rgba-30)';
+      {/* Icon */}
+      <div
+        className="shrink-0 w-11 h-11 rounded-xl flex items-center justify-center transition-colors duration-200"
+        style={{
+          color: "var(--color-primary-end)",
+          filter: "grayscale(100%) brightness(0.7) sepia(100%) saturate(1800%) hue-rotate(20deg) brightness(1.25) contrast(1.05)"
         }}
-        onMouseLeave={(e) => {
-          e.currentTarget.style.borderColor = '';
-        }}>
+      >
         {item.icon ? (
           isIconUrl(item.icon) ? (
             <Image
               src={getImageUrl(item.icon)}
               alt={item.title}
-              width={24}
-              height={24}
-              sizes="24px"
+              width={22}
+              height={22}
+              sizes="22px"
               className="object-contain"
             />
           ) : (
-            <span className="text-2xl">{item.icon}</span>
+            <span className="text-xl">{item.icon}</span>
           )
         ) : (
           <svg
-            className="w-6 h-6 text-gray-600"
+            className="w-5 h-5"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -137,26 +147,24 @@ function Navbar({ pages, services, industries }: NavbarProps) {
       </div>
       {/* Content */}
       <div className="flex-1 min-w-0">
-        <h3 className="text-sm font-semibold theme-text-primary theme-hover-primary-end transition-colors">
+        <span className="text-sm font-semibold text-[var(--color-text-secondary)] group-hover:text-[var(--color-primary-end)] transition-colors block">
           {item.title}
-        </h3>
+        </span>
+        {item.description && (
+          <span className="text-xs mt-0.5 line-clamp-2 block" style={{ color: "rgba(255,255,255,0.7)" }}>
+            {item.description}
+          </span>
+        )}
       </div>
-      {/* Arrow Icon */}
-      <div className="shrink-0 flex items-center opacity-0 group-hover:opacity-100 transition-opacity">
-        <svg
-          className="w-4 h-4 theme-text-primary-end transform group-hover:translate-x-1 transition-transform"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M9 5l7 7-7 7"
-          />
-        </svg>
-      </div>
+      <svg
+        className="w-4 h-4 shrink-0 transition-all opacity-70 group-hover:opacity-100 group-hover:translate-x-0.5"
+        style={{ color: "var(--color-primary-end)" }}
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+      </svg>
     </Link>
   );
 
@@ -298,18 +306,23 @@ function Navbar({ pages, services, industries }: NavbarProps) {
                       </button>
                       {servicesDropdownOpen && (
                         <>
-                          {/* Invisible bridge to prevent gap */}
                           <div
-                            className="absolute top-full left-0 right-0 h-3"
+                            className="absolute top-full left-0 right-0 h-2"
                             onMouseEnter={() => setServicesDropdownOpen(true)}
                           />
                           <div
-                            className="absolute top-full left-1/2 -translate-x-1/2 pt-3 w-[650px] max-w-[90vw] z-50"
+                            className="absolute top-full left-1/2 -translate-x-1/2 pt-2 w-[580px] max-w-[90vw] z-50"
                             onMouseEnter={() => setServicesDropdownOpen(true)}
                             onMouseLeave={() => setServicesDropdownOpen(false)}
                           >
-                            <div className="bg-white rounded-2xl shadow-2xl border border-gray-200 p-6 max-h-[80vh] overflow-y-auto animate-in fade-in slide-in-from-top-2 duration-200">
-                              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            <div
+                              className="rounded-2xl overflow-hidden backdrop-blur-xl shadow-xl max-h-[75vh] overflow-y-auto animate-in fade-in slide-in-from-top-2 duration-200"
+                              style={{
+                                backgroundColor: "var(--color-primary-start)",
+                                border: "1px solid var(--color-border-white-30)",
+                              }}
+                            >
+                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 p-4">
                                 {item.services.map((service) =>
                                   renderDropdownItem(service, "/services")
                                 )}
@@ -360,20 +373,25 @@ function Navbar({ pages, services, industries }: NavbarProps) {
                       </button>
                       {industriesDropdownOpen && (
                         <>
-                          {/* Invisible bridge to prevent gap */}
                           <div
-                            className="absolute top-full left-0 right-0 h-3"
+                            className="absolute top-full left-0 right-0 h-2"
                             onMouseEnter={() => setIndustriesDropdownOpen(true)}
                           />
                           <div
-                            className="absolute top-full left-1/2 -translate-x-1/2 pt-3 w-[650px] max-w-[90vw] z-50"
+                            className="absolute top-full left-1/2 -translate-x-1/2 pt-2 w-[580px] max-w-[90vw] z-50"
                             onMouseEnter={() => setIndustriesDropdownOpen(true)}
                             onMouseLeave={() =>
                               setIndustriesDropdownOpen(false)
                             }
                           >
-                            <div className="bg-white rounded-2xl shadow-2xl border border-gray-200 p-6 max-h-[80vh] overflow-y-auto animate-in fade-in slide-in-from-top-2 duration-200">
-                              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            <div
+                              className="rounded-2xl overflow-hidden backdrop-blur-xl shadow-xl max-h-[75vh] overflow-y-auto animate-in fade-in slide-in-from-top-2 duration-200"
+                              style={{
+                                backgroundColor: "var(--color-primary-start)",
+                                border: "1px solid var(--color-border-white-30)",
+                              }}
+                            >
+                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 p-4">
                                 {item.industries.map((industry) =>
                                   renderDropdownItem(industry, "/industries")
                                 )}
@@ -449,11 +467,15 @@ function Navbar({ pages, services, industries }: NavbarProps) {
 
         {/* Mobile Menu */}
         {mobileMenuOpen && (
-          <div 
-            className="lg:hidden py-4 animate-in slide-in-from-top duration-200"
-            style={{ borderTop: "1px solid var(--color-border-white-30)" }}
+          <div
+            className="lg:hidden animate-in slide-in-from-top duration-200 rounded-2xl -mx-1 -mb-1 overflow-hidden backdrop-blur-md"
+            style={{
+              borderTop: "1px solid var(--color-border-white-30)",
+              backgroundColor: "rgba(42, 68, 94, 0.8)",
+              boxShadow: "0 20px 40px -12px rgba(0,0,0,0.35)",
+            }}
           >
-            <div className="flex flex-col space-y-2">
+            <div className="px-3 py-4 flex flex-col gap-1">
               {navItems.map((item) => {
                 if (item.type === "page") {
                   const active = isActive(item.slug);
@@ -462,10 +484,10 @@ function Navbar({ pages, services, industries }: NavbarProps) {
                       key={item.id}
                       href={`/${item.slug === "home" ? "" : item.slug}`}
                       onClick={() => setMobileMenuOpen(false)}
-                      className="px-4 py-3 text-base font-medium rounded-lg transition-colors"
+                      className="px-4 py-3.5 text-[15px] font-medium rounded-xl transition-colors active:scale-[0.98]"
                       style={{
                         color: active ? "var(--color-primary-end)" : "var(--color-text-secondary)",
-                        backgroundColor: active ? "var(--color-primary-start-rgba-20)" : "transparent"
+                        backgroundColor: active ? "rgba(255,255,255,0.12)" : "transparent",
                       }}
                     >
                       {item.title}
@@ -473,7 +495,7 @@ function Navbar({ pages, services, industries }: NavbarProps) {
                   );
                 } else if (item.type === "services") {
                   return (
-                    <div key="services" className="space-y-2">
+                    <div key="services" className="rounded-xl overflow-hidden">
                       <button
                         onClick={(e) => {
                           e.preventDefault();
@@ -485,32 +507,28 @@ function Navbar({ pages, services, industries }: NavbarProps) {
                           e.stopPropagation();
                           setServicesDropdownOpen(!servicesDropdownOpen);
                         }}
-                        className="w-full flex items-center justify-between px-4 py-3 text-base font-medium rounded-lg transition-colors"
-                        style={{ 
+                        className="w-full flex items-center justify-between px-4 py-3.5 text-[15px] font-medium rounded-xl transition-colors active:scale-[0.98]"
+                        style={{
                           touchAction: "manipulation",
+                          WebkitTapHighlightColor: "transparent",
                           color: "var(--color-text-secondary)",
-                          backgroundColor: servicesDropdownOpen ? "var(--color-primary-start-rgba-20)" : "transparent"
+                          backgroundColor: servicesDropdownOpen ? "rgba(255,255,255,0.12)" : "transparent",
                         }}
                       >
                         <span>Services</span>
                         <svg
-                          className={`w-5 h-5 transition-transform pointer-events-none ${
+                          className={`w-5 h-5 opacity-80 transition-transform duration-200 ${
                             servicesDropdownOpen ? "rotate-180" : ""
                           }`}
                           fill="none"
                           stroke="currentColor"
                           viewBox="0 0 24 24"
                         >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M19 9l-7 7-7-7"
-                          />
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                         </svg>
                       </button>
                       {servicesDropdownOpen && (
-                        <div className="pl-4 space-y-1">
+                        <div className="pl-4 pr-2 pb-2 space-y-0.5 border-l-2 border-[var(--color-primary-end-rgba-30)] ml-4">
                           {item.services.map((service) => (
                             <button
                               key={service._id}
@@ -528,12 +546,11 @@ function Navbar({ pages, services, industries }: NavbarProps) {
                                 setServicesDropdownOpen(false);
                                 router.push(`/services/${service.slug}`);
                               }}
-                              className="block w-full text-left px-4 py-2 text-sm rounded-lg transition-colors cursor-pointer relative z-10"
+                              className="block w-full text-left px-3 py-2.5 text-sm font-medium rounded-lg transition-colors cursor-pointer active:scale-[0.98]"
                               style={{
                                 touchAction: "manipulation",
                                 WebkitTapHighlightColor: "transparent",
-                                color: "var(--color-text-secondary)",
-                                backgroundColor: "var(--color-primary-start-rgba-10)"
+                                color: "rgba(255,255,255,0.9)",
                               }}
                             >
                               {service.title}
@@ -545,7 +562,7 @@ function Navbar({ pages, services, industries }: NavbarProps) {
                   );
                 } else {
                   return (
-                    <div key="industries" className="space-y-2">
+                    <div key="industries" className="rounded-xl overflow-hidden">
                       <button
                         onClick={(e) => {
                           e.preventDefault();
@@ -557,32 +574,28 @@ function Navbar({ pages, services, industries }: NavbarProps) {
                           e.stopPropagation();
                           setIndustriesDropdownOpen(!industriesDropdownOpen);
                         }}
-                        className="w-full flex items-center justify-between px-4 py-3 text-base font-medium rounded-lg transition-colors"
-                        style={{ 
+                        className="w-full flex items-center justify-between px-4 py-3.5 text-[15px] font-medium rounded-xl transition-colors active:scale-[0.98]"
+                        style={{
                           touchAction: "manipulation",
+                          WebkitTapHighlightColor: "transparent",
                           color: "var(--color-text-secondary)",
-                          backgroundColor: industriesDropdownOpen ? "var(--color-primary-start-rgba-20)" : "transparent"
+                          backgroundColor: industriesDropdownOpen ? "rgba(255,255,255,0.12)" : "transparent",
                         }}
                       >
                         <span>Industries</span>
                         <svg
-                          className={`w-5 h-5 transition-transform pointer-events-none ${
+                          className={`w-5 h-5 opacity-80 transition-transform duration-200 ${
                             industriesDropdownOpen ? "rotate-180" : ""
                           }`}
                           fill="none"
                           stroke="currentColor"
                           viewBox="0 0 24 24"
                         >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M19 9l-7 7-7-7"
-                          />
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                         </svg>
                       </button>
                       {industriesDropdownOpen && (
-                        <div className="pl-4 space-y-1">
+                        <div className="pl-4 pr-2 pb-2 space-y-0.5 border-l-2 border-[var(--color-primary-end-rgba-30)] ml-4">
                           {item.industries.map((industry) => (
                             <button
                               key={industry._id}
@@ -600,12 +613,11 @@ function Navbar({ pages, services, industries }: NavbarProps) {
                                 setIndustriesDropdownOpen(false);
                                 router.push(`/industries/${industry.slug}`);
                               }}
-                              className="block w-full text-left px-4 py-2 text-sm rounded-lg transition-colors cursor-pointer relative z-10"
+                              className="block w-full text-left px-3 py-2.5 text-sm font-medium rounded-lg transition-colors cursor-pointer active:scale-[0.98]"
                               style={{
                                 touchAction: "manipulation",
                                 WebkitTapHighlightColor: "transparent",
-                                color: "var(--color-text-secondary)",
-                                backgroundColor: "var(--color-primary-start-rgba-10)"
+                                color: "rgba(255,255,255,0.9)",
                               }}
                             >
                               {industry.title}
@@ -617,17 +629,20 @@ function Navbar({ pages, services, industries }: NavbarProps) {
                   );
                 }
               })}
-              <Link
-                href="/contact"
-                onClick={() => setMobileMenuOpen(false)}
-                className="mx-4 mt-4 px-6 py-3 text-sm font-semibold text-center rounded-lg transition-all duration-200 shadow-md"
-                style={{
-                  background: "var(--color-primary-gradient)",
-                  color: "var(--color-text-secondary)"
-                }}
-              >
-                Get started
-              </Link>
+              <div className="mt-3 pt-3" style={{ borderTop: "1px solid var(--color-border-white-30)" }}>
+                <Link
+                  href="/contact"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="flex items-center justify-center w-full px-5 py-3.5 text-[15px] font-semibold rounded-xl transition-all duration-200 active:scale-[0.98]"
+                  style={{
+                    backgroundColor: "var(--color-primary-end)",
+                    color: "var(--color-text-primary)",
+                    boxShadow: "0 4px 14px rgba(0,0,0,0.2)",
+                  }}
+                >
+                  Get started
+                </Link>
+              </div>
             </div>
           </div>
         )}

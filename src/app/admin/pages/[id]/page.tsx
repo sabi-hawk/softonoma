@@ -1168,13 +1168,13 @@ export default function PageSectionsAdmin() {
   const isContact = isContactPage(page.slug, page.title);
   if (isContact) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+      <div className="min-h-screen bg-gray-900">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="mb-6">
+          <div className="mb-6 mt-20">
             <Link href="/admin" className="text-blue-600 hover:text-blue-800">
               ← Back to Admin
             </Link>
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white mt-4">
+            <h1 className="text-3xl font-bold text-white mt-4">
               {page.title}
             </h1>
             <div className="mt-6 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-6">
@@ -1221,19 +1221,19 @@ export default function PageSectionsAdmin() {
 
   // All pages use sections approach
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div className="min-h-screen bg-gray-900">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-6">
           <Link href="/admin" className="text-blue-600 hover:text-blue-800">
             ← Back to Admin
           </Link>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white mt-4">
+          <h1 className="text-3xl font-bold text-white mt-4">
             Sections for: {page.title}
           </h1>
         </div>
 
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-2xl font-semibold text-gray-900 dark:text-white">
+          <h2 className="text-2xl font-semibold text-white">
             Sections ({sections.length})
           </h2>
           <div className="flex gap-3">
@@ -1259,7 +1259,7 @@ export default function PageSectionsAdmin() {
         {showSectionForm && (
           <div className="mb-6 space-y-6">
             {/* Form Panel */}
-            <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
+            <div className="bg-gray-800 p-6 rounded-lg shadow">
               <div className="flex justify-between items-center mb-4">
                 <h3 className="text-lg font-semibold">
                   {editingSection ? "Edit" : "Add"} Section
@@ -3190,7 +3190,7 @@ export default function PageSectionsAdmin() {
                       setEditingSection(null);
                       resetForm();
                     }}
-                    className="px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50 dark:border-gray-600 dark:hover:bg-gray-700"
+                    className="px-4 py-2 border border-gray-600 rounded-md hover:bg-gray-700 text-gray-200"
                   >
                     Cancel
                   </button>
@@ -3199,10 +3199,10 @@ export default function PageSectionsAdmin() {
             </div>
 
             {/* Preview Panel - Moved to Bottom */}
-            <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
+            <div className="bg-gray-800 p-6 rounded-lg shadow">
               <h3 className="text-xl font-semibold mb-4">Live Preview</h3>
               <div className="border-2 border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
-                <div className="min-h-[400px] max-h-[800px] overflow-y-auto bg-gray-50 dark:bg-gray-900">
+                <div className="min-h-[400px] max-h-[800px] overflow-y-auto bg-gray-900">
                   <SectionRenderer section={previewSection} />
                 </div>
               </div>
@@ -3211,28 +3211,28 @@ export default function PageSectionsAdmin() {
         )}
 
         {/* Sections List */}
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden">
-          <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-            <thead className="bg-gray-50 dark:bg-gray-700">
+        <div className="bg-gray-800 rounded-lg shadow overflow-hidden">
+          <table className="min-w-full divide-y divide-gray-700">
+            <thead className="bg-gray-700">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
                   Order
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
                   Type
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
                   Title
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
                   Status
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
                   Actions
                 </th>
               </tr>
             </thead>
-            <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+            <tbody className="bg-gray-800 divide-y divide-gray-700">
               {sections.length === 0 ? (
                 <tr>
                   <td
@@ -3256,7 +3256,7 @@ export default function PageSectionsAdmin() {
                         >
                           ↑
                         </button>
-                        <span className="text-sm text-gray-900 dark:text-white">
+                        <span className="text-sm text-white">
                           {section.order}
                         </span>
                         <button
@@ -3269,10 +3269,10 @@ export default function PageSectionsAdmin() {
                         </button>
                       </div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white capitalize">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-white capitalize">
                       {section.type}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-white">
                       {section.content?.title || "-"}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm">
@@ -3309,9 +3309,9 @@ export default function PageSectionsAdmin() {
 
         {/* Full Page Preview - At the very bottom */}
         {showPagePreview && (
-          <div className="mt-6 bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
+          <div className="mt-6 bg-gray-800 p-6 rounded-lg shadow">
             <div className="flex justify-between items-center mb-4">
-              <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
+              <h3 className="text-xl font-semibold text-white">
                 Full Page Preview
               </h3>
               <div className="flex items-center gap-3">
@@ -3333,7 +3333,7 @@ export default function PageSectionsAdmin() {
             </div>
             <div className="border-2 border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
               <div
-                className="bg-gray-50 dark:bg-gray-900 overflow-y-auto"
+                className="bg-gray-900 overflow-y-auto"
                 style={{ maxHeight: "80vh" }}
               >
                 {sections.length === 0 ? (
