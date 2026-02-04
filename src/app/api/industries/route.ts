@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import connectDB from "@/lib/mongodb";
 import Industry, { IIndustry } from "@/models/Industry";
+import Page from "@/models/Page";
 import { getDefaultIndustryTemplateForTitle } from "@/lib/industry-template";
 
 // GET all industries
@@ -92,6 +93,28 @@ export async function POST(request: NextRequest) {
         { success: false, error: "Industry creation failed" },
         { status: 500 }
       );
+    }
+
+    // Auto-create industries listing page if it doesn't exist
+    try {
+      const existingIndustriesPage = await Page.findOne({ slug: "industries" });
+      if (!existingIndustriesPage) {
+        // Get the highest order value to set new page order
+        const maxOrderPage = await Page.findOne().sort({ order: -1 });
+        const newPageOrder =
+          maxOrderPage?.order !== undefined ? (maxOrderPage.order + 1) : 0;
+
+        await Page.create({
+          title: "Industries",
+          slug: "industries",
+          content: "",
+          isPublished: true,
+          order: newPageOrder,
+        });
+      }
+    } catch (pageError) {
+      // Log error but don't fail industry creation if page creation fails
+      console.error("Error auto-creating industries page:", pageError);
     }
 
     // Serialize the industry document

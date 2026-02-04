@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import connectDB from "@/lib/mongodb";
 import Service, { IService } from "@/models/Service";
+import Page from "@/models/Page";
 import { getDefaultServiceTemplateForTitle } from "@/lib/service-template";
 
 // GET all services
@@ -100,6 +101,28 @@ export async function POST(request: NextRequest) {
         { success: false, error: "Service creation failed" },
         { status: 500 }
       );
+    }
+
+    // Auto-create services listing page if it doesn't exist
+    try {
+      const existingServicesPage = await Page.findOne({ slug: "services" });
+      if (!existingServicesPage) {
+        // Get the highest order value to set new page order
+        const maxOrderPage = await Page.findOne().sort({ order: -1 });
+        const newPageOrder =
+          maxOrderPage?.order !== undefined ? (maxOrderPage.order + 1) : 0;
+
+        await Page.create({
+          title: "Services",
+          slug: "services",
+          content: "",
+          isPublished: true,
+          order: newPageOrder,
+        });
+      }
+    } catch (pageError) {
+      // Log error but don't fail service creation if page creation fails
+      console.error("Error auto-creating services page:", pageError);
     }
 
     const serializedService = {
