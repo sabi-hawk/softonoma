@@ -36,10 +36,11 @@ export default function HeroSection({
   return (
     <section
       ref={heroSectionRef as React.RefObject<HTMLElement>}
-      className="relative py-12 sm:py-16 md:py-20 lg:py-24 overflow-hidden theme-bg-black"
+      className="relative pt-24 sm:pt-20 md:pt-32 lg:pt-36 pb-12 sm:pb-16 md:pb-20 lg:pb-24 overflow-hidden theme-bg-black"
     >
+      <div className="absolute inset-0 bg-black z-0" />
       {(backgroundImage || backgroundVideo) && (
-        <div className="absolute inset-0">
+        <div className="absolute inset-0 z-[1]">
           {backgroundImage && (
             <div className="relative w-full h-full">
               <Image
@@ -67,8 +68,8 @@ export default function HeroSection({
               className="absolute inset-0 w-full h-full object-cover"
               style={{
                 opacity: heroVideoReady ? backgroundOpacity : 0,
-                zIndex: 1,
-                transition: "opacity 0.3s ease-in",
+                zIndex: 2,
+                transition: "opacity 0.5s ease-in",
               }}
             >
               <source src={backgroundVideo} type="video/mp4" />
@@ -79,27 +80,29 @@ export default function HeroSection({
       )}
 
       {(backgroundImage || backgroundVideo) && (
-        <div
-          className="absolute inset-0 theme-bg-black"
-          style={{ opacity: 0.5 }}
-        />
+        <div className="absolute inset-0 theme-bg-black" style={{ opacity: 0.5 }} />
       )}
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="max-w-3xl">
+        <div className="max-w-4xl text-left">
           {breadcrumbs && (
-            <div className="mb-3 sm:mb-4 text-xs sm:text-sm theme-text-white opacity-80">
+            <div className="text-xs sm:text-sm text-white mb-3 sm:mb-4 opacity-90">
               {breadcrumbs}
             </div>
           )}
-          <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-3 sm:mb-4 theme-text-white">
-            {title}
-          </h1>
+
+          {title && (
+            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold theme-text-white mb-3 sm:mb-4 leading-tight">
+              {title}
+            </h1>
+          )}
+
           {subtitle && (
-            <p className="text-lg sm:text-xl md:text-2xl theme-primary-mid-dark mb-3 sm:mb-4">
+            <p className="text-lg sm:text-xl theme-text-white mb-3 sm:mb-4 leading-tight" style={{ opacity: 0.95 }}>
               {subtitle}
             </p>
           )}
+
           {description && (
             <p
               className="text-sm sm:text-base md:text-lg theme-text-white mb-4 sm:mb-6 max-w-3xl leading-relaxed"
@@ -108,17 +111,19 @@ export default function HeroSection({
               {description}
             </p>
           )}
-          {primaryButtonText && (
-            <Link
-              href={primaryButtonLink || "#contact"}
-              className="inline-block px-5 py-2.5 sm:px-6 sm:py-3 theme-bg-primary-mid-dark text-white rounded-lg font-semibold text-sm sm:text-base transition-all hover:opacity-90 hover:shadow-lg"
-            >
-              {primaryButtonText}
-            </Link>
-          )}
+
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 items-start">
+            {primaryButtonText && (
+              <Link
+                href={primaryButtonLink || "#contact"}
+                className="inline-block px-6 py-2.5 sm:px-8 sm:py-4 theme-bg-primary-mid-dark text-white rounded-lg font-semibold text-sm sm:text-base transition-all hover:opacity-90 hover:shadow-lg"
+              >
+                {primaryButtonText}
+              </Link>
+            )}
+          </div>
         </div>
       </div>
     </section>
   );
 }
-

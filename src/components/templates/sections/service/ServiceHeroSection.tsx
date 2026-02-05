@@ -34,7 +34,7 @@ export default function ServiceHeroSection({
   return (
     <section
       ref={heroSectionRef as React.RefObject<HTMLElement>}
-      className="relative py-12 sm:py-16 md:py-20 lg:py-24 overflow-hidden theme-bg-black"
+      className="relative pt-24 sm:pt-20 md:pt-32 lg:pt-36 pb-12 sm:pb-16 md:pb-20 lg:pb-24 overflow-hidden theme-bg-black"
     >
       <div className="absolute inset-0 bg-black z-0"></div>
       {(backgroundImage || backgroundVideo) && (
