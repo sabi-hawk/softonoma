@@ -862,12 +862,18 @@ export default function AdminPanel() {
                 dropdown menu.
               </p>
             </div>
-            <div className="mb-4">
+            <div className="mb-4 flex gap-3">
               <Link
                 href="/admin/services"
                 className="inline-block bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors"
               >
                 Manage Services →
+              </Link>
+              <Link
+                href="/admin/services/listing"
+                className="inline-block bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition-colors"
+              >
+                Edit Listing Page →
               </Link>
             </div>
             <div className="bg-gray-700 rounded-lg p-4">
@@ -940,12 +946,18 @@ export default function AdminPanel() {
                 Industries dropdown menu.
               </p>
             </div>
-            <div className="mb-4">
+            <div className="mb-4 flex gap-3">
               <Link
                 href="/admin/industries"
                 className="inline-block bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors"
               >
                 Manage Industries →
+              </Link>
+              <Link
+                href="/admin/industries/listing"
+                className="inline-block bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition-colors"
+              >
+                Edit Listing Page →
               </Link>
             </div>
             <div className="bg-gray-700 rounded-lg p-4">

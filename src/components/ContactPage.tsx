@@ -87,8 +87,8 @@ export default function ContactPage({
 
   return (
     <main className="min-h-screen theme-bg-white">
-      {/* Professional Hero Section */}
-      <section className="relative py-20 md:py-32 px-4 sm:px-6 lg:px-8 overflow-hidden theme-bg-black">
+      {/* Professional Hero Section - top padding matches hero for navbar clearance */}
+      <section className="relative pt-24 sm:pt-20 md:pt-32 lg:pt-36 pb-20 md:pb-32 px-4 sm:px-6 lg:px-8 overflow-hidden theme-bg-black">
         {/* Background Pattern - Same as Footer */}
         <div className="absolute inset-0 opacity-5">
           <div

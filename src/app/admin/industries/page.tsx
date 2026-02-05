@@ -200,20 +200,39 @@ export default function IndustriesAdmin() {
           <Link href="/admin" className="text-blue-400 hover:text-blue-300">
             ← Back to Admin
           </Link>
-          <h1 className="text-3xl font-bold text-white mt-4">
-            Industries Management
-          </h1>
-          <p className="text-gray-400 mt-2">
-            Manage your industries. Each industry creates a pre-filled industry
-            page that you can customize.
-          </p>
+          <div className="mt-4">
+            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4">
+              <div>
+                <h1 className="text-3xl font-bold text-white">
+                  Industries Management
+                </h1>
+                <p className="text-gray-400 mt-2">
+                  Manage your industries. Each industry creates a pre-filled industry
+                  page that you can customize.
+                </p>
+              </div>
+              <Link
+                href="/admin/industries/listing"
+                className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition-colors whitespace-nowrap self-start sm:self-auto"
+              >
+                ✏️ Edit Listing Page
+              </Link>
+            </div>
+          </div>
         </div>
 
-        <div className="flex justify-between items-center mb-4">
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-4">
           <h2 className="text-2xl font-semibold text-white">
             Industries ({industries.length})
           </h2>
-          <button
+          <div className="flex gap-2">
+            <Link
+              href="/admin/industries/listing"
+              className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition-colors whitespace-nowrap"
+            >
+              Edit Listing Page
+            </Link>
+            <button
             onClick={() => {
               setEditingIndustry(null);
               setIndustryForm({
@@ -237,6 +256,7 @@ export default function IndustriesAdmin() {
           >
             + Add Industry
           </button>
+          </div>
         </div>
 
         {showIndustryForm && (

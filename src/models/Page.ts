@@ -1,12 +1,30 @@
 import mongoose, { Schema, Document } from "mongoose";
 
+export interface IPageConfig {
+  hero?: {
+    title?: string;
+    description?: string;
+    backgroundImage?: string;
+    backgroundColor?: string;
+    showHero?: boolean;
+  };
+  display?: {
+    cardsPerRow?: number; // 2, 3, or 4
+    cardStyle?: string; // "minimal", "elevated", "outlined"
+    showDescriptions?: boolean;
+    showIcons?: boolean;
+  };
+  [key: string]: unknown;
+}
+
 export interface IPage extends Document {
   title: string;
   slug: string;
   content: string;
   isPublished: boolean;
   order: number;
-  templateType?: "homepage" | "standard" | string; // "standard" = uses sections, "homepage" = uses full page template
+  templateType?: "homepage" | "standard" | "services-listing" | "industries-listing" | string; // "standard" = uses sections, "homepage" = uses full page template, "services-listing" and "industries-listing" = custom listing pages
+  pageConfig?: IPageConfig;
   seoTitle?: string;
   seoDescription?: string;
   seoKeywords?: string;
@@ -51,8 +69,12 @@ const PageSchema: Schema = new Schema(
     },
     templateType: {
       type: String,
-      enum: ["homepage", "standard"],
+      enum: ["homepage", "standard", "services-listing", "industries-listing"],
       default: "standard",
+    },
+    pageConfig: {
+      type: Schema.Types.Mixed,
+      default: {},
     },
     seoTitle: {
       type: String,

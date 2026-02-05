@@ -278,32 +278,47 @@ function Navbar({ pages, services, industries }: NavbarProps) {
                         setIndustriesDropdownOpen(false);
                       }}
                     >
-                      <button
-                        onClick={() => {
-                          setServicesDropdownOpen(!servicesDropdownOpen);
-                          setIndustriesDropdownOpen(false);
-                        }}
-                        className="px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200 flex items-center gap-1.5"
+                      <div className="px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200 flex items-center gap-1.5"
                         style={{ 
-                          color: "var(--color-text-secondary)",
                           backgroundColor: servicesDropdownOpen ? "var(--color-primary-start-rgba-20)" : "transparent"
                         }}
                       >
-                        Services
-                        <svg
-                          className={`w-4 h-4 transition-transform duration-200 ${
-                            servicesDropdownOpen ? "rotate-180" : ""
-                          }`}
-                          fill="none"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth="2"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
+                        <Link
+                          href="/services"
+                          className="flex-1"
+                          style={{ 
+                            color: "var(--color-text-secondary)"
+                          }}
                         >
-                          <path d="M19 9l-7 7-7-7"></path>
-                        </svg>
-                      </button>
+                          Services
+                        </Link>
+                        <button
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            setServicesDropdownOpen(!servicesDropdownOpen);
+                            setIndustriesDropdownOpen(false);
+                          }}
+                          className="flex items-center justify-center"
+                          style={{ 
+                            color: "var(--color-text-secondary)"
+                          }}
+                        >
+                          <svg
+                            className={`w-4 h-4 transition-transform duration-200 ${
+                              servicesDropdownOpen ? "rotate-180" : ""
+                            }`}
+                            fill="none"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                          >
+                            <path d="M19 9l-7 7-7-7"></path>
+                          </svg>
+                        </button>
+                      </div>
                       {servicesDropdownOpen && (
                         <>
                           <div
@@ -345,32 +360,47 @@ function Navbar({ pages, services, industries }: NavbarProps) {
                         setServicesDropdownOpen(false);
                       }}
                     >
-                      <button
-                        onClick={() => {
-                          setIndustriesDropdownOpen(!industriesDropdownOpen);
-                          setServicesDropdownOpen(false);
-                        }}
-                        className="px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200 flex items-center gap-1.5"
+                      <div className="px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200 flex items-center gap-1.5"
                         style={{ 
-                          color: "var(--color-text-secondary)",
                           backgroundColor: industriesDropdownOpen ? "var(--color-primary-start-rgba-20)" : "transparent"
                         }}
                       >
-                        Industries
-                        <svg
-                          className={`w-4 h-4 transition-transform duration-200 ${
-                            industriesDropdownOpen ? "rotate-180" : ""
-                          }`}
-                          fill="none"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth="2"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
+                        <Link
+                          href="/industries"
+                          className="flex-1"
+                          style={{ 
+                            color: "var(--color-text-secondary)"
+                          }}
                         >
-                          <path d="M19 9l-7 7-7-7"></path>
-                        </svg>
-                      </button>
+                          Industries
+                        </Link>
+                        <button
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            setIndustriesDropdownOpen(!industriesDropdownOpen);
+                            setServicesDropdownOpen(false);
+                          }}
+                          className="flex items-center justify-center"
+                          style={{ 
+                            color: "var(--color-text-secondary)"
+                          }}
+                        >
+                          <svg
+                            className={`w-4 h-4 transition-transform duration-200 ${
+                              industriesDropdownOpen ? "rotate-180" : ""
+                            }`}
+                            fill="none"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                          >
+                            <path d="M19 9l-7 7-7-7"></path>
+                          </svg>
+                        </button>
+                      </div>
                       {industriesDropdownOpen && (
                         <>
                           <div
@@ -496,37 +526,53 @@ function Navbar({ pages, services, industries }: NavbarProps) {
                 } else if (item.type === "services") {
                   return (
                     <div key="services" className="rounded-xl overflow-hidden">
-                      <button
-                        onClick={(e) => {
-                          e.preventDefault();
-                          e.stopPropagation();
-                          setServicesDropdownOpen(!servicesDropdownOpen);
-                        }}
-                        onTouchEnd={(e) => {
-                          e.preventDefault();
-                          e.stopPropagation();
-                          setServicesDropdownOpen(!servicesDropdownOpen);
-                        }}
-                        className="w-full flex items-center justify-between px-4 py-3.5 text-[15px] font-medium rounded-xl transition-colors active:scale-[0.98]"
+                      <div className="w-full flex items-center justify-between px-4 py-3.5 text-[15px] font-medium rounded-xl transition-colors"
                         style={{
-                          touchAction: "manipulation",
-                          WebkitTapHighlightColor: "transparent",
-                          color: "var(--color-text-secondary)",
                           backgroundColor: servicesDropdownOpen ? "rgba(255,255,255,0.12)" : "transparent",
                         }}
                       >
-                        <span>Services</span>
-                        <svg
-                          className={`w-5 h-5 opacity-80 transition-transform duration-200 ${
-                            servicesDropdownOpen ? "rotate-180" : ""
-                          }`}
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
+                        <Link
+                          href="/services"
+                          onClick={() => setMobileMenuOpen(false)}
+                          className="flex-1 active:scale-[0.98]"
+                          style={{
+                            touchAction: "manipulation",
+                            WebkitTapHighlightColor: "transparent",
+                            color: "var(--color-text-secondary)",
+                          }}
                         >
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                        </svg>
-                      </button>
+                          Services
+                        </Link>
+                        <button
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            setServicesDropdownOpen(!servicesDropdownOpen);
+                          }}
+                          onTouchEnd={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            setServicesDropdownOpen(!servicesDropdownOpen);
+                          }}
+                          className="flex items-center justify-center active:scale-[0.98]"
+                          style={{
+                            touchAction: "manipulation",
+                            WebkitTapHighlightColor: "transparent",
+                            color: "var(--color-text-secondary)",
+                          }}
+                        >
+                          <svg
+                            className={`w-5 h-5 opacity-80 transition-transform duration-200 ${
+                              servicesDropdownOpen ? "rotate-180" : ""
+                            }`}
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                          </svg>
+                        </button>
+                      </div>
                       {servicesDropdownOpen && (
                         <div className="pl-4 pr-2 pb-2 space-y-0.5 border-l-2 border-[var(--color-primary-end-rgba-30)] ml-4">
                           {item.services.map((service) => (
@@ -563,37 +609,53 @@ function Navbar({ pages, services, industries }: NavbarProps) {
                 } else {
                   return (
                     <div key="industries" className="rounded-xl overflow-hidden">
-                      <button
-                        onClick={(e) => {
-                          e.preventDefault();
-                          e.stopPropagation();
-                          setIndustriesDropdownOpen(!industriesDropdownOpen);
-                        }}
-                        onTouchEnd={(e) => {
-                          e.preventDefault();
-                          e.stopPropagation();
-                          setIndustriesDropdownOpen(!industriesDropdownOpen);
-                        }}
-                        className="w-full flex items-center justify-between px-4 py-3.5 text-[15px] font-medium rounded-xl transition-colors active:scale-[0.98]"
+                      <div className="w-full flex items-center justify-between px-4 py-3.5 text-[15px] font-medium rounded-xl transition-colors"
                         style={{
-                          touchAction: "manipulation",
-                          WebkitTapHighlightColor: "transparent",
-                          color: "var(--color-text-secondary)",
                           backgroundColor: industriesDropdownOpen ? "rgba(255,255,255,0.12)" : "transparent",
                         }}
                       >
-                        <span>Industries</span>
-                        <svg
-                          className={`w-5 h-5 opacity-80 transition-transform duration-200 ${
-                            industriesDropdownOpen ? "rotate-180" : ""
-                          }`}
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
+                        <Link
+                          href="/industries"
+                          onClick={() => setMobileMenuOpen(false)}
+                          className="flex-1 active:scale-[0.98]"
+                          style={{
+                            touchAction: "manipulation",
+                            WebkitTapHighlightColor: "transparent",
+                            color: "var(--color-text-secondary)",
+                          }}
                         >
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                        </svg>
-                      </button>
+                          Industries
+                        </Link>
+                        <button
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            setIndustriesDropdownOpen(!industriesDropdownOpen);
+                          }}
+                          onTouchEnd={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            setIndustriesDropdownOpen(!industriesDropdownOpen);
+                          }}
+                          className="flex items-center justify-center active:scale-[0.98]"
+                          style={{
+                            touchAction: "manipulation",
+                            WebkitTapHighlightColor: "transparent",
+                            color: "var(--color-text-secondary)",
+                          }}
+                        >
+                          <svg
+                            className={`w-5 h-5 opacity-80 transition-transform duration-200 ${
+                              industriesDropdownOpen ? "rotate-180" : ""
+                            }`}
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                          </svg>
+                        </button>
+                      </div>
                       {industriesDropdownOpen && (
                         <div className="pl-4 pr-2 pb-2 space-y-0.5 border-l-2 border-[var(--color-primary-end-rgba-30)] ml-4">
                           {item.industries.map((industry) => (
