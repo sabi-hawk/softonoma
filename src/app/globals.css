@@ -22,6 +22,7 @@
   --color-bg-primary: #ffffff; /* White */
   --color-bg-secondary: #edf2f7; /* Light grey */
   --color-bg-overlay: rgba(255, 255, 255, 0.9);
+  --color-listing-hero-bg: #0d1520; /* Dark hero for Services/Industries listing pages */
 
   /* White to Light Grey Gradient */
   --color-white-light-gradient: linear-gradient(

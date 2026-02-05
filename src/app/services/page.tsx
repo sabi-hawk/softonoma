@@ -29,7 +29,7 @@ export default async function ServicesPage() {
   if (!page) {
     return (
       <main className="min-h-screen">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 sm:pt-20 md:pt-32 lg:pt-36 pb-12">
           <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-6">
             Services
           </h1>
@@ -114,7 +114,7 @@ export default async function ServicesPage() {
         </div>
       ) : (
         /* Fallback to default listing if no sections */
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 sm:pt-20 md:pt-32 lg:pt-36 pb-12">
           <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-6">
             {page.title}
           </h1>
