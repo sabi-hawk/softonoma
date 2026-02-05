@@ -34,6 +34,9 @@ const nextConfig: NextConfig = {
       { protocol: 'https', hostname: 'ik.imagekit.io', pathname: '/**' },
       { protocol: 'https', hostname: 'cloud.appwrite.io', pathname: '/**' },
       { protocol: 'https', hostname: 'images.unsplash.com', pathname: '/**' },
+      // Partner / external logos (add more hostnames as needed)
+      { protocol: 'https', hostname: 'saigontechnology.com', pathname: '/**' },
+      { protocol: 'http', hostname: 'saigontechnology.com', pathname: '/**' },
       // Fallback for dev without CDN; remove in prod or keep for local S3
       { protocol: 'https', hostname: 'softonoma-s3-bucket.s3.eu-north-1.amazonaws.com', pathname: '/**' },
     ],

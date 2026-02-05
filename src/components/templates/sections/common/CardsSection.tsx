@@ -1,10 +1,13 @@
+import Image from "next/image";
 import { getBackgroundStyle, getDefaultBackground } from "@/lib/section-helpers";
+import { getImageUrl } from "@/lib/image-utils";
 
 interface CardItem {
   quote?: string;
   author?: string;
   role?: string;
   company?: string;
+  image?: string;
 }
 
 interface CardsSectionProps {
@@ -31,7 +34,6 @@ export default function CardsSection({
   title,
   description,
   items,
-  showStars = true,
   backgroundColor,
   itemsToShow,
   mobileItemsToShow,
@@ -45,6 +47,7 @@ export default function CardsSection({
   getVisibleItems,
   getCurrentSlideIndex,
   totalSlides,
+  showStars: _showStars, // kept for API compat; design matches section (no stars)
 }: CardsSectionProps) {
   const bgColor = backgroundColor || getDefaultBackground("cards");
   const background = getBackgroundStyle(bgColor);
@@ -55,24 +58,38 @@ export default function CardsSection({
       style={background.style}
     >
       <div className="max-w-7xl mx-auto">
-        {title && (
-          <div className="text-center mb-8 sm:mb-10 md:mb-12">
-            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold theme-text-black mb-3 sm:mb-4 px-2">
+        {/* Header Section - Aligned with sections/CardsSection */}
+        <div className="mb-8 sm:mb-10 md:mb-12 text-left px-6 sm:px-8 md:px-8">
+          <div className="mb-4 sm:mb-5">
+            <Image
+              src="/Left-quote-traced.png"
+              alt="Quote icon"
+              width={60}
+              height={60}
+              className="w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14"
+            />
+          </div>
+          {title && (
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold theme-text-primary mb-3 sm:mb-4">
               {title}
             </h2>
-            {description && (
-              <p className="text-base sm:text-lg md:text-xl theme-text-black max-w-3xl mx-auto opacity-80 px-2">
-                {description}
-              </p>
-            )}
-          </div>
-        )}
+          )}
+          {description && (
+            <p
+              className="text-sm sm:text-base md:text-lg theme-text-muted leading-relaxed"
+              style={{ fontFamily: "var(--font-inter), sans-serif" }}
+            >
+              {description}
+            </p>
+          )}
+        </div>
+
         {totalItems > 0 && (
           <div className="relative">
             {totalItems > itemsToShow && (
               <button
                 onClick={onPrev}
-                className="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 w-12 h-12 bg-transparent border-2 theme-text-black rounded-full items-center justify-center shadow-md hover:scale-110 transition-all backdrop-blur-sm"
+                className="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 lg:-translate-x-8 z-10 w-12 h-12 bg-white border-2 theme-text-primary rounded-full items-center justify-center shadow-md hover:scale-110 transition-all"
                 style={{ borderColor: "var(--color-border-default-20)" }}
                 aria-label="Previous"
               >
@@ -83,99 +100,124 @@ export default function CardsSection({
             )}
 
             <div
-              className="md:hidden overflow-hidden"
+              className="relative overflow-hidden"
               onTouchStart={onTouchStart}
               onTouchMove={onTouchMove}
               onTouchEnd={onTouchEnd}
+              style={{ touchAction: "pan-y" }}
             >
-              <div
-                className="flex transition-transform duration-500 ease-in-out"
-                style={{ transform: `translateX(-${cardsIndex * 100}%)` }}
-              >
-                {items.map((item, index) => (
-                  <div
-                    key={index}
-                    className="group p-6 theme-bg-white rounded-xl border border-gray-200 shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 shrink-0 w-full px-4"
-                    style={{ borderColor: "var(--color-border-default)" }}
-                  >
-                    {showStars && (
-                      <div className="mb-4 text-lg theme-text-primary-end">
-                        {"★★★★★".split("").map((star, i) => (
-                          <span key={i}>{star}</span>
-                        ))}
-                      </div>
-                    )}
-                    {item.quote && (
-                      <p className="text-gray-700 mb-6 leading-relaxed italic text-sm">
-                        &ldquo;{item.quote}&rdquo;
-                      </p>
-                    )}
-                    <div className="border-t border-gray-200 pt-4">
+              {/* Mobile: 1 item at a time */}
+              <div className="md:hidden overflow-hidden">
+                <div
+                  className="flex transition-transform duration-500 ease-in-out"
+                  style={{ transform: `translateX(-${cardsIndex * 100}%)` }}
+                >
+                  {items.map((item, index) => (
+                    <div
+                      key={index}
+                      className="group p-6 sm:p-8 theme-bg-secondary rounded-2xl border shrink-0 shadow-sm transition-all duration-300 mx-2"
+                      style={{
+                        width: "calc(100% - 1rem)" as string,
+                        borderColor: "var(--color-border-default-20)",
+                        boxShadow: "0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)",
+                      }}
+                    >
                       {item.author && (
-                        <p className="font-semibold text-gray-900">{item.author}</p>
+                        <p className="text-lg sm:text-xl font-bold theme-text-primary mb-1">
+                          {item.author}
+                        </p>
                       )}
                       {(item.role || item.company) && (
-                        <p className="text-sm text-gray-600">
-                          {item.role}
-                          {item.role && item.company && ", "}
+                        <p
+                          className="text-xs sm:text-sm theme-text-muted mb-4 sm:mb-6 uppercase tracking-wide"
+                          style={{ fontFamily: "var(--font-inter), sans-serif" }}
+                        >
+                          {item.role && `${item.role}`}
+                          {item.role && item.company && " "}
                           {item.company}
                         </p>
                       )}
+                      {item.quote && (
+                        <p
+                          className="theme-text-muted mb-6 sm:mb-8 leading-relaxed text-sm sm:text-base"
+                          style={{ fontFamily: "var(--font-inter), sans-serif" }}
+                        >
+                          {item.quote}
+                        </p>
+                      )}
+                      {item.image && (
+                        <div className="mt-6">
+                          <Image
+                            src={getImageUrl(item.image)}
+                            alt={item.author || "Client"}
+                            width={48}
+                            height={48}
+                            sizes="48px"
+                            className="w-12 h-12 rounded-full object-cover"
+                          />
+                        </div>
+                      )}
                     </div>
-                  </div>
-                ))}
-              </div>
-              {totalSlides > 1 && (
-                <div className="flex justify-center gap-1.5 mt-6">
-                  {Array.from({ length: totalSlides }).map((_, idx) => (
-                    <span
-                      key={idx}
-                      className={`w-1.5 h-1.5 rounded-full transition-all ${
-                        getCurrentSlideIndex() === idx ? "bg-gray-800" : "bg-gray-400 opacity-40"
-                      }`}
-                    />
                   ))}
                 </div>
-              )}
-            </div>
+              </div>
 
-            <div className="hidden md:grid grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 px-8">
-              {getVisibleItems(false).map(({ item, originalIndex }, visibleIndex) => (
-                <div
-                  key={`card-${originalIndex}-${visibleIndex}-${item.author || visibleIndex}`}
-                  className="group p-8 theme-bg-white rounded-xl border border-gray-200 shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-1"
-                  style={{ borderColor: "rgba(0, 0, 0, 0.1)" }}
-                >
-                  {showStars && (
-                    <div className="mb-4 text-lg" style={{ color: "var(--color-primary-end)" }}>
-                      {"★★★★★".split("").map((star, i) => (
-                        <span key={i}>{star}</span>
-                      ))}
-                    </div>
-                  )}
-                  {item.quote && (
-                    <p className="text-gray-700 mb-6 leading-relaxed italic">
-                      &ldquo;{item.quote}&rdquo;
-                    </p>
-                  )}
-                  <div className="border-t border-gray-200 pt-4">
-                    {item.author && <p className="font-semibold text-gray-900">{item.author}</p>}
+              {/* Desktop: 3 items */}
+              <div className="hidden md:flex md:gap-6 lg:gap-8 px-8">
+                {getVisibleItems(false).map(({ item, originalIndex }) => (
+                  <div
+                    key={originalIndex}
+                    className="group shrink-0 p-6 sm:p-8 theme-bg-secondary rounded-2xl border shadow-sm transition-all duration-300 hover:shadow-md"
+                    style={{
+                      width: "calc(33.333% - 1rem)",
+                      borderColor: "var(--color-border-default-20)",
+                      boxShadow: "0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)",
+                    }}
+                  >
+                    {item.author && (
+                      <p className="text-lg sm:text-xl font-bold theme-text-primary mb-1">
+                        {item.author}
+                      </p>
+                    )}
                     {(item.role || item.company) && (
-                      <p className="text-sm text-gray-600">
-                        {item.role}
-                        {item.role && item.company && ", "}
+                      <p
+                        className="text-xs sm:text-sm theme-text-muted mb-4 sm:mb-6 uppercase tracking-wide"
+                        style={{ fontFamily: "var(--font-inter), sans-serif" }}
+                      >
+                        {item.role && `${item.role}`}
+                        {item.role && item.company && " "}
                         {item.company}
                       </p>
                     )}
+                    {item.quote && (
+                      <p
+                        className="theme-text-muted mb-6 sm:mb-8 leading-relaxed text-sm sm:text-base"
+                        style={{ fontFamily: "var(--font-inter), sans-serif" }}
+                      >
+                        {item.quote}
+                      </p>
+                    )}
+                    {item.image && (
+                      <div className="mt-6">
+                        <Image
+                          src={getImageUrl(item.image)}
+                          alt={item.author || "Client"}
+                          width={48}
+                          height={48}
+                          sizes="48px"
+                          className="w-12 h-12 rounded-full object-cover"
+                        />
+                      </div>
+                    )}
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
 
             {totalItems > itemsToShow && (
               <button
                 onClick={onNext}
-                className="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 w-12 h-12 bg-transparent border-2 theme-text-black rounded-full items-center justify-center shadow-md hover:scale-110 transition-all backdrop-blur-sm"
+                className="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 lg:translate-x-8 z-10 w-12 h-12 bg-white border-2 theme-text-primary rounded-full items-center justify-center shadow-md hover:scale-110 transition-all"
                 style={{ borderColor: "var(--color-border-default-20)" }}
                 aria-label="Next"
               >
@@ -184,10 +226,22 @@ export default function CardsSection({
                 </svg>
               </button>
             )}
+
+            {totalSlides > 1 && (
+              <div className="flex justify-center gap-1.5 mt-8 md:hidden">
+                {Array.from({ length: totalSlides }).map((_, index) => (
+                  <span
+                    key={index}
+                    className={`w-1.5 h-1.5 rounded-full transition-all ${
+                      getCurrentSlideIndex() === index ? "theme-bg-primary-end" : "bg-gray-400 opacity-40"
+                    }`}
+                  />
+                ))}
+              </div>
+            )}
           </div>
         )}
       </div>
     </section>
   );
 }
-
