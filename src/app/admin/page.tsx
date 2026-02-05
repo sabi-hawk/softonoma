@@ -38,6 +38,13 @@ interface Industry {
   navOrder?: number;
 }
 
+interface Blog {
+  _id: string;
+  title: string;
+  slug: string;
+  isPublished: boolean;
+}
+
 type NavItem =
   | {
       type: "page";
@@ -51,11 +58,12 @@ type NavItem =
 
 export default function AdminPanel() {
   const [activeTab, setActiveTab] = useState<
-    "pages" | "services" | "industries"
+    "pages" | "services" | "industries" | "blog"
   >("pages");
   const [pages, setPages] = useState<Page[]>([]);
   const [services, setServices] = useState<Service[]>([]);
   const [industries, setIndustries] = useState<Industry[]>([]);
+  const [blogs, setBlogs] = useState<Blog[]>([]);
   const [navItems, setNavItems] = useState<NavItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [showPageForm, setShowPageForm] = useState(false);
@@ -103,24 +111,27 @@ export default function AdminPanel() {
 
   const fetchData = async () => {
     try {
-      const [pagesRes, servicesRes, industriesRes] = await Promise.all([
+      const [pagesRes, servicesRes, industriesRes, blogsRes] = await Promise.all([
         fetch("/api/pages"),
         fetch("/api/services"),
         fetch("/api/industries"),
+        fetch("/api/blogs"),
       ]);
 
       const pagesData = await pagesRes.json();
       const servicesData = await servicesRes.json();
       const industriesData = await industriesRes.json();
+      const blogsData = await blogsRes.json();
 
       const fetchedPages = pagesData.data || [];
       const fetchedServices = servicesData.data || [];
       const fetchedIndustries = industriesData.data || [];
+      const fetchedBlogs = blogsData.data || [];
 
       setPages(fetchedPages);
-      // Store services and industries for potential future use
       setServices(fetchedServices);
       setIndustries(fetchedIndustries);
+      setBlogs(fetchedBlogs);
 
       // Build unified navigation items
       const publishedPages = fetchedPages.filter((p: Page) => p.isPublished);
@@ -335,7 +346,7 @@ export default function AdminPanel() {
                 Admin Panel
               </h1>
               <p className="text-gray-400 mt-2">
-                Manage your website content, pages, services, and industries.
+                Manage your website content, pages, services, industries, and blog.
               </p>
             </div>
             <button
@@ -379,6 +390,16 @@ export default function AdminPanel() {
               }`}
             >
               Industries
+            </button>
+            <button
+              onClick={() => setActiveTab("blog")}
+              className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
+                activeTab === "blog"
+                  ? "border-blue-500 text-blue-400"
+                  : "border-transparent text-gray-400 hover:text-gray-300 hover:border-gray-600"
+              }`}
+            >
+              Blog
             </button>
           </nav>
         </div>
@@ -926,6 +947,74 @@ export default function AdminPanel() {
                         }`}
                       >
                         {service.isPublished ? "Published" : "Draft"}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
+            {activeTab === "blog" && (
+          <div className="bg-gray-800 rounded-lg shadow p-6">
+            <div className="mb-6">
+              <h2 className="text-2xl font-semibold text-white mb-2">
+                Blog Management
+              </h2>
+              <p className="text-gray-400">
+                Create and manage blog posts with the rich text editor. Published
+                posts are available at /blog/[slug].
+              </p>
+            </div>
+            <div className="mb-4">
+              <Link
+                href="/admin/blog"
+                className="inline-block bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors"
+              >
+                Manage Blog Posts →
+              </Link>
+            </div>
+            <div className="bg-gray-700 rounded-lg p-4">
+              <h3 className="font-semibold text-white mb-2">
+                Quick Stats
+              </h3>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <p className="text-sm text-gray-400">Total Posts</p>
+                  <p className="text-2xl font-bold text-white">{blogs.length}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-gray-400">Published</p>
+                  <p className="text-2xl font-bold text-white">
+                    {blogs.filter((b) => b.isPublished).length}
+                  </p>
+                </div>
+              </div>
+            </div>
+            {blogs.length > 0 && (
+              <div className="mt-6">
+                <h3 className="font-semibold text-white mb-3">Recent Posts</h3>
+                <div className="space-y-2">
+                  {blogs.slice(0, 5).map((blog) => (
+                    <div
+                      key={blog._id}
+                      className="flex justify-between items-center p-3 bg-gray-700 rounded-lg"
+                    >
+                      <div>
+                        <p className="font-medium text-white">
+                          {blog.title || "Untitled"}
+                        </p>
+                        <p className="text-sm text-gray-400">/blog/{blog.slug}</p>
+                      </div>
+                      <span
+                        className={`px-2 py-1 rounded-full text-xs ${
+                          blog.isPublished
+                            ? "bg-green-900/50 text-green-300"
+                            : "bg-gray-600 text-gray-300"
+                        }`}
+                      >
+                        {blog.isPublished ? "Published" : "Draft"}
                       </span>
                     </div>
                   ))}
