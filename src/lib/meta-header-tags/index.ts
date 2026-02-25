@@ -2,6 +2,7 @@ export {
   getMetaHeaderTagsBySlug,
   getMetaHeaderTagsByService,
   getMetaHeaderTagsByIndustry,
+  getMetaHeaderTagsByBlog,
 } from "./get";
 
 export { parseMetaHeaderTags } from "./parse";

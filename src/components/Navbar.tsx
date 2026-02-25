@@ -36,15 +36,20 @@ interface Industry {
 type NavItem =
   | { type: "page"; id: string; title: string; slug: string; order: number }
   | { type: "services"; services: Service[] }
-  | { type: "industries"; industries: Industry[] };
+  | { type: "industries"; industries: Industry[] }
+  | { type: "blog"; title: string; order: number };
 
 interface NavbarProps {
   readonly pages: Page[];
   readonly services: Service[];
   readonly industries: Industry[];
+  readonly showBlog?: boolean;
+  readonly blogTitle?: string;
 }
 
-function Navbar({ pages, services, industries }: NavbarProps) {
+const BLOG_NAV_ORDER = 10000; // After services/industries
+
+function Navbar({ pages, services, industries, showBlog = false, blogTitle = "Blogs" }: NavbarProps) {
   const router = useRouter();
   const pathname = usePathname();
   const [servicesDropdownOpen, setServicesDropdownOpen] = useState(false);
@@ -182,19 +187,21 @@ function Navbar({ pages, services, industries }: NavbarProps) {
       ...(industries.length > 0
         ? [{ type: "industries" as const, industries }]
         : []),
+      ...(showBlog ? [{ type: "blog" as const, title: blogTitle, order: BLOG_NAV_ORDER }] : []),
     ];
 
     // Helper to get order for sorting
     const getNavItemOrder = (item: NavItem): number => {
       if (item.type === "page") return item.order;
       if (item.type === "services") return item.services[0]?.navOrder ?? 9999;
-      return item.industries[0]?.navOrder ?? 9999;
+      if (item.type === "industries") return item.industries[0]?.navOrder ?? 9999;
+      return item.order; // blog
     };
 
     // Sort by order/navOrder
     items.sort((a, b) => getNavItemOrder(a) - getNavItemOrder(b));
     return items;
-  }, [pages, services, industries]);
+  }, [pages, services, industries, showBlog, blogTitle]);
 
   // Check if a path is active
   const isActive = useCallback((slug: string) => {
@@ -219,23 +226,15 @@ function Navbar({ pages, services, industries }: NavbarProps) {
           {/* Logo on the left */}
           <div className="flex items-center shrink-0">
             <Link href="/" className="flex items-center group gap-2">
-              {/* Logo Icon - Abstract geometric shapes */}
-              <div className="relative w-10 h-10 flex items-center justify-center">
-                <div 
-                  className="absolute w-6 h-6 rounded"
-                  style={{ 
-                    backgroundColor: "var(--color-primary-mid)",
-                    transform: "rotate(-10deg)"
-                  }}
-                />
-                <div 
-                  className="absolute w-5 h-5 rounded-sm"
-                  style={{ 
-                    backgroundColor: "var(--color-primary-end)",
-                    top: "-2px",
-                    right: "-2px",
-                    transform: "rotate(15deg)"
-                  }}
+              {/* Logo */}
+              <div className="relative w-10 h-10 flex items-center justify-center shrink-0">
+                <Image
+                  src="/logo.png"
+                  alt="Softonoma"
+                  width={40}
+                  height={40}
+                  className="object-contain"
+                  priority
                 />
               </div>
               <span 
@@ -257,6 +256,21 @@ function Navbar({ pages, services, industries }: NavbarProps) {
                     <Link
                       key={item.id}
                       href={`/${item.slug === "home" ? "" : item.slug}`}
+                      prefetch={true}
+                      className="px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200 relative"
+                      style={{
+                        color: active ? "var(--color-primary-end)" : "var(--color-text-secondary)"
+                      }}
+                    >
+                      {item.title}
+                    </Link>
+                  );
+                } else if (item.type === "blog") {
+                  const active = isActive("blogs");
+                  return (
+                    <Link
+                      key="blog"
+                      href="/blogs"
                       prefetch={true}
                       className="px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200 relative"
                       style={{
@@ -513,6 +527,22 @@ function Navbar({ pages, services, industries }: NavbarProps) {
                     <Link
                       key={item.id}
                       href={`/${item.slug === "home" ? "" : item.slug}`}
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="px-4 py-3.5 text-[15px] font-medium rounded-xl transition-colors active:scale-[0.98]"
+                      style={{
+                        color: active ? "var(--color-primary-end)" : "var(--color-text-secondary)",
+                        backgroundColor: active ? "rgba(255,255,255,0.12)" : "transparent",
+                      }}
+                    >
+                      {item.title}
+                    </Link>
+                  );
+                } else if (item.type === "blog") {
+                  const active = isActive("blogs");
+                  return (
+                    <Link
+                      key="blog"
+                      href="/blogs"
                       onClick={() => setMobileMenuOpen(false)}
                       className="px-4 py-3.5 text-[15px] font-medium rounded-xl transition-colors active:scale-[0.98]"
                       style={{

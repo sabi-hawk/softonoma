@@ -25,15 +25,6 @@ interface PageData {
       showIcons?: boolean;
     };
   };
-  seoTitle?: string;
-  seoDescription?: string;
-  seoKeywords?: string;
-  ogImage?: string;
-  ogTitle?: string;
-  ogDescription?: string;
-  metaHeaderTags?: string;
-  allowIndexing?: boolean;
-  isPublished?: boolean;
 }
 
 export default function ServicesListingEditor() {
@@ -59,15 +50,6 @@ export default function ServicesListingEditor() {
         showIcons: true,
       },
     },
-    seoTitle: "",
-    seoDescription: "",
-    seoKeywords: "",
-    ogImage: "",
-    ogTitle: "",
-    ogDescription: "",
-    metaHeaderTags: "",
-    allowIndexing: true,
-    isPublished: true,
   });
 
   useEffect(() => {
@@ -93,9 +75,13 @@ export default function ServicesListingEditor() {
       const res = await fetch("/api/pages/services-listing");
       const data = await res.json();
       if (data.success && data.data) {
+        const d = data.data;
         setPageData({
-          ...data.data,
-          pageConfig: data.data.pageConfig || {
+          _id: d._id,
+          title: d.title ?? "Services",
+          slug: d.slug ?? "services",
+          templateType: d.templateType ?? "services-listing",
+          pageConfig: d.pageConfig || {
             hero: {
               title: "",
               description: "",
@@ -269,97 +255,6 @@ export default function ServicesListingEditor() {
                   type="checkbox"
                   checked={pageData.pageConfig.display?.showIcons !== false}
                   onChange={(e) => updatePageConfig(["display", "showIcons"], e.target.checked)}
-                  className="w-4 h-4"
-                />
-              </div>
-            </div>
-          </div>
-
-          {/* SEO Settings */}
-          <div className="bg-gray-800 rounded-lg p-6">
-            <h2 className="text-xl font-semibold mb-4">SEO Settings</h2>
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium mb-2">SEO Title</label>
-                <input
-                  type="text"
-                  value={pageData.seoTitle || ""}
-                  onChange={(e) => setPageData({ ...pageData, seoTitle: e.target.value })}
-                  className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium mb-2">SEO Description</label>
-                <textarea
-                  value={pageData.seoDescription || ""}
-                  onChange={(e) => setPageData({ ...pageData, seoDescription: e.target.value })}
-                  className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white"
-                  rows={3}
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium mb-2">SEO Keywords</label>
-                <input
-                  type="text"
-                  value={pageData.seoKeywords || ""}
-                  onChange={(e) => setPageData({ ...pageData, seoKeywords: e.target.value })}
-                  className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white"
-                  placeholder="keyword1, keyword2, keyword3"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium mb-2">OG Image</label>
-                <FileUpload
-                  label=""
-                  value={pageData.ogImage || ""}
-                  onChange={(url) => setPageData({ ...pageData, ogImage: url })}
-                  folder="og-images"
-                  type="image"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium mb-2">OG Title</label>
-                <input
-                  type="text"
-                  value={pageData.ogTitle || ""}
-                  onChange={(e) => setPageData({ ...pageData, ogTitle: e.target.value })}
-                  className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium mb-2">OG Description</label>
-                <textarea
-                  value={pageData.ogDescription || ""}
-                  onChange={(e) => setPageData({ ...pageData, ogDescription: e.target.value })}
-                  className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white"
-                  rows={3}
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium mb-2">Meta Header Tags</label>
-                <textarea
-                  value={pageData.metaHeaderTags || ""}
-                  onChange={(e) => setPageData({ ...pageData, metaHeaderTags: e.target.value })}
-                  className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white font-mono text-sm"
-                  rows={4}
-                  placeholder="<meta name='...' content='...' />"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium mb-2">Allow Indexing</label>
-                <input
-                  type="checkbox"
-                  checked={pageData.allowIndexing !== false}
-                  onChange={(e) => setPageData({ ...pageData, allowIndexing: e.target.checked })}
-                  className="w-4 h-4"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium mb-2">Published</label>
-                <input
-                  type="checkbox"
-                  checked={pageData.isPublished !== false}
-                  onChange={(e) => setPageData({ ...pageData, isPublished: e.target.checked })}
                   className="w-4 h-4"
                 />
               </div>

@@ -52,6 +52,15 @@ export default function AdminBlogEdit() {
     metaHeaderTags: "",
   });
 
+  // Slug: only lowercase letters, numbers, hyphens (matches Blog model)
+  const slugRegex = /^[a-z0-9\-]+$/;
+  const sanitizeSlug = (raw: string): string =>
+    raw
+      .toLowerCase()
+      .trim()
+      .replace(/\s+/g, "-")
+      .replace(/[^a-z0-9\-]/g, "");
+
   const fetchData = useCallback(async () => {
     try {
       const res = await fetch(`/api/blogs/id/${id}`);
@@ -61,7 +70,7 @@ export default function AdminBlogEdit() {
         setBlog(b);
         setForm({
           title: b.title ?? "",
-          slug: b.slug ?? "",
+          slug: sanitizeSlug((b.slug ?? "").toString()),
           excerpt: b.excerpt ?? "",
           coverImage: b.coverImage ?? "",
           author: b.author ?? "",
@@ -105,8 +114,22 @@ export default function AdminBlogEdit() {
     [id]
   );
 
+  const handleSlugChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const next = sanitizeSlug(e.target.value);
+    setForm((f) => ({ ...f, slug: next }));
+  };
+
   const handleSaveMeta = async (e: React.FormEvent) => {
     e.preventDefault();
+    const slug = form.slug.trim();
+    if (!slug) {
+      alert("Slug is required.");
+      return;
+    }
+    if (!slugRegex.test(slug)) {
+      alert("Slug can only contain lowercase letters, numbers, and hyphens.");
+      return;
+    }
     setSavingMeta(true);
     try {
       const res = await fetch(`/api/blogs/id/${id}`, {
@@ -114,6 +137,7 @@ export default function AdminBlogEdit() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...form,
+          slug: slug,
           publishedAt: form.publishedAt ? new Date(form.publishedAt).toISOString() : undefined,
         }),
       });
@@ -206,11 +230,15 @@ export default function AdminBlogEdit() {
               <input
                 type="text"
                 value={form.slug}
-                onChange={(e) => setForm((f) => ({ ...f, slug: e.target.value }))}
-                className="w-full px-3 py-2 rounded border border-gray-600 bg-gray-700 text-white"
+                onChange={handleSlugChange}
+                className="w-full px-3 py-2 rounded border border-gray-600 bg-gray-700 text-white font-mono"
                 pattern="^[a-z0-9\-]+$"
-                title="Lowercase letters, numbers, hyphens only"
+                title="Lowercase letters, numbers, and hyphens only"
+                placeholder="e.g. my-post-title"
               />
+              <p className="text-xs text-gray-500 mt-1">
+                Only lowercase letters (a–z), numbers (0–9), and hyphens (-). Spaces become hyphens.
+              </p>
             </div>
             <div className="md:col-span-2">
               <label className="block text-sm font-medium text-gray-300 mb-1">
@@ -270,28 +298,97 @@ export default function AdminBlogEdit() {
               />
             </div>
           </div>
-          <div className="mt-4 pt-4 border-t border-gray-700">
-            <h3 className="text-sm font-medium text-gray-300 mb-2">SEO (optional)</h3>
+          <div className="mt-6 pt-6 border-t border-gray-700">
+            <h3 className="text-lg font-semibold text-white mb-4">SEO &amp; Meta</h3>
+            <p className="text-sm text-gray-400 mb-4">
+              Same options as normal pages: SEO fields, Open Graph, and additional header tags.
+            </p>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm text-gray-400 mb-1">Meta title</label>
+                <label className="block text-sm font-medium text-gray-300 mb-1">SEO Title</label>
                 <input
                   type="text"
                   value={form.seoTitle}
                   onChange={(e) => setForm((f) => ({ ...f, seoTitle: e.target.value }))}
-                  className="w-full px-3 py-2 rounded border border-gray-600 bg-gray-700 text-white text-sm"
+                  className="w-full px-3 py-2 rounded border border-gray-600 bg-gray-700 text-white"
+                  placeholder="Defaults to post title if empty"
                 />
               </div>
               <div>
-                <label className="block text-sm text-gray-400 mb-1">Meta description</label>
+                <label className="block text-sm font-medium text-gray-300 mb-1">SEO Description</label>
                 <input
                   type="text"
                   value={form.seoDescription}
-                  onChange={(e) =>
-                    setForm((f) => ({ ...f, seoDescription: e.target.value }))
-                  }
-                  className="w-full px-3 py-2 rounded border border-gray-600 bg-gray-700 text-white text-sm"
+                  onChange={(e) => setForm((f) => ({ ...f, seoDescription: e.target.value }))}
+                  className="w-full px-3 py-2 rounded border border-gray-600 bg-gray-700 text-white"
+                  placeholder="Short description for search results"
                 />
+              </div>
+              <div className="md:col-span-2">
+                <label className="block text-sm font-medium text-gray-300 mb-1">SEO Keywords</label>
+                <input
+                  type="text"
+                  value={form.seoKeywords}
+                  onChange={(e) => setForm((f) => ({ ...f, seoKeywords: e.target.value }))}
+                  className="w-full px-3 py-2 rounded border border-gray-600 bg-gray-700 text-white"
+                  placeholder="keyword1, keyword2, keyword3"
+                />
+              </div>
+              <div className="md:col-span-2">
+                <label className="block text-sm font-medium text-gray-300 mb-1">OG Image</label>
+                <FileUpload
+                  label=""
+                  value={form.ogImage}
+                  onChange={(url) => setForm((f) => ({ ...f, ogImage: url }))}
+                  folder="og-images"
+                  type="image"
+                />
+                <p className="text-xs text-gray-500 mt-1">Image for social sharing (e.g. Facebook, Twitter)</p>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-1">OG Title</label>
+                <input
+                  type="text"
+                  value={form.ogTitle}
+                  onChange={(e) => setForm((f) => ({ ...f, ogTitle: e.target.value }))}
+                  className="w-full px-3 py-2 rounded border border-gray-600 bg-gray-700 text-white"
+                  placeholder="Defaults to SEO title if empty"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-1">OG Description</label>
+                <input
+                  type="text"
+                  value={form.ogDescription}
+                  onChange={(e) => setForm((f) => ({ ...f, ogDescription: e.target.value }))}
+                  className="w-full px-3 py-2 rounded border border-gray-600 bg-gray-700 text-white"
+                  placeholder="Defaults to SEO description if empty"
+                />
+              </div>
+              <div className="md:col-span-2">
+                <label className="block text-sm font-medium text-gray-300 mb-1">Meta Header Tags</label>
+                <textarea
+                  value={form.metaHeaderTags}
+                  onChange={(e) => setForm((f) => ({ ...f, metaHeaderTags: e.target.value }))}
+                  className="w-full px-3 py-2 rounded border border-gray-600 bg-gray-700 text-white font-mono text-sm"
+                  rows={4}
+                  placeholder={'<meta name="custom" content="value" />'}
+                />
+                <p className="text-xs text-gray-500 mt-1">Optional. Raw meta tags injected into the page head.</p>
+              </div>
+              <div className="md:col-span-2">
+                <div className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    id="allowIndexing"
+                    checked={form.allowIndexing !== false}
+                    onChange={(e) => setForm((f) => ({ ...f, allowIndexing: e.target.checked }))}
+                    className="rounded border-gray-600 bg-gray-700"
+                  />
+                  <label htmlFor="allowIndexing" className="text-gray-300">
+                    Allow search engines to index this post
+                  </label>
+                </div>
               </div>
             </div>
           </div>

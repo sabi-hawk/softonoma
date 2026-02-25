@@ -2,6 +2,7 @@ import connectDB from "@/lib/mongodb";
 import Page from "@/models/Page";
 import Service from "@/models/Service";
 import Industry from "@/models/Industry";
+import Blog from "@/models/Blog";
 
 export async function getMetaHeaderTagsBySlug(slug: string): Promise<string | null> {
   try {
@@ -45,6 +46,19 @@ export async function getMetaHeaderTagsByIndustry(slug: string): Promise<string 
     return industry?.metaHeaderTags?.trim() || null;
   } catch (error) {
     console.error("Error fetching meta header tags by industry:", error);
+    return null;
+  }
+}
+
+export async function getMetaHeaderTagsByBlog(slug: string): Promise<string | null> {
+  try {
+    await connectDB();
+    const blog = await Blog.findOne({ slug, isPublished: true })
+      .select("metaHeaderTags")
+      .lean();
+    return blog?.metaHeaderTags?.trim() || null;
+  } catch (error) {
+    console.error("Error fetching meta header tags by blog:", error);
     return null;
   }
 }

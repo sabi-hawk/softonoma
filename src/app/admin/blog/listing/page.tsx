@@ -22,19 +22,22 @@ interface PageData {
       cardsPerRow?: number;
       cardStyle?: string;
       showDescriptions?: boolean;
-      showIcons?: boolean;
+      showExcerpts?: boolean;
+      showCoverImages?: boolean;
+      showAuthor?: boolean;
+      showDate?: boolean;
     };
   };
 }
 
-export default function IndustriesListingEditor() {
+export default function BlogListingEditor() {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [pageData, setPageData] = useState<PageData>({
-    title: "Industries",
-    slug: "industries",
-    templateType: "industries-listing",
+    title: "Blogs",
+    slug: "blogs",
+    templateType: "blog-listing",
     pageConfig: {
       hero: {
         title: "",
@@ -44,10 +47,13 @@ export default function IndustriesListingEditor() {
         showHero: true,
       },
       display: {
-        cardsPerRow: 4,
-        cardStyle: "minimal",
-        showDescriptions: false,
-        showIcons: true,
+        cardsPerRow: 3,
+        cardStyle: "elevated",
+        showDescriptions: true,
+        showExcerpts: true,
+        showCoverImages: true,
+        showAuthor: true,
+        showDate: true,
       },
     },
   });
@@ -72,15 +78,15 @@ export default function IndustriesListingEditor() {
 
   const fetchData = async () => {
     try {
-      const res = await fetch("/api/pages/industries-listing");
+      const res = await fetch("/api/pages/blog-listing");
       const data = await res.json();
       if (data.success && data.data) {
         const d = data.data;
         setPageData({
           _id: d._id,
-          title: d.title ?? "Industries",
-          slug: d.slug ?? "industries",
-          templateType: d.templateType ?? "industries-listing",
+          title: d.title ?? "Blogs",
+          slug: d.slug ?? "blogs",
+          templateType: d.templateType ?? "blog-listing",
           pageConfig: d.pageConfig || {
             hero: {
               title: "",
@@ -90,10 +96,13 @@ export default function IndustriesListingEditor() {
               showHero: true,
             },
             display: {
-              cardsPerRow: 4,
-              cardStyle: "minimal",
-              showDescriptions: false,
-              showIcons: true,
+              cardsPerRow: 3,
+              cardStyle: "elevated",
+              showDescriptions: true,
+              showExcerpts: true,
+              showCoverImages: true,
+              showAuthor: true,
+              showDate: true,
             },
           },
         });
@@ -109,7 +118,7 @@ export default function IndustriesListingEditor() {
     e.preventDefault();
     setSaving(true);
     try {
-      const res = await fetch("/api/pages/industries-listing", {
+      const res = await fetch("/api/pages/blog-listing", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(pageData),
@@ -117,7 +126,7 @@ export default function IndustriesListingEditor() {
 
       const data = await res.json();
       if (data.success) {
-        alert("Industries listing page saved successfully!");
+        alert("Blog listing page saved successfully!");
         await fetchData();
       } else {
         alert(data.error || "Error saving page");
@@ -151,8 +160,8 @@ export default function IndustriesListingEditor() {
     <div className="min-h-screen bg-gray-900 text-white p-4 sm:p-6 lg:p-8">
       <div className="max-w-6xl mx-auto">
         <div className="mb-6">
-          <h1 className="text-3xl font-bold mb-2">Edit Industries Listing Page</h1>
-          <p className="text-gray-400">Customize the industries listing page design and content</p>
+          <h1 className="text-3xl font-bold mb-2">Edit Blog Listing Page</h1>
+          <p className="text-gray-400">Customize the blog listing page design and content</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
@@ -219,19 +228,19 @@ export default function IndustriesListingEditor() {
               <div>
                 <label className="block text-sm font-medium mb-2">Cards Per Row</label>
                 <select
-                  value={pageData.pageConfig.display?.cardsPerRow || 4}
+                  value={pageData.pageConfig.display?.cardsPerRow || 3}
                   onChange={(e) => updatePageConfig(["display", "cardsPerRow"], parseInt(e.target.value))}
                   className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white"
                 >
+                  <option value={2}>2</option>
                   <option value={3}>3</option>
                   <option value={4}>4</option>
-                  <option value={5}>5</option>
                 </select>
               </div>
               <div>
                 <label className="block text-sm font-medium mb-2">Card Style</label>
                 <select
-                  value={pageData.pageConfig.display?.cardStyle || "minimal"}
+                  value={pageData.pageConfig.display?.cardStyle || "elevated"}
                   onChange={(e) => updatePageConfig(["display", "cardStyle"], e.target.value)}
                   className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white"
                 >
@@ -241,20 +250,38 @@ export default function IndustriesListingEditor() {
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium mb-2">Show Descriptions</label>
+                <label className="block text-sm font-medium mb-2">Show Cover Images</label>
                 <input
                   type="checkbox"
-                  checked={pageData.pageConfig.display?.showDescriptions === true}
-                  onChange={(e) => updatePageConfig(["display", "showDescriptions"], e.target.checked)}
+                  checked={pageData.pageConfig.display?.showCoverImages !== false}
+                  onChange={(e) => updatePageConfig(["display", "showCoverImages"], e.target.checked)}
                   className="w-4 h-4"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium mb-2">Show Icons</label>
+                <label className="block text-sm font-medium mb-2">Show Excerpts</label>
                 <input
                   type="checkbox"
-                  checked={pageData.pageConfig.display?.showIcons !== false}
-                  onChange={(e) => updatePageConfig(["display", "showIcons"], e.target.checked)}
+                  checked={pageData.pageConfig.display?.showExcerpts !== false}
+                  onChange={(e) => updatePageConfig(["display", "showExcerpts"], e.target.checked)}
+                  className="w-4 h-4"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-2">Show Author</label>
+                <input
+                  type="checkbox"
+                  checked={pageData.pageConfig.display?.showAuthor !== false}
+                  onChange={(e) => updatePageConfig(["display", "showAuthor"], e.target.checked)}
+                  className="w-4 h-4"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-2">Show Date</label>
+                <input
+                  type="checkbox"
+                  checked={pageData.pageConfig.display?.showDate !== false}
+                  onChange={(e) => updatePageConfig(["display", "showDate"], e.target.checked)}
                   className="w-4 h-4"
                 />
               </div>
@@ -283,4 +310,3 @@ export default function IndustriesListingEditor() {
     </div>
   );
 }
-

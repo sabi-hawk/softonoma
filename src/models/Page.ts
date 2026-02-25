@@ -23,7 +23,7 @@ export interface IPage extends Document {
   content: string;
   isPublished: boolean;
   order: number;
-  templateType?: "homepage" | "standard" | "services-listing" | "industries-listing" | string; // "standard" = uses sections, "homepage" = uses full page template, "services-listing" and "industries-listing" = custom listing pages
+  templateType?: "homepage" | "standard" | "services-listing" | "industries-listing" | "blog-listing" | string; // "standard" = uses sections, "homepage" = uses full page template, "services-listing", "industries-listing", "blog-listing" = custom listing pages
   pageConfig?: IPageConfig;
   seoTitle?: string;
   seoDescription?: string;
@@ -69,7 +69,7 @@ const PageSchema: Schema = new Schema(
     },
     templateType: {
       type: String,
-      enum: ["homepage", "standard", "services-listing", "industries-listing"],
+      enum: ["homepage", "standard", "services-listing", "industries-listing", "blog-listing"],
       default: "standard",
     },
     pageConfig: {

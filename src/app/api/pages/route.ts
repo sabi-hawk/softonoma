@@ -51,6 +51,12 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Home page must use slug "home" (served at "/", not "/home")
+    const normalizedSlug =
+      slug.trim().toLowerCase().replace(/^\/+|\/+$/g, "") === "home"
+        ? "home"
+        : slug;
+
     // Get the highest order value to set new page order
     const maxOrderPage = await Page.findOne().sort({ order: -1 });
     const newOrder =
@@ -58,7 +64,7 @@ export async function POST(request: NextRequest) {
 
     const page = await Page.create({
       title,
-      slug,
+      slug: normalizedSlug,
       content: content || "",
       isPublished: isPublished !== undefined ? isPublished : true,
       order: newOrder,
@@ -75,10 +81,10 @@ export async function POST(request: NextRequest) {
     let appliedTemplateName = "";
     if (
       applyTemplate ||
-      isAboutPage(slug, title) ||
-      isContactPage(slug, title)
+      isAboutPage(normalizedSlug, title) ||
+      isContactPage(normalizedSlug, title)
     ) {
-      const templateName = isContactPage(slug, title) ? "contact" : "about";
+      const templateName = isContactPage(normalizedSlug, title) ? "contact" : "about";
       const template = getTemplate(templateName);
       if (template) {
         // Create sections from template
