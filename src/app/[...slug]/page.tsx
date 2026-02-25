@@ -1,4 +1,4 @@
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import connectDB from "@/lib/mongodb";
 import Page from "@/models/Page";
 import Section from "@/models/Section";
@@ -19,6 +19,11 @@ export default async function DynamicPage({ params }: PageProps) {
 
   const { slug } = await params;
   const pageSlug = slug.join("/");
+
+  // Home page is only at "/", not "/home" — redirect to root
+  if (pageSlug === "home") {
+    redirect("/");
+  }
 
   // Get page content - allow both published and unpublished pages to be viewed
   // Only select fields we need for better performance
@@ -91,9 +96,12 @@ export default async function DynamicPage({ params }: PageProps) {
 }
 
 export async function generateMetadata({ params }: PageProps) {
-  await connectDB();
   const { slug } = await params;
   const pageSlug = slug.join("/");
+  if (pageSlug === "home") {
+    redirect("/");
+  }
+  await connectDB();
   // Allow metadata for both published and unpublished pages
   const page = await Page.findOne({ slug: pageSlug }).lean();
 

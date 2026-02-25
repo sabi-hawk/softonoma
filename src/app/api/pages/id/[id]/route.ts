@@ -40,6 +40,14 @@ export async function PUT(
     const { id } = await params;
     const body = await request.json();
 
+    // Home page must use slug "home" (served at "/", not "/home")
+    if (body.slug && typeof body.slug === "string") {
+      const normalized = body.slug.trim().toLowerCase().replace(/^\/+|\/+$/g, "");
+      if (normalized === "home") {
+        body.slug = "home";
+      }
+    }
+
     const page = await Page.findByIdAndUpdate(id, body, {
       new: true,
       runValidators: true,

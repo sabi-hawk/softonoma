@@ -95,7 +95,14 @@ export default function AdminBlogList() {
                 Create and manage blog posts. Each post uses the rich text editor.
               </p>
             </div>
-            <button
+            <div className="flex gap-3 flex-wrap">
+              <Link
+                href="/admin/blog/listing"
+                className="inline-block bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 whitespace-nowrap"
+              >
+                Edit Listing Page
+              </Link>
+              <button
               type="button"
               onClick={handleCreate}
               disabled={creating}
@@ -103,6 +110,7 @@ export default function AdminBlogList() {
             >
               {creating ? "Creating…" : "+ New blog"}
             </button>
+            </div>
           </div>
         </div>
 

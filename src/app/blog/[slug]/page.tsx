@@ -9,7 +9,9 @@ interface BlogPageProps {
   params: Promise<{ slug: string }>;
 }
 
-export const revalidate = 60;
+// Force dynamic rendering to avoid Turbopack "module factory is not available" with dynamic routes
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 function formatBlogDate(date: Date | string | undefined): string {
   if (!date) return "";
@@ -160,10 +162,14 @@ export async function generateMetadata({ params }: BlogPageProps) {
   const title = post.seoTitle || post.title;
   const description =
     post.seoDescription || post.excerpt || post.content?.replaceAll(/<[^>]*>/g, "").slice(0, 160) || "";
+  const keywords = post.seoKeywords?.trim()
+    ? post.seoKeywords.split(",").map((k) => k.trim()).filter(Boolean)
+    : undefined;
 
   return {
     title,
     description: description.slice(0, 160),
+    keywords,
     openGraph: {
       title: post.ogTitle || title,
       description: post.ogDescription || post.seoDescription || description.slice(0, 160),

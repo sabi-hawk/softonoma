@@ -371,7 +371,7 @@ export default function PageSectionsAdmin() {
           { title: "Services", href: "/services" },
           { title: "Industries", href: "/industries" },
           { title: "Portfolio", href: "/portfolio" },
-          { title: "Blog", href: "/blog" },
+          { title: "Blogs", href: "/blogs" },
           { title: "Contact", href: "/contact" },
         ],
         footerServices: [
@@ -1258,10 +1258,10 @@ export default function PageSectionsAdmin() {
 
         {showSectionForm && (
           <div className="mb-6 space-y-6">
-            {/* Form Panel */}
-            <div className="bg-gray-800 p-6 rounded-lg shadow">
+            {/* Form Panel - explicit font colors for readability on dark bg */}
+            <div className="bg-gray-800 p-6 rounded-lg shadow text-gray-200 [&_input]:bg-gray-700 [&_input]:border-gray-600 [&_input]:text-gray-100 [&_input]:placeholder:text-gray-400 [&_select]:bg-gray-700 [&_select]:border-gray-600 [&_select]:text-gray-100 [&_textarea]:bg-gray-700 [&_textarea]:border-gray-600 [&_textarea]:text-gray-100 [&_textarea]:placeholder:text-gray-400">
               <div className="flex justify-between items-center mb-4">
-                <h3 className="text-lg font-semibold">
+                <h3 className="text-lg font-semibold text-white">
                   {editingSection ? "Edit" : "Add"} Section
                 </h3>
                 <button
@@ -1270,14 +1270,14 @@ export default function PageSectionsAdmin() {
                     setEditingSection(null);
                     resetForm();
                   }}
-                  className="text-gray-500 hover:text-gray-700"
+                  className="text-gray-400 hover:text-white"
                 >
                   ✕
                 </button>
               </div>
               <form onSubmit={handleSectionSubmit} className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium mb-1">Type</label>
+                  <label className="block text-sm font-medium mb-1 text-gray-200">Type</label>
                   <select
                     value={sectionForm.type}
                     onChange={(e) => {
@@ -1289,7 +1289,7 @@ export default function PageSectionsAdmin() {
                         content: defaultContent,
                       });
                     }}
-                    className="w-full px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600"
+                    className="w-full px-3 py-2 border rounded-md bg-gray-700 border-gray-600 text-gray-100"
                     required
                   >
                     <option value="hero">Hero</option>
@@ -1313,7 +1313,7 @@ export default function PageSectionsAdmin() {
 
                 {/* Common Fields */}
                 <div>
-                  <label className="block text-sm font-medium mb-1">
+                  <label className="block text-sm font-medium mb-1 text-gray-200">
                     Title
                   </label>
                   <input
@@ -1322,7 +1322,7 @@ export default function PageSectionsAdmin() {
                     onChange={(e) =>
                       updateContentField("title", e.target.value)
                     }
-                    className="w-full px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600"
+                    className="w-full px-3 py-2 border rounded-md bg-gray-700 border-gray-600 text-gray-100 placeholder:text-gray-400"
                   />
                 </div>
 
@@ -1341,7 +1341,7 @@ export default function PageSectionsAdmin() {
                   sectionForm.type === "process" ||
                   sectionForm.type === "faq") && (
                   <div>
-                    <label className="block text-sm font-medium mb-1">
+                    <label className="block text-sm font-medium mb-1 text-gray-200">
                       Description
                     </label>
                     <textarea
@@ -1350,7 +1350,7 @@ export default function PageSectionsAdmin() {
                         updateContentField("description", e.target.value)
                       }
                       rows={3}
-                      className="w-full px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600"
+                      className="w-full px-3 py-2 border rounded-md bg-gray-700 border-gray-600 text-gray-100 placeholder:text-gray-400"
                     />
                   </div>
                 )}
@@ -1368,7 +1368,7 @@ export default function PageSectionsAdmin() {
                       onChange={(e) =>
                         updateContentField("backgroundColor", e.target.value)
                       }
-                      className="w-full px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600"
+                      className="w-full px-3 py-2 border rounded-md bg-gray-700 border-gray-600 text-gray-100 placeholder:text-gray-400"
                     >
                       <option value="">Use Default</option>
                       <option value="white">White</option>
@@ -1376,7 +1376,7 @@ export default function PageSectionsAdmin() {
                         White-Green Gradient
                       </option>
                     </select>
-                    <p className="text-xs text-gray-500 mt-1">
+                    <p className="text-xs text-gray-400 mt-1">
                       Select background color for this section. Defaults are set
                       per section type.
                     </p>
@@ -1396,7 +1396,7 @@ export default function PageSectionsAdmin() {
                         onChange={(e) =>
                           updateContentField("subtitle", e.target.value)
                         }
-                        className="w-full px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600"
+                        className="w-full px-3 py-2 border rounded-md bg-gray-700 border-gray-600 text-gray-100 placeholder:text-gray-400"
                       />
                     </div>
                     <FileUpload
@@ -1442,9 +1442,9 @@ export default function PageSectionsAdmin() {
                             parseFloat(e.target.value) || 0.3
                           )
                         }
-                        className="w-full px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600"
+                        className="w-full px-3 py-2 border rounded-md bg-gray-700 border-gray-600 text-gray-100 placeholder:text-gray-400"
                       />
-                      <p className="text-xs text-gray-500 mt-1">
+                      <p className="text-xs text-gray-400 mt-1">
                         Opacity for background image/video (0 = transparent, 1 =
                         fully opaque). Default: 0.3
                       </p>
@@ -1471,7 +1471,7 @@ export default function PageSectionsAdmin() {
                       sectionForm.content.services.map((service, index) => (
                         <div
                           key={index}
-                          className="mb-4 p-3 border rounded-md dark:border-gray-600"
+                          className="mb-4 p-3 border rounded-md border-gray-600"
                         >
                           <div className="flex justify-between items-center mb-2">
                             <span className="text-sm font-medium">
@@ -1501,7 +1501,7 @@ export default function PageSectionsAdmin() {
                             onChange={(e) =>
                               updateService(index, "title", e.target.value)
                             }
-                            className="w-full mb-2 px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600"
+                            className="w-full mb-2 px-3 py-2 border rounded-md bg-gray-700 border-gray-600 text-gray-100 placeholder:text-gray-400"
                             required
                           />
                           <textarea
@@ -1515,7 +1515,7 @@ export default function PageSectionsAdmin() {
                               )
                             }
                             rows={3}
-                            className="w-full px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600"
+                            className="w-full px-3 py-2 border rounded-md bg-gray-700 border-gray-600 text-gray-100 placeholder:text-gray-400"
                             required
                           />
                         </div>
@@ -1542,7 +1542,7 @@ export default function PageSectionsAdmin() {
                       sectionForm.content.stats.map((stat, index) => (
                         <div
                           key={index}
-                          className="mb-4 p-3 border rounded-md dark:border-gray-600"
+                          className="mb-4 p-3 border rounded-md border-gray-600"
                         >
                           <div className="flex justify-between items-center mb-2">
                             <span className="text-sm font-medium">
@@ -1563,7 +1563,7 @@ export default function PageSectionsAdmin() {
                               onChange={(iconName) => updateStat(index, "icon", iconName)}
                             />
                             <div className="mt-2">
-                              <p className="text-xs text-gray-500 mb-1">Or use custom image/emoji:</p>
+                              <p className="text-xs text-gray-400 mb-1">Or use custom image/emoji:</p>
                               <input
                                 type="text"
                                 placeholder="Enter emoji or paste image URL"
@@ -1571,7 +1571,7 @@ export default function PageSectionsAdmin() {
                                 onChange={(e) =>
                                   updateStat(index, "icon", e.target.value)
                                 }
-                                className="w-full mb-2 px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600 text-sm"
+                                className="w-full mb-2 px-3 py-2 border rounded-md bg-gray-700 border-gray-600 text-gray-100 placeholder:text-gray-400 text-sm"
                               />
                               <IconUpload
                                 label="Or upload image"
@@ -1589,7 +1589,7 @@ export default function PageSectionsAdmin() {
                             onChange={(e) =>
                               updateStat(index, "number", e.target.value)
                             }
-                            className="w-full mb-2 px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600"
+                            className="w-full mb-2 px-3 py-2 border rounded-md bg-gray-700 border-gray-600 text-gray-100 placeholder:text-gray-400"
                             required
                           />
                           <input
@@ -1599,7 +1599,7 @@ export default function PageSectionsAdmin() {
                             onChange={(e) =>
                               updateStat(index, "title", e.target.value)
                             }
-                            className="w-full mb-2 px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600"
+                            className="w-full mb-2 px-3 py-2 border rounded-md bg-gray-700 border-gray-600 text-gray-100 placeholder:text-gray-400"
                             required
                           />
                         </div>
@@ -1640,10 +1640,10 @@ export default function PageSectionsAdmin() {
                             parseFloat(e.target.value) || 0.4
                           )
                         }
-                        className="w-full px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600"
+                        className="w-full px-3 py-2 border rounded-md bg-gray-700 border-gray-600 text-gray-100 placeholder:text-gray-400"
                         placeholder="0.4"
                       />
-                      <p className="text-xs text-gray-500 mt-1">
+                      <p className="text-xs text-gray-400 mt-1">
                         Controls background image opacity (0 = transparent, 1 =
                         opaque). Default: 0.4
                       </p>
@@ -1657,12 +1657,12 @@ export default function PageSectionsAdmin() {
                         onChange={(e) =>
                           updateContentField("textColor", e.target.value)
                         }
-                        className="w-full px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600"
+                        className="w-full px-3 py-2 border rounded-md bg-gray-700 border-gray-600 text-gray-100 placeholder:text-gray-400"
                       >
                         <option value="var(--color-text-primary)">Dark (#121e29)</option>
                         <option value="white">White</option>
                       </select>
-                      <p className="text-xs text-gray-500 mt-1">
+                      <p className="text-xs text-gray-400 mt-1">
                         Choose text color: Dark (#121e29) or White
                       </p>
                     </div>
@@ -1675,7 +1675,7 @@ export default function PageSectionsAdmin() {
                         onChange={(e) =>
                           updateContentField("textAlign", e.target.value)
                         }
-                        className="w-full px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600"
+                        className="w-full px-3 py-2 border rounded-md bg-gray-700 border-gray-600 text-gray-100 placeholder:text-gray-400"
                       >
                         <option value="center">Center</option>
                         <option value="left">Left</option>
@@ -1691,7 +1691,7 @@ export default function PageSectionsAdmin() {
                         onChange={(e) =>
                           updateContentField("buttonText", e.target.value)
                         }
-                        className="w-full px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600"
+                        className="w-full px-3 py-2 border rounded-md bg-gray-700 border-gray-600 text-gray-100 placeholder:text-gray-400"
                         placeholder="Get Started"
                       />
                     </div>
@@ -1705,7 +1705,7 @@ export default function PageSectionsAdmin() {
                         onChange={(e) =>
                           updateContentField("buttonLink", e.target.value)
                         }
-                        className="w-full px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600"
+                        className="w-full px-3 py-2 border rounded-md bg-gray-700 border-gray-600 text-gray-100 placeholder:text-gray-400"
                         placeholder="/contact"
                       />
                     </div>
@@ -1719,7 +1719,7 @@ export default function PageSectionsAdmin() {
                         onChange={(e) =>
                           updateContentField("secondaryButtonText", e.target.value)
                         }
-                        className="w-full px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600"
+                        className="w-full px-3 py-2 border rounded-md bg-gray-700 border-gray-600 text-gray-100 placeholder:text-gray-400"
                         placeholder="Learn More"
                       />
                     </div>
@@ -1733,7 +1733,7 @@ export default function PageSectionsAdmin() {
                         onChange={(e) =>
                           updateContentField("secondaryButtonLink", e.target.value)
                         }
-                        className="w-full px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600"
+                        className="w-full px-3 py-2 border rounded-md bg-gray-700 border-gray-600 text-gray-100 placeholder:text-gray-400"
                         placeholder="/about"
                       />
                     </div>
@@ -1759,7 +1759,7 @@ export default function PageSectionsAdmin() {
                       sectionForm.content.industries.map((industry, index) => (
                         <div
                           key={index}
-                          className="mb-4 p-3 border rounded-md dark:border-gray-600"
+                          className="mb-4 p-3 border rounded-md border-gray-600"
                         >
                           <div className="flex justify-between items-center mb-2">
                             <span className="text-sm font-medium">
@@ -1789,7 +1789,7 @@ export default function PageSectionsAdmin() {
                             onChange={(e) =>
                               updateIndustry(index, "name", e.target.value)
                             }
-                            className="w-full px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600"
+                            className="w-full px-3 py-2 border rounded-md bg-gray-700 border-gray-600 text-gray-100 placeholder:text-gray-400"
                             required
                           />
                         </div>
@@ -1810,7 +1810,7 @@ export default function PageSectionsAdmin() {
                           updateContentField("aboutText", e.target.value)
                         }
                         rows={8}
-                        className="w-full px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600"
+                        className="w-full px-3 py-2 border rounded-md bg-gray-700 border-gray-600 text-gray-100 placeholder:text-gray-400"
                         placeholder="About us content (plain text only)"
                       />
                     </div>
@@ -1831,7 +1831,7 @@ export default function PageSectionsAdmin() {
                         onChange={(e) =>
                           updateContentField("aboutLinkText", e.target.value)
                         }
-                        className="w-full px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600"
+                        className="w-full px-3 py-2 border rounded-md bg-gray-700 border-gray-600 text-gray-100 placeholder:text-gray-400"
                         placeholder="Learn more about us"
                       />
                     </div>
@@ -1845,7 +1845,7 @@ export default function PageSectionsAdmin() {
                         onChange={(e) =>
                           updateContentField("aboutLink", e.target.value)
                         }
-                        className="w-full px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600"
+                        className="w-full px-3 py-2 border rounded-md bg-gray-700 border-gray-600 text-gray-100 placeholder:text-gray-400"
                         placeholder="/about"
                       />
                     </div>
@@ -1872,7 +1872,7 @@ export default function PageSectionsAdmin() {
                         (partnership, index) => (
                           <div
                             key={index}
-                            className="mb-4 p-3 border rounded-md dark:border-gray-600"
+                            className="mb-4 p-3 border rounded-md border-gray-600"
                           >
                             <div className="flex justify-between items-center mb-2">
                               <span className="text-sm font-medium">
@@ -1907,7 +1907,7 @@ export default function PageSectionsAdmin() {
                                   e.target.value
                                 )
                               }
-                              className="w-full mb-2 px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600"
+                              className="w-full mb-2 px-3 py-2 border rounded-md bg-gray-700 border-gray-600 text-gray-100 placeholder:text-gray-400"
                               required
                             />
                             <textarea
@@ -1921,7 +1921,7 @@ export default function PageSectionsAdmin() {
                                 )
                               }
                               rows={4}
-                              className="w-full px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600"
+                              className="w-full px-3 py-2 border rounded-md bg-gray-700 border-gray-600 text-gray-100 placeholder:text-gray-400"
                               required
                             />
                           </div>
@@ -1945,7 +1945,7 @@ export default function PageSectionsAdmin() {
                         onChange={(e) =>
                           updateContentField("companyName", e.target.value)
                         }
-                        className="w-full px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600"
+                        className="w-full px-3 py-2 border rounded-md bg-gray-700 border-gray-600 text-gray-100 placeholder:text-gray-400"
                       />
                     </div>
                     <div>
@@ -1964,7 +1964,7 @@ export default function PageSectionsAdmin() {
                           )
                         }
                         rows={3}
-                        className="w-full px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600"
+                        className="w-full px-3 py-2 border rounded-md bg-gray-700 border-gray-600 text-gray-100 placeholder:text-gray-400"
                       />
                     </div>
                     <div className="grid grid-cols-2 gap-4">
@@ -1978,7 +1978,7 @@ export default function PageSectionsAdmin() {
                           onChange={(e) =>
                             updateContentField("email", e.target.value)
                           }
-                          className="w-full px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600"
+                          className="w-full px-3 py-2 border rounded-md bg-gray-700 border-gray-600 text-gray-100 placeholder:text-gray-400"
                         />
                       </div>
                       <div>
@@ -1991,7 +1991,7 @@ export default function PageSectionsAdmin() {
                           onChange={(e) =>
                             updateContentField("phone", e.target.value)
                           }
-                          className="w-full px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600"
+                          className="w-full px-3 py-2 border rounded-md bg-gray-700 border-gray-600 text-gray-100 placeholder:text-gray-400"
                         />
                       </div>
                     </div>
@@ -2005,7 +2005,7 @@ export default function PageSectionsAdmin() {
                         onChange={(e) =>
                           updateContentField("address", e.target.value)
                         }
-                        className="w-full px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600"
+                        className="w-full px-3 py-2 border rounded-md bg-gray-700 border-gray-600 text-gray-100 placeholder:text-gray-400"
                       />
                     </div>
                     <div className="grid grid-cols-2 gap-4">
@@ -2019,7 +2019,7 @@ export default function PageSectionsAdmin() {
                           onChange={(e) =>
                             updateContentField("facebook", e.target.value)
                           }
-                          className="w-full px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600"
+                          className="w-full px-3 py-2 border rounded-md bg-gray-700 border-gray-600 text-gray-100 placeholder:text-gray-400"
                         />
                       </div>
                       <div>
@@ -2032,7 +2032,7 @@ export default function PageSectionsAdmin() {
                           onChange={(e) =>
                             updateContentField("twitter", e.target.value)
                           }
-                          className="w-full px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600"
+                          className="w-full px-3 py-2 border rounded-md bg-gray-700 border-gray-600 text-gray-100 placeholder:text-gray-400"
                         />
                       </div>
                     </div>
@@ -2047,7 +2047,7 @@ export default function PageSectionsAdmin() {
                           onChange={(e) =>
                             updateContentField("linkedin", e.target.value)
                           }
-                          className="w-full px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600"
+                          className="w-full px-3 py-2 border rounded-md bg-gray-700 border-gray-600 text-gray-100 placeholder:text-gray-400"
                         />
                       </div>
                       <div>
@@ -2060,7 +2060,7 @@ export default function PageSectionsAdmin() {
                           onChange={(e) =>
                             updateContentField("github", e.target.value)
                           }
-                          className="w-full px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600"
+                          className="w-full px-3 py-2 border rounded-md bg-gray-700 border-gray-600 text-gray-100 placeholder:text-gray-400"
                         />
                       </div>
                     </div>
@@ -2093,7 +2093,7 @@ export default function PageSectionsAdmin() {
                           ) => (
                             <div
                               key={index}
-                              className="mb-4 p-3 border rounded-md dark:border-gray-600"
+                              className="mb-4 p-3 border rounded-md border-gray-600"
                             >
                               <div className="flex justify-between items-center mb-2">
                                 <span className="text-sm font-medium">
@@ -2131,7 +2131,7 @@ export default function PageSectionsAdmin() {
                                   };
                                   updateContentField("quickLinks", links);
                                 }}
-                                className="w-full mb-2 px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600"
+                                className="w-full mb-2 px-3 py-2 border rounded-md bg-gray-700 border-gray-600 text-gray-100 placeholder:text-gray-400"
                               />
                               <input
                                 type="text"
@@ -2149,7 +2149,7 @@ export default function PageSectionsAdmin() {
                                   };
                                   updateContentField("quickLinks", links);
                                 }}
-                                className="w-full px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600"
+                                className="w-full px-3 py-2 border rounded-md bg-gray-700 border-gray-600 text-gray-100 placeholder:text-gray-400"
                               />
                             </div>
                           )
@@ -2184,7 +2184,7 @@ export default function PageSectionsAdmin() {
                           ) => (
                             <div
                               key={index}
-                              className="mb-4 p-3 border rounded-md dark:border-gray-600"
+                              className="mb-4 p-3 border rounded-md border-gray-600"
                             >
                               <div className="flex justify-between items-center mb-2">
                                 <span className="text-sm font-medium">
@@ -2228,7 +2228,7 @@ export default function PageSectionsAdmin() {
                                     services
                                   );
                                 }}
-                                className="w-full mb-2 px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600"
+                                className="w-full mb-2 px-3 py-2 border rounded-md bg-gray-700 border-gray-600 text-gray-100 placeholder:text-gray-400"
                               />
                               <input
                                 type="text"
@@ -2249,7 +2249,7 @@ export default function PageSectionsAdmin() {
                                     services
                                   );
                                 }}
-                                className="w-full px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600"
+                                className="w-full px-3 py-2 border rounded-md bg-gray-700 border-gray-600 text-gray-100 placeholder:text-gray-400"
                               />
                             </div>
                           )
@@ -2267,7 +2267,7 @@ export default function PageSectionsAdmin() {
                           updateContentField("newsletterText", e.target.value)
                         }
                         rows={2}
-                        className="w-full px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600"
+                        className="w-full px-3 py-2 border rounded-md bg-gray-700 border-gray-600 text-gray-100 placeholder:text-gray-400"
                         placeholder="Subscribe to our newsletter..."
                       />
                     </div>
@@ -2287,7 +2287,7 @@ export default function PageSectionsAdmin() {
                             e.target.value
                           )
                         }
-                        className="w-full px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600"
+                        className="w-full px-3 py-2 border rounded-md bg-gray-700 border-gray-600 text-gray-100 placeholder:text-gray-400"
                         placeholder="Subscribe"
                       />
                     </div>
@@ -2303,7 +2303,7 @@ export default function PageSectionsAdmin() {
                         onChange={(e) =>
                           updateContentField("copyrightText", e.target.value)
                         }
-                        className="w-full px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600"
+                        className="w-full px-3 py-2 border rounded-md bg-gray-700 border-gray-600 text-gray-100 placeholder:text-gray-400"
                         placeholder="Leave empty for default"
                       />
                     </div>
@@ -2349,7 +2349,7 @@ export default function PageSectionsAdmin() {
                           ) => (
                             <div
                               key={index}
-                              className="mb-4 p-3 border rounded-md dark:border-gray-600"
+                              className="mb-4 p-3 border rounded-md border-gray-600"
                             >
                               <div className="flex justify-between items-center mb-2">
                                 <span className="text-sm font-medium">
@@ -2387,7 +2387,7 @@ export default function PageSectionsAdmin() {
                                   };
                                   updateContentField("features", features);
                                 }}
-                                className="w-full mb-2 px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600"
+                                className="w-full mb-2 px-3 py-2 border rounded-md bg-gray-700 border-gray-600 text-gray-100 placeholder:text-gray-400"
                               />
                               <textarea
                                 placeholder="Feature Description"
@@ -2405,7 +2405,7 @@ export default function PageSectionsAdmin() {
                                   updateContentField("features", features);
                                 }}
                                 rows={3}
-                                className="w-full px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600"
+                                className="w-full px-3 py-2 border rounded-md bg-gray-700 border-gray-600 text-gray-100 placeholder:text-gray-400"
                               />
                             </div>
                           )
@@ -2469,7 +2469,7 @@ export default function PageSectionsAdmin() {
                           ) => (
                             <div
                               key={index}
-                              className="mb-4 p-3 border rounded-md dark:border-gray-600"
+                              className="mb-4 p-3 border rounded-md border-gray-600"
                             >
                               <div className="flex justify-between items-center mb-2">
                                 <span className="text-sm font-medium">
@@ -2507,7 +2507,7 @@ export default function PageSectionsAdmin() {
                                   updateContentField("items", items);
                                 }}
                                 rows={3}
-                                className="w-full mb-2 px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600"
+                                className="w-full mb-2 px-3 py-2 border rounded-md bg-gray-700 border-gray-600 text-gray-100 placeholder:text-gray-400"
                               />
                               <input
                                 type="text"
@@ -2525,7 +2525,7 @@ export default function PageSectionsAdmin() {
                                   };
                                   updateContentField("items", items);
                                 }}
-                                className="w-full mb-2 px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600"
+                                className="w-full mb-2 px-3 py-2 border rounded-md bg-gray-700 border-gray-600 text-gray-100 placeholder:text-gray-400"
                               />
                               <input
                                 type="text"
@@ -2543,7 +2543,7 @@ export default function PageSectionsAdmin() {
                                   };
                                   updateContentField("items", items);
                                 }}
-                                className="w-full mb-2 px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600"
+                                className="w-full mb-2 px-3 py-2 border rounded-md bg-gray-700 border-gray-600 text-gray-100 placeholder:text-gray-400"
                               />
                               <input
                                 type="text"
@@ -2561,7 +2561,7 @@ export default function PageSectionsAdmin() {
                                   };
                                   updateContentField("items", items);
                                 }}
-                                className="w-full px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600"
+                                className="w-full px-3 py-2 border rounded-md bg-gray-700 border-gray-600 text-gray-100 placeholder:text-gray-400"
                               />
                             </div>
                           )
@@ -2600,7 +2600,7 @@ export default function PageSectionsAdmin() {
                         ) => (
                           <div
                             key={index}
-                            className="mb-4 p-3 border rounded-md dark:border-gray-600"
+                            className="mb-4 p-3 border rounded-md border-gray-600"
                           >
                             <div className="flex justify-between items-center mb-2">
                               <span className="text-sm font-medium">
@@ -2631,7 +2631,7 @@ export default function PageSectionsAdmin() {
                               onChange={(e) =>
                                 updateProject(index, "title", e.target.value)
                               }
-                              className="w-full mb-2 px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600"
+                              className="w-full mb-2 px-3 py-2 border rounded-md bg-gray-700 border-gray-600 text-gray-100 placeholder:text-gray-400"
                               required
                             />
                             <textarea
@@ -2645,7 +2645,7 @@ export default function PageSectionsAdmin() {
                                 )
                               }
                               rows={3}
-                              className="w-full mb-2 px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600"
+                              className="w-full mb-2 px-3 py-2 border rounded-md bg-gray-700 border-gray-600 text-gray-100 placeholder:text-gray-400"
                               required
                             />
                             <input
@@ -2655,7 +2655,7 @@ export default function PageSectionsAdmin() {
                               onChange={(e) =>
                                 updateProject(index, "category", e.target.value)
                               }
-                              className="w-full mb-2 px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600"
+                              className="w-full mb-2 px-3 py-2 border rounded-md bg-gray-700 border-gray-600 text-gray-100 placeholder:text-gray-400"
                             />
                             <input
                               type="text"
@@ -2675,7 +2675,7 @@ export default function PageSectionsAdmin() {
                                     .filter((t) => t)
                                 )
                               }
-                              className="w-full mb-2 px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600"
+                              className="w-full mb-2 px-3 py-2 border rounded-md bg-gray-700 border-gray-600 text-gray-100 placeholder:text-gray-400"
                             />
                             <input
                               type="text"
@@ -2684,7 +2684,7 @@ export default function PageSectionsAdmin() {
                               onChange={(e) =>
                                 updateProject(index, "link", e.target.value)
                               }
-                              className="w-full px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600"
+                              className="w-full px-3 py-2 border rounded-md bg-gray-700 border-gray-600 text-gray-100 placeholder:text-gray-400"
                             />
                           </div>
                         )
@@ -2717,7 +2717,7 @@ export default function PageSectionsAdmin() {
                         ) => (
                           <div
                             key={index}
-                            className="mb-4 p-3 border rounded-md dark:border-gray-600"
+                            className="mb-4 p-3 border rounded-md border-gray-600"
                           >
                             <div className="flex justify-between items-center mb-2">
                               <span className="text-sm font-medium">
@@ -2772,7 +2772,7 @@ export default function PageSectionsAdmin() {
                         ) => (
                           <div
                             key={index}
-                            className="mb-4 p-3 border rounded-md dark:border-gray-600"
+                            className="mb-4 p-3 border rounded-md border-gray-600"
                           >
                             <div className="flex justify-between items-center mb-2">
                               <span className="text-sm font-medium">
@@ -2802,7 +2802,7 @@ export default function PageSectionsAdmin() {
                               onChange={(e) =>
                                 updatePartner(index, "name", e.target.value)
                               }
-                              className="w-full px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600"
+                              className="w-full px-3 py-2 border rounded-md bg-gray-700 border-gray-600 text-gray-100 placeholder:text-gray-400"
                             />
                           </div>
                         )
@@ -2841,7 +2841,7 @@ export default function PageSectionsAdmin() {
                         ) => (
                           <div
                             key={index}
-                            className="mb-4 p-3 border rounded-md dark:border-gray-600"
+                            className="mb-4 p-3 border rounded-md border-gray-600"
                           >
                             <div className="flex justify-between items-center mb-2">
                               <span className="text-sm font-medium">
@@ -2872,7 +2872,7 @@ export default function PageSectionsAdmin() {
                               onChange={(e) =>
                                 updatePost(index, "title", e.target.value)
                               }
-                              className="w-full mb-2 px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600"
+                              className="w-full mb-2 px-3 py-2 border rounded-md bg-gray-700 border-gray-600 text-gray-100 placeholder:text-gray-400"
                               required
                             />
                             <textarea
@@ -2882,7 +2882,7 @@ export default function PageSectionsAdmin() {
                                 updatePost(index, "excerpt", e.target.value)
                               }
                               rows={3}
-                              className="w-full mb-2 px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600"
+                              className="w-full mb-2 px-3 py-2 border rounded-md bg-gray-700 border-gray-600 text-gray-100 placeholder:text-gray-400"
                               required
                             />
                             <div className="grid grid-cols-2 gap-2 mb-2">
@@ -2893,7 +2893,7 @@ export default function PageSectionsAdmin() {
                                 onChange={(e) =>
                                   updatePost(index, "author", e.target.value)
                                 }
-                                className="px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600"
+                                className="px-3 py-2 border rounded-md bg-gray-700 border-gray-600 text-gray-100 placeholder:text-gray-400"
                               />
                               <input
                                 type="text"
@@ -2902,7 +2902,7 @@ export default function PageSectionsAdmin() {
                                 onChange={(e) =>
                                   updatePost(index, "date", e.target.value)
                                 }
-                                className="px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600"
+                                className="px-3 py-2 border rounded-md bg-gray-700 border-gray-600 text-gray-100 placeholder:text-gray-400"
                               />
                             </div>
                             <div className="grid grid-cols-2 gap-2">
@@ -2913,7 +2913,7 @@ export default function PageSectionsAdmin() {
                                 onChange={(e) =>
                                   updatePost(index, "category", e.target.value)
                                 }
-                                className="px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600"
+                                className="px-3 py-2 border rounded-md bg-gray-700 border-gray-600 text-gray-100 placeholder:text-gray-400"
                               />
                               <input
                                 type="text"
@@ -2922,7 +2922,7 @@ export default function PageSectionsAdmin() {
                                 onChange={(e) =>
                                   updatePost(index, "link", e.target.value)
                                 }
-                                className="px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600"
+                                className="px-3 py-2 border rounded-md bg-gray-700 border-gray-600 text-gray-100 placeholder:text-gray-400"
                               />
                             </div>
                           </div>
@@ -2959,7 +2959,7 @@ export default function PageSectionsAdmin() {
                         ) => (
                           <div
                             key={index}
-                            className="mb-4 p-3 border rounded-md dark:border-gray-600"
+                            className="mb-4 p-3 border rounded-md border-gray-600"
                           >
                             <div className="flex justify-between items-center mb-2">
                               <span className="text-sm font-medium">
@@ -2981,7 +2981,7 @@ export default function PageSectionsAdmin() {
                                 onChange={(e) =>
                                   updateStep(index, "number", e.target.value)
                                 }
-                                className="px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600"
+                                className="px-3 py-2 border rounded-md bg-gray-700 border-gray-600 text-gray-100 placeholder:text-gray-400"
                               />
                               <div>
                                 <IconUpload
@@ -3003,7 +3003,7 @@ export default function PageSectionsAdmin() {
                               onChange={(e) =>
                                 updateStep(index, "title", e.target.value)
                               }
-                              className="w-full mb-2 px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600"
+                              className="w-full mb-2 px-3 py-2 border rounded-md bg-gray-700 border-gray-600 text-gray-100 placeholder:text-gray-400"
                               required
                             />
                             <textarea
@@ -3013,7 +3013,7 @@ export default function PageSectionsAdmin() {
                                 updateStep(index, "description", e.target.value)
                               }
                               rows={3}
-                              className="w-full px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600"
+                              className="w-full px-3 py-2 border rounded-md bg-gray-700 border-gray-600 text-gray-100 placeholder:text-gray-400"
                               required
                             />
                           </div>
@@ -3046,7 +3046,7 @@ export default function PageSectionsAdmin() {
                         ) => (
                           <div
                             key={index}
-                            className="mb-4 p-3 border rounded-md dark:border-gray-600"
+                            className="mb-4 p-3 border rounded-md border-gray-600"
                           >
                             <div className="flex justify-between items-center mb-2">
                               <span className="text-sm font-medium">
@@ -3067,7 +3067,7 @@ export default function PageSectionsAdmin() {
                               onChange={(e) =>
                                 updateFAQ(index, "question", e.target.value)
                               }
-                              className="w-full mb-2 px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600"
+                              className="w-full mb-2 px-3 py-2 border rounded-md bg-gray-700 border-gray-600 text-gray-100 placeholder:text-gray-400"
                               required
                             />
                             <textarea
@@ -3077,7 +3077,7 @@ export default function PageSectionsAdmin() {
                                 updateFAQ(index, "answer", e.target.value)
                               }
                               rows={4}
-                              className="w-full px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600"
+                              className="w-full px-3 py-2 border rounded-md bg-gray-700 border-gray-600 text-gray-100 placeholder:text-gray-400"
                               required
                             />
                           </div>
@@ -3099,7 +3099,7 @@ export default function PageSectionsAdmin() {
                         onChange={(e) =>
                           updateContentField("buttonText", e.target.value)
                         }
-                        className="w-full px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600"
+                        className="w-full px-3 py-2 border rounded-md bg-gray-700 border-gray-600 text-gray-100 placeholder:text-gray-400"
                       />
                     </div>
                     <div>
@@ -3112,7 +3112,7 @@ export default function PageSectionsAdmin() {
                         onChange={(e) =>
                           updateContentField("buttonLink", e.target.value)
                         }
-                        className="w-full px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600"
+                        className="w-full px-3 py-2 border rounded-md bg-gray-700 border-gray-600 text-gray-100 placeholder:text-gray-400"
                       />
                     </div>
                     <div>
@@ -3128,7 +3128,7 @@ export default function PageSectionsAdmin() {
                             e.target.value
                           )
                         }
-                        className="w-full px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600"
+                        className="w-full px-3 py-2 border rounded-md bg-gray-700 border-gray-600 text-gray-100 placeholder:text-gray-400"
                       />
                     </div>
                     <div>
@@ -3144,7 +3144,7 @@ export default function PageSectionsAdmin() {
                             e.target.value
                           )
                         }
-                        className="w-full px-3 py-2 border rounded-md dark:bg-gray-700 dark:border-gray-600"
+                        className="w-full px-3 py-2 border rounded-md bg-gray-700 border-gray-600 text-gray-100 placeholder:text-gray-400"
                       />
                     </div>
                   </>
@@ -3237,7 +3237,7 @@ export default function PageSectionsAdmin() {
                 <tr>
                   <td
                     colSpan={5}
-                    className="px-6 py-4 text-center text-gray-500"
+                    className="px-6 py-4 text-center text-gray-400"
                   >
                     No sections yet. Click &quot;Add Section&quot; to get
                     started.

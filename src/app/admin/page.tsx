@@ -964,15 +964,21 @@ export default function AdminPanel() {
               </h2>
               <p className="text-gray-400">
                 Create and manage blog posts with the rich text editor. Published
-                posts are available at /blog/[slug].
+                Listing at /blogs. Posts at /blog/[slug].
               </p>
             </div>
-            <div className="mb-4">
+            <div className="mb-4 flex gap-3">
               <Link
                 href="/admin/blog"
                 className="inline-block bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors"
               >
                 Manage Blog Posts →
+              </Link>
+              <Link
+                href="/admin/blog/listing"
+                className="inline-block bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition-colors"
+              >
+                Edit Listing Page →
               </Link>
             </div>
             <div className="bg-gray-700 rounded-lg p-4">

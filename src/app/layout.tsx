@@ -9,6 +9,7 @@ import {
   getMetaHeaderTagsBySlug,
   getMetaHeaderTagsByService,
   getMetaHeaderTagsByIndustry,
+  getMetaHeaderTagsByBlog,
   MetaHeaderTags,
 } from "@/lib/meta-header-tags";
 import { getHomeHeroImageUrl } from "@/lib/home-hero";
@@ -71,6 +72,9 @@ export default async function RootLayout({
       } else if (currentPath.startsWith("/industries/")) {
         const slug = currentPath.replace("/industries/", "").split("/")[0];
         if (slug) metaHeaderTags = await getMetaHeaderTagsByIndustry(slug);
+      } else if (currentPath.startsWith("/blog/")) {
+        const slug = currentPath.replace("/blog/", "").split("/")[0];
+        if (slug) metaHeaderTags = await getMetaHeaderTagsByBlog(slug);
       } else if (currentPath === "/") {
         [metaHeaderTags, heroImageUrl] = await Promise.all([
           getMetaHeaderTagsBySlug("home"),
