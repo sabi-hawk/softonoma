@@ -2603,7 +2603,7 @@ export default function ServiceTemplateEditor({
                   <div>
                     <FormattedTextInput
                       label="Section Description"
-                      value={data.faq.description}
+                      value={data.faq.description ?? ""}
                       onChange={(value) =>
                         updateField("faq", "description", value)
                       }
