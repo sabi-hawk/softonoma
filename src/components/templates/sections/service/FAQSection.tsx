@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { getBackgroundStyle, getDefaultBackground } from "@/lib/section-helpers";
+import { renderFormattedText } from "@/lib/text-formatting";
 
 interface FAQItem {
   question: string;
@@ -30,9 +31,9 @@ export default function FAQSection({ title, description, items, backgroundColor 
             {title}
           </h2>
           {description && (
-            <p className="text-base sm:text-lg md:text-xl theme-text-primary max-w-3xl mx-auto px-2" style={{ opacity: 0.8 }}>
-              {description}
-            </p>
+            <div className="text-base sm:text-lg md:text-xl theme-text-primary max-w-3xl mx-auto px-2" style={{ opacity: 0.8 }}>
+              {renderFormattedText(description)}
+            </div>
           )}
         </div>
 
@@ -94,9 +95,9 @@ export default function FAQSection({ title, description, items, backgroundColor 
                 {isExpanded && (
                   <div className="overflow-hidden transition-all duration-300">
                     <div className="px-5 py-4 sm:px-6 sm:py-5 theme-bg-secondary rounded-b-xl">
-                      <p className="text-sm sm:text-base theme-text-muted leading-relaxed">
-                        {faq.answer || `Answer ${index + 1}`}
-                      </p>
+                      <div className="text-sm sm:text-base theme-text-muted leading-relaxed">
+                        {renderFormattedText(faq.answer || `Answer ${index + 1}`)}
+                      </div>
                     </div>
                   </div>
                 )}

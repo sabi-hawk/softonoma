@@ -4,6 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { IPageConfig } from "@/models/Page";
 import { getImageUrl } from "@/lib/image-utils";
+import { renderFormattedText } from "@/lib/text-formatting";
 import ListingHero from "./ListingHero";
 
 interface Service {
@@ -97,9 +98,9 @@ export default function ServicesListingPage({ pageConfig, services }: ServicesLi
                       </h3>
                     )}
                     {showDescriptions && service.description && (
-                      <p className="theme-text-muted text-sm leading-relaxed line-clamp-3 flex-1">
-                        {service.description}
-                      </p>
+                      <div className="theme-text-muted text-sm leading-relaxed line-clamp-3 flex-1">
+                        {renderFormattedText(service.description)}
+                      </div>
                     )}
                     <span className="mt-3 inline-flex items-center text-sm font-medium theme-text-primary-end opacity-80 group-hover:opacity-100 transition-opacity">
                       Learn more

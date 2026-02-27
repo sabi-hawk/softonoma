@@ -8,6 +8,7 @@ import {
 } from "@/lib/section-helpers";
 import { getImageUrl } from "@/lib/image-utils";
 import Image from "next/image";
+import { renderFormattedText } from "@/lib/text-formatting";
 
 interface CardsSectionProps {
   section: ISection;
@@ -180,12 +181,12 @@ export default function CardsSection({ section }: CardsSectionProps) {
 
           {/* Description */}
           {content.description && (
-            <p
+            <div
               className="text-sm sm:text-base md:text-lg theme-text-muted leading-relaxed"
               style={{ fontFamily: "var(--font-inter), sans-serif" }}
             >
-              {content.description}
-            </p>
+              {renderFormattedText(content.description)}
+            </div>
           )}
         </div>
 
@@ -262,12 +263,12 @@ export default function CardsSection({ section }: CardsSectionProps) {
 
                     {/* Quote */}
                     {item.quote && (
-                      <p
+                      <div
                         className="theme-text-muted mb-6 sm:mb-8 leading-relaxed text-sm sm:text-base"
                         style={{ fontFamily: "var(--font-inter), sans-serif" }}
                       >
-                        {item.quote}
-                      </p>
+                        {renderFormattedText(item.quote)}
+                      </div>
                     )}
 
                     {/* Profile Picture */}
@@ -321,12 +322,12 @@ export default function CardsSection({ section }: CardsSectionProps) {
 
                     {/* Quote */}
                     {item.quote && (
-                      <p
+                      <div
                         className="theme-text-muted mb-6 sm:mb-8 leading-relaxed text-sm sm:text-base"
                         style={{ fontFamily: "var(--font-inter), sans-serif" }}
                       >
-                        {item.quote}
-                      </p>
+                        {renderFormattedText(item.quote)}
+                      </div>
                     )}
 
                     {/* Profile Picture */}

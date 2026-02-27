@@ -9,6 +9,7 @@ import FileUpload from "@/components/admin/FileUpload";
 import IconUpload from "@/components/admin/IconUpload";
 import ReactIconSelector from "@/components/admin/ReactIconSelector";
 import Loader from "@/components/admin/Loader";
+import FormattedTextInput from "@/components/admin/FormattedTextInput";
 import { isContactPage } from "@/lib/about-page-templates";
 
 interface Section {
@@ -1341,17 +1342,14 @@ export default function PageSectionsAdmin() {
                   sectionForm.type === "process" ||
                   sectionForm.type === "faq") && (
                   <div>
-                    <label className="block text-sm font-medium mb-1 text-gray-200">
-                      Description
-                    </label>
-                    <textarea
-                      value={sectionForm.content.description || ""}
-                      onChange={(e) =>
-                        updateContentField("description", e.target.value)
-                      }
-                      rows={3}
-                      className="w-full px-3 py-2 border rounded-md bg-gray-700 border-gray-600 text-gray-100 placeholder:text-gray-400"
-                    />
+                  <FormattedTextInput
+                    label="Description"
+                    value={sectionForm.content.description || ""}
+                    onChange={(value) =>
+                      updateContentField("description", value)
+                    }
+                    rows={3}
+                  />
                   </div>
                 )}
 
@@ -1504,19 +1502,17 @@ export default function PageSectionsAdmin() {
                             className="w-full mb-2 px-3 py-2 border rounded-md bg-gray-700 border-gray-600 text-gray-100 placeholder:text-gray-400"
                             required
                           />
-                          <textarea
+                          <FormattedTextInput
                             placeholder="Description"
                             value={service.description}
-                            onChange={(e) =>
+                            onChange={(value) =>
                               updateService(
                                 index,
                                 "description",
-                                e.target.value
+                                value
                               )
                             }
                             rows={3}
-                            className="w-full px-3 py-2 border rounded-md bg-gray-700 border-gray-600 text-gray-100 placeholder:text-gray-400"
-                            required
                           />
                         </div>
                       ))}
@@ -1801,18 +1797,15 @@ export default function PageSectionsAdmin() {
                 {sectionForm.type === "about" && (
                   <>
                     <div>
-                      <label className="block text-sm font-medium mb-1">
-                        About Text
-                      </label>
-                      <textarea
-                        value={sectionForm.content.aboutText || ""}
-                        onChange={(e) =>
-                          updateContentField("aboutText", e.target.value)
-                        }
-                        rows={8}
-                        className="w-full px-3 py-2 border rounded-md bg-gray-700 border-gray-600 text-gray-100 placeholder:text-gray-400"
-                        placeholder="About us content (plain text only)"
-                      />
+                    <FormattedTextInput
+                      label="About Text"
+                      value={sectionForm.content.aboutText || ""}
+                      onChange={(value) =>
+                        updateContentField("aboutText", value)
+                      }
+                      rows={8}
+                      placeholder="About us content"
+                    />
                     </div>
                     <FileUpload
                       label="About Image"
@@ -1910,19 +1903,17 @@ export default function PageSectionsAdmin() {
                               className="w-full mb-2 px-3 py-2 border rounded-md bg-gray-700 border-gray-600 text-gray-100 placeholder:text-gray-400"
                               required
                             />
-                            <textarea
+                            <FormattedTextInput
                               placeholder="Description"
                               value={partnership.description}
-                              onChange={(e) =>
+                              onChange={(value) =>
                                 updatePartnership(
                                   index,
                                   "description",
-                                  e.target.value
+                                  value
                                 )
                               }
                               rows={4}
-                              className="w-full px-3 py-2 border rounded-md bg-gray-700 border-gray-600 text-gray-100 placeholder:text-gray-400"
-                              required
                             />
                           </div>
                         )
@@ -1949,23 +1940,20 @@ export default function PageSectionsAdmin() {
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium mb-1">
-                        Company Description
-                      </label>
-                      <textarea
-                        value={
-                          (sectionForm.content.companyDescription as string) ||
-                          ""
-                        }
-                        onChange={(e) =>
-                          updateContentField(
-                            "companyDescription",
-                            e.target.value
-                          )
-                        }
-                        rows={3}
-                        className="w-full px-3 py-2 border rounded-md bg-gray-700 border-gray-600 text-gray-100 placeholder:text-gray-400"
-                      />
+                    <FormattedTextInput
+                      label="Company Description"
+                      value={
+                        (sectionForm.content.companyDescription as string) ||
+                        ""
+                      }
+                      onChange={(value) =>
+                        updateContentField(
+                          "companyDescription",
+                          value
+                        )
+                      }
+                      rows={3}
+                    />
                     </div>
                     <div className="grid grid-cols-2 gap-4">
                       <div>
@@ -2256,20 +2244,17 @@ export default function PageSectionsAdmin() {
                         )}
                     </div>
                     <div>
-                      <label className="block text-sm font-medium mb-1">
-                        Newsletter Text
-                      </label>
-                      <textarea
-                        value={
-                          (sectionForm.content.newsletterText as string) || ""
-                        }
-                        onChange={(e) =>
-                          updateContentField("newsletterText", e.target.value)
-                        }
-                        rows={2}
-                        className="w-full px-3 py-2 border rounded-md bg-gray-700 border-gray-600 text-gray-100 placeholder:text-gray-400"
-                        placeholder="Subscribe to our newsletter..."
-                      />
+                    <FormattedTextInput
+                      label="Newsletter Text"
+                      value={
+                        (sectionForm.content.newsletterText as string) || ""
+                      }
+                      onChange={(value) =>
+                        updateContentField("newsletterText", value)
+                      }
+                      rows={2}
+                      placeholder="Subscribe to our newsletter..."
+                    />
                     </div>
                     <div>
                       <label className="block text-sm font-medium mb-1">
@@ -2389,10 +2374,10 @@ export default function PageSectionsAdmin() {
                                 }}
                                 className="w-full mb-2 px-3 py-2 border rounded-md bg-gray-700 border-gray-600 text-gray-100 placeholder:text-gray-400"
                               />
-                              <textarea
+                              <FormattedTextInput
                                 placeholder="Feature Description"
                                 value={feature.description || ""}
-                                onChange={(e) => {
+                                onChange={(value) => {
                                   const features = Array.isArray(
                                     sectionForm.content.features
                                   )
@@ -2400,12 +2385,11 @@ export default function PageSectionsAdmin() {
                                     : [];
                                   features[index] = {
                                     ...features[index],
-                                    description: e.target.value,
+                                    description: value,
                                   };
                                   updateContentField("features", features);
                                 }}
                                 rows={3}
-                                className="w-full px-3 py-2 border rounded-md bg-gray-700 border-gray-600 text-gray-100 placeholder:text-gray-400"
                               />
                             </div>
                           )
@@ -2491,10 +2475,10 @@ export default function PageSectionsAdmin() {
                                   Remove
                                 </button>
                               </div>
-                              <textarea
+                              <FormattedTextInput
                                 placeholder="Quote/Content"
                                 value={item.quote || ""}
-                                onChange={(e) => {
+                                onChange={(value) => {
                                   const items = Array.isArray(
                                     sectionForm.content.items
                                   )
@@ -2502,12 +2486,11 @@ export default function PageSectionsAdmin() {
                                     : [];
                                   items[index] = {
                                     ...items[index],
-                                    quote: e.target.value,
+                                    quote: value,
                                   };
                                   updateContentField("items", items);
                                 }}
                                 rows={3}
-                                className="w-full mb-2 px-3 py-2 border rounded-md bg-gray-700 border-gray-600 text-gray-100 placeholder:text-gray-400"
                               />
                               <input
                                 type="text"
@@ -2634,19 +2617,17 @@ export default function PageSectionsAdmin() {
                               className="w-full mb-2 px-3 py-2 border rounded-md bg-gray-700 border-gray-600 text-gray-100 placeholder:text-gray-400"
                               required
                             />
-                            <textarea
+                            <FormattedTextInput
                               placeholder="Description"
                               value={project.description || ""}
-                              onChange={(e) =>
+                              onChange={(value) =>
                                 updateProject(
                                   index,
                                   "description",
-                                  e.target.value
+                                  value
                                 )
                               }
                               rows={3}
-                              className="w-full mb-2 px-3 py-2 border rounded-md bg-gray-700 border-gray-600 text-gray-100 placeholder:text-gray-400"
-                              required
                             />
                             <input
                               type="text"
@@ -3006,15 +2987,13 @@ export default function PageSectionsAdmin() {
                               className="w-full mb-2 px-3 py-2 border rounded-md bg-gray-700 border-gray-600 text-gray-100 placeholder:text-gray-400"
                               required
                             />
-                            <textarea
+                            <FormattedTextInput
                               placeholder="Description"
                               value={step.description || ""}
-                              onChange={(e) =>
-                                updateStep(index, "description", e.target.value)
+                              onChange={(value) =>
+                                updateStep(index, "description", value)
                               }
                               rows={3}
-                              className="w-full px-3 py-2 border rounded-md bg-gray-700 border-gray-600 text-gray-100 placeholder:text-gray-400"
-                              required
                             />
                           </div>
                         )
@@ -3070,15 +3049,13 @@ export default function PageSectionsAdmin() {
                               className="w-full mb-2 px-3 py-2 border rounded-md bg-gray-700 border-gray-600 text-gray-100 placeholder:text-gray-400"
                               required
                             />
-                            <textarea
+                            <FormattedTextInput
                               placeholder="Answer"
                               value={faq.answer || ""}
-                              onChange={(e) =>
-                                updateFAQ(index, "answer", e.target.value)
+                              onChange={(value) =>
+                                updateFAQ(index, "answer", value)
                               }
                               rows={4}
-                              className="w-full px-3 py-2 border rounded-md bg-gray-700 border-gray-600 text-gray-100 placeholder:text-gray-400"
-                              required
                             />
                           </div>
                         )

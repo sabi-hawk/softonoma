@@ -5,6 +5,7 @@ import { useRef, useEffect } from "react";
 import { getBackgroundStyle, getDefaultBackground } from "@/lib/section-helpers";
 import { getImageUrl } from "@/lib/image-utils";
 import { isIconUrl } from "../../utils/helpers";
+import { renderFormattedText } from "@/lib/text-formatting";
 
 interface Partner {
   name?: string;
@@ -68,9 +69,9 @@ export default function PartnersSection({
                   {title}
                 </h2>
                 {description && (
-                  <p className="text-sm sm:text-lg theme-text-muted max-w-3xl mx-auto px-1 sm:px-2">
-                    {description}
-                  </p>
+                  <div className="text-sm sm:text-lg theme-text-muted max-w-3xl mx-auto px-1 sm:px-2">
+                    {renderFormattedText(description)}
+                  </div>
                 )}
               </div>
             )}

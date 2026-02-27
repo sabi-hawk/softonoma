@@ -3,6 +3,7 @@ import Image from "next/image";
 import { getBackgroundStyle, getDefaultBackground } from "@/lib/section-helpers";
 import { getImageUrl } from "@/lib/image-utils";
 import { isIconUrl } from "../../utils/helpers";
+import { renderFormattedText } from "@/lib/text-formatting";
 
 interface SubServiceItem {
   icon?: string;
@@ -38,7 +39,7 @@ export default function SubServicesSection({
             {title}
           </h2>
           {description && (
-            <p className="text-base sm:text-lg text-gray-600 max-w-2xl mx-auto px-2">{description}</p>
+            <div className="text-base sm:text-lg text-gray-600 max-w-2xl mx-auto px-2">{renderFormattedText(description)}</div>
           )}
         </div>
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
@@ -68,7 +69,7 @@ export default function SubServicesSection({
                   <h3 className="text-lg sm:text-xl font-semibold theme-text-primary mb-1 sm:mb-2 theme-hover-primary-end transition-colors">
                     {item.title}
                   </h3>
-                  <p className="text-sm sm:text-base theme-text-primary leading-relaxed opacity-80">{item.description}</p>
+                  <div className="text-sm sm:text-base theme-text-primary leading-relaxed opacity-80">{renderFormattedText(item.description)}</div>
                 </div>
               </div>
             </div>

@@ -9,6 +9,7 @@ import {
 } from "@/lib/industry-template";
 import FileUpload from "@/components/admin/FileUpload";
 import IconUpload from "@/components/admin/IconUpload";
+import FormattedTextInput from "@/components/admin/FormattedTextInput";
 
 interface IndustryTemplateEditorProps {
   initialContent: string;
@@ -322,15 +323,12 @@ export default function IndustryTemplateEditor({
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
-                  Description
-                </label>
-                <textarea
+                <FormattedTextInput
+                  label="Description"
                   value={data.hero.description}
-                  onChange={(e) =>
-                    updateField("hero", "description", e.target.value)
+                  onChange={(value) =>
+                    updateField("hero", "description", value)
                   }
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                   rows={3}
                 />
               </div>
@@ -490,20 +488,20 @@ export default function IndustryTemplateEditor({
                         Remove
                       </button>
                     </div>
-                    <textarea
+                    <FormattedTextInput
                       value={para.text}
-                      onChange={(e) => {
+                      onChange={(value) => {
                         setData((prev) => ({
                           ...prev,
                           overview: {
                             ...prev.overview,
                             paragraphs: prev.overview.paragraphs.map((p, i) =>
-                              i === index ? { text: e.target.value } : p
+                              i === index ? { text: value } : p
                             ),
                           },
                         }));
                       }}
-                      className="w-full px-2 py-1 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
+                      className="w-full px-2 py-1"
                       rows={3}
                     />
                   </div>
@@ -787,21 +785,18 @@ export default function IndustryTemplateEditor({
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
-                      Section Description (optional)
-                    </label>
-                    <textarea
+                    <FormattedTextInput
+                      label="Section Description (optional)"
                       value={data.subServices.description || ""}
-                      onChange={(e) =>
+                      onChange={(value) =>
                         setData((prev) => ({
                           ...prev,
                           subServices: {
                             ...prev.subServices!,
-                            description: e.target.value,
+                            description: value,
                           },
                         }))
                       }
-                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                       rows={2}
                     />
                   </div>
@@ -908,9 +903,9 @@ export default function IndustryTemplateEditor({
                         <label className="block text-xs font-medium mb-1 text-gray-700 dark:text-gray-300">
                           Description
                         </label>
-                        <textarea
+                        <FormattedTextInput
                           value={item.description}
-                          onChange={(e) => {
+                          onChange={(value) => {
                             setData((prev) => ({
                               ...prev,
                               subServices: {
@@ -918,13 +913,13 @@ export default function IndustryTemplateEditor({
                                 items:
                                   prev.subServices?.items?.map((s, i) =>
                                     i === index
-                                      ? { ...s, description: e.target.value }
+                                      ? { ...s, description: value }
                                       : s
                                   ) || [],
                               },
                             }));
                           }}
-                          className="w-full px-2 py-1 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
+                          className="w-full px-2 py-1"
                           rows={2}
                         />
                       </div>
@@ -1052,21 +1047,18 @@ export default function IndustryTemplateEditor({
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
-                      Section Description (optional)
-                    </label>
-                    <textarea
+                    <FormattedTextInput
+                      label="Section Description (optional)"
                       value={data.partners.description || ""}
-                      onChange={(e) =>
+                      onChange={(value) =>
                         setData((prev) => ({
                           ...prev,
                           partners: {
                             ...prev.partners!,
-                            description: e.target.value,
+                            description: value,
                           },
                         }))
                       }
-                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                       rows={2}
                     />
                   </div>
@@ -1257,21 +1249,18 @@ export default function IndustryTemplateEditor({
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
-                      Section Description (optional)
-                    </label>
-                    <textarea
+                    <FormattedTextInput
+                      label="Section Description (optional)"
                       value={data.cards.description || ""}
-                      onChange={(e) =>
+                      onChange={(value) =>
                         setData((prev) => ({
                           ...prev,
                           cards: {
                             ...prev.cards!,
-                            description: e.target.value,
+                            description: value,
                           },
                         }))
                       }
-                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                       rows={2}
                     />
                   </div>
@@ -1349,12 +1338,10 @@ export default function IndustryTemplateEditor({
                         </button>
                       </div>
                       <div>
-                        <label className="block text-xs font-medium mb-1 text-gray-700 dark:text-gray-300">
-                          Quote
-                        </label>
-                        <textarea
+                        <FormattedTextInput
+                          label="Quote"
                           value={item.quote || ""}
-                          onChange={(e) => {
+                          onChange={(value) => {
                             setData((prev) => ({
                               ...prev,
                               cards: {
@@ -1362,13 +1349,13 @@ export default function IndustryTemplateEditor({
                                 items:
                                   prev.cards?.items?.map((c, i) =>
                                     i === index
-                                      ? { ...c, quote: e.target.value }
+                                      ? { ...c, quote: value }
                                       : c
                                   ) || [],
                               },
                             }));
                           }}
-                          className="w-full px-2 py-1 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
+                          className="w-full px-2 py-1"
                           rows={3}
                         />
                       </div>
@@ -1546,21 +1533,18 @@ export default function IndustryTemplateEditor({
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
-                      Section Description (optional)
-                    </label>
-                    <textarea
+                    <FormattedTextInput
+                      label="Section Description (optional)"
                       value={data.portfolio.description || ""}
-                      onChange={(e) =>
+                      onChange={(value) =>
                         setData((prev) => ({
                           ...prev,
                           portfolio: {
                             ...prev.portfolio!,
-                            description: e.target.value,
+                            description: value,
                           },
                         }))
                       }
-                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                       rows={2}
                     />
                   </div>
@@ -1686,12 +1670,10 @@ export default function IndustryTemplateEditor({
                         />
                       </div>
                       <div>
-                        <label className="block text-xs font-medium mb-1 text-gray-700 dark:text-gray-300">
-                          Description
-                        </label>
-                        <textarea
+                        <FormattedTextInput
+                          label="Description"
                           value={project.description}
-                          onChange={(e) => {
+                          onChange={(value) => {
                             setData((prev) => ({
                               ...prev,
                               portfolio: {
@@ -1699,13 +1681,13 @@ export default function IndustryTemplateEditor({
                                 projects:
                                   prev.portfolio?.projects?.map((p, i) =>
                                     i === index
-                                      ? { ...p, description: e.target.value }
+                                      ? { ...p, description: value }
                                       : p
                                   ) || [],
                               },
                             }));
                           }}
-                          className="w-full px-2 py-1 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
+                          className="w-full px-2 py-1"
                           rows={3}
                         />
                       </div>
@@ -1839,19 +1821,16 @@ export default function IndustryTemplateEditor({
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
-                      Section Description
-                    </label>
-                    <textarea
+                    <FormattedTextInput
+                      label="Section Description"
                       value={data.technologies.description}
-                      onChange={(e) =>
+                      onChange={(value) =>
                         updateField(
                           "technologies",
                           "description",
-                          e.target.value
+                          value
                         )
                       }
-                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                       rows={2}
                     />
                   </div>

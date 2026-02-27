@@ -6,6 +6,7 @@ import {
   getDefaultBackground,
 } from "@/lib/section-helpers";
 import { getImageUrl } from "@/lib/image-utils";
+import { renderFormattedText } from "@/lib/text-formatting";
 
 interface AboutSectionProps {
   section: ISection;
@@ -37,14 +38,14 @@ export default function AboutSection({ section }: AboutSectionProps) {
               </h2>
             )}
             {content.aboutText && (
-              <p className="text-sm sm:text-lg leading-relaxed theme-text-muted mb-3 sm:mb-6">
-                {content.aboutText}
-              </p>
+              <div className="text-sm sm:text-lg leading-relaxed theme-text-muted mb-3 sm:mb-6">
+                {renderFormattedText(content.aboutText)}
+              </div>
             )}
             {content.description && (
-              <p className="text-sm sm:text-lg leading-relaxed theme-text-muted mb-4 sm:mb-8">
-                {content.description}
-              </p>
+              <div className="text-sm sm:text-lg leading-relaxed theme-text-muted mb-4 sm:mb-8">
+                {renderFormattedText(content.description)}
+              </div>
             )}
             {content.aboutLink && content.aboutLinkText && (
               <Link

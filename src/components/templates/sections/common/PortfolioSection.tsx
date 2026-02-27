@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { getBackgroundStyle, getDefaultBackground } from "@/lib/section-helpers";
 import { getImageUrl } from "@/lib/image-utils";
+import { renderFormattedText } from "@/lib/text-formatting";
 
 interface Project {
   image?: string;
@@ -68,9 +69,9 @@ export default function PortfolioSection({
               {title}
             </h2>
             {description && (
-              <p className="text-base sm:text-lg md:text-xl theme-text-black max-w-3xl mx-auto opacity-80 px-2">
-                {description}
-              </p>
+              <div className="text-base sm:text-lg md:text-xl theme-text-black max-w-3xl mx-auto opacity-80 px-2">
+                {renderFormattedText(description)}
+              </div>
             )}
           </div>
         )}
@@ -123,7 +124,7 @@ export default function PortfolioSection({
                         </span>
                       )}
                       <h3 className="text-xl font-bold theme-text-black mb-2">{project.title}</h3>
-                      <p className="text-gray-600 mb-4 line-clamp-2">{project.description}</p>
+                      <div className="text-gray-600 mb-4 line-clamp-2">{renderFormattedText(project.description)}</div>
                     </div>
                   </div>
                 ))}
@@ -167,7 +168,7 @@ export default function PortfolioSection({
                       </span>
                     )}
                     <h3 className="text-xl font-bold theme-text-black mb-2">{project.title}</h3>
-                    <p className="text-gray-600 mb-4 line-clamp-2">{project.description}</p>
+                    <div className="text-gray-600 mb-4 line-clamp-2">{renderFormattedText(project.description)}</div>
                   </div>
                 </div>
               ))}

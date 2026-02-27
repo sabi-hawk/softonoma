@@ -2,6 +2,7 @@ import { ISection } from "@/models/Section";
 import Image from "next/image";
 import { getBackgroundStyle, getDefaultBackground } from "@/lib/section-helpers";
 import { getImageUrl } from "@/lib/image-utils";
+import { renderFormattedText } from "@/lib/text-formatting";
 
 interface FeaturesSectionProps {
   section: ISection;
@@ -23,9 +24,9 @@ export default function FeaturesSection({ section }: FeaturesSectionProps) {
               </h2>
             )}
             {content.description && (
-              <p className="text-base sm:text-lg theme-text-muted mb-6 sm:mb-10 leading-relaxed">
-                {content.description}
-              </p>
+              <div className="text-base sm:text-lg theme-text-muted mb-6 sm:mb-10 leading-relaxed">
+                {renderFormattedText(content.description)}
+              </div>
             )}
             {Array.isArray(content.features) && content.features.length > 0 && (
               <div className="space-y-4 sm:space-y-6">
@@ -55,9 +56,9 @@ export default function FeaturesSection({ section }: FeaturesSectionProps) {
                           </h3>
                         )}
                         {feature.description && (
-                          <p className="text-sm sm:text-base theme-text-muted leading-relaxed">
-                            {feature.description}
-                          </p>
+                          <div className="text-sm sm:text-base theme-text-muted leading-relaxed">
+                            {renderFormattedText(feature.description)}
+                          </div>
                         )}
                       </div>
                     </div>

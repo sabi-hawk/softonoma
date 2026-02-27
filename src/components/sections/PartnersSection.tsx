@@ -8,6 +8,7 @@ import {
   getDefaultBackground,
 } from "@/lib/section-helpers";
 import { getImageUrl } from "@/lib/image-utils";
+import { renderFormattedText } from "@/lib/text-formatting";
 
 interface PartnersSectionProps {
   section: ISection;
@@ -105,9 +106,9 @@ export default function PartnersSection({ section }: PartnersSectionProps) {
                   {content.title}
                 </h2>
                 {content.description && (
-                  <p className="text-sm sm:text-lg theme-text-muted max-w-3xl mx-auto px-1 sm:px-2">
-                    {content.description}
-                  </p>
+                  <div className="text-sm sm:text-lg theme-text-muted max-w-3xl mx-auto px-1 sm:px-2">
+                    {renderFormattedText(content.description)}
+                  </div>
                 )}
               </div>
             )}

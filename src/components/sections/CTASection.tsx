@@ -8,6 +8,7 @@ import {
   getDefaultBackground,
 } from "@/lib/section-helpers";
 import { getImageUrl } from "@/lib/image-utils";
+import { renderFormattedText } from "@/lib/text-formatting";
 
 interface CTASectionProps {
   readonly section: ISection;
@@ -98,7 +99,7 @@ export default function CTASection({ section }: CTASectionProps) {
           </h2>
         )}
         {content.description && (
-          <p
+          <div
             className={`text-sm sm:text-base md:text-lg mb-5 sm:mb-6 md:mb-8 leading-relaxed ${
               (content.textAlign as string) === "left" ? "max-w-2xl" : "max-w-2xl mx-auto"
             }`}
@@ -107,8 +108,8 @@ export default function CTASection({ section }: CTASectionProps) {
               opacity: 0.9 
             }}
           >
-            {content.description}
-          </p>
+            {renderFormattedText(content.description)}
+          </div>
         )}
         {content.buttonText && content.buttonLink && (
           <div 
