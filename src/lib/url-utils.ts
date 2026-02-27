@@ -1,10 +1,18 @@
 /**
- * Get base URL from environment or default to production domain
+ * Get base URL for sitemap, robots, and canonical links.
+ * Prefers canonical/production domain so search engines index the real site,
+ * not Vercel preview URLs.
  */
 export function getBaseUrl(): string {
-  if (process.env.NEXT_PUBLIC_BASE_URL) {
-    return process.env.NEXT_PUBLIC_BASE_URL;
+  const canonical = process.env.NEXT_PUBLIC_BASE_URL?.replace(/\/$/, "");
+  if (canonical) {
+    return canonical;
   }
+  // Production deployment: use canonical domain so sitemap/robots use the real URL
+  if (process.env.VERCEL_ENV === "production") {
+    return "https://www.softonoma.com";
+  }
+  // Preview/deployments and local: use Vercel URL or default
   if (process.env.VERCEL_URL) {
     return `https://${process.env.VERCEL_URL}`;
   }

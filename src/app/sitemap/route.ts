@@ -3,6 +3,7 @@ import connectDB from "@/lib/mongodb";
 import Page from "@/models/Page";
 import Service from "@/models/Service";
 import Industry from "@/models/Industry";
+import Blog from "@/models/Blog";
 import { getBaseUrl } from "@/lib/url-utils";
 
 // Force dynamic rendering - sitemap should be generated at request time
@@ -53,21 +54,27 @@ export async function GET() {
       priority: "1.0",
     });
 
-    // Fetch all published pages
+    // Fetch all published pages (exclude "home" — already added as "/" and /home redirects to /)
     const pages = await Page.find({ isPublished: true })
       .select("slug updatedAt")
       .lean();
 
     pages.forEach((page) => {
+      if (page.slug === "home") return;
       urls.push({
         url: `/${page.slug}`,
         lastmod: page.updatedAt
           ? new Date(page.updatedAt).toISOString().split("T")[0]
           : undefined,
         changefreq: "weekly",
-        priority: page.slug === "home" ? "1.0" : "0.8",
+        priority: "0.8",
       });
     });
+
+    // Listing pages (fixed routes)
+    urls.push({ url: "/services", changefreq: "weekly", priority: "0.8" });
+    urls.push({ url: "/industries", changefreq: "weekly", priority: "0.8" });
+    urls.push({ url: "/blogs", changefreq: "weekly", priority: "0.8" });
 
     // Fetch all published services
     const services = await Service.find({ isPublished: true })
@@ -98,6 +105,22 @@ export async function GET() {
           : undefined,
         changefreq: "monthly",
         priority: "0.7",
+      });
+    });
+
+    // Fetch all published blog posts (URL is /blog/[slug], singular)
+    const blogs = await Blog.find({ isPublished: true })
+      .select("slug updatedAt")
+      .lean();
+
+    blogs.forEach((blog) => {
+      urls.push({
+        url: `/blog/${blog.slug}`,
+        lastmod: blog.updatedAt
+          ? new Date(blog.updatedAt).toISOString().split("T")[0]
+          : undefined,
+        changefreq: "monthly",
+        priority: "0.6",
       });
     });
 
