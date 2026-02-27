@@ -322,7 +322,7 @@ export default function ServiceTemplateEditor({
               <div>
                 <FormattedTextInput
                   label="Description"
-                  value={data.hero.description}
+                  value={data.hero.description ?? ""}
                   onChange={(value) =>
                     updateField("hero", "description", value)
                   }
@@ -505,7 +505,7 @@ export default function ServiceTemplateEditor({
                       </button>
                     </div>
                     <FormattedTextInput
-                      value={para.text}
+                      value={para.text ?? ""}
                       onChange={(value) => {
                         setData((prev) => ({
                           ...prev,
@@ -901,7 +901,7 @@ export default function ServiceTemplateEditor({
                           Description
                         </label>
                         <FormattedTextInput
-                          value={service.description}
+                          value={service.description ?? ""}
                           onChange={(value) => {
                             setData((prev) => ({
                               ...prev,
@@ -1407,7 +1407,7 @@ export default function ServiceTemplateEditor({
                       Description
                     </label>
                     <FormattedTextInput
-                      value={step.description}
+                      value={step.description ?? ""}
                       onChange={(value) =>
                         updateArrayItem(
                           "process",
@@ -1492,7 +1492,7 @@ export default function ServiceTemplateEditor({
                   <div>
                     <FormattedTextInput
                       label="Section Description"
-                      value={data.technologies.description}
+                      value={data.technologies.description ?? ""}
                       onChange={(value) =>
                         updateField(
                           "technologies",
@@ -1786,7 +1786,7 @@ export default function ServiceTemplateEditor({
                           Description
                         </label>
                         <FormattedTextInput
-                          value={project.description}
+                          value={project.description ?? ""}
                           onChange={(value) => {
                             setData((prev) => ({
                               ...prev,
@@ -2603,7 +2603,7 @@ export default function ServiceTemplateEditor({
                   <div>
                     <FormattedTextInput
                       label="Section Description"
-                      value={data.faq.description ?? ""}
+                      value={data.faq?.description ?? ""}
                       onChange={(value) =>
                         updateField("faq", "description", value)
                       }
@@ -2668,7 +2668,7 @@ export default function ServiceTemplateEditor({
                       <div>
                         <FormattedTextInput
                           label="Answer"
-                          value={item.answer}
+                          value={item.answer ?? ""}
                           onChange={(value) =>
                             updateArrayItem(
                               "faq",

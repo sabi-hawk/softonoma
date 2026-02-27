@@ -325,7 +325,7 @@ export default function IndustryTemplateEditor({
               <div>
                 <FormattedTextInput
                   label="Description"
-                  value={data.hero.description}
+                  value={data.hero.description ?? ""}
                   onChange={(value) =>
                     updateField("hero", "description", value)
                   }
@@ -489,7 +489,7 @@ export default function IndustryTemplateEditor({
                       </button>
                     </div>
                     <FormattedTextInput
-                      value={para.text}
+                      value={para.text ?? ""}
                       onChange={(value) => {
                         setData((prev) => ({
                           ...prev,
@@ -904,7 +904,7 @@ export default function IndustryTemplateEditor({
                           Description
                         </label>
                         <FormattedTextInput
-                          value={item.description}
+                          value={item.description ?? ""}
                           onChange={(value) => {
                             setData((prev) => ({
                               ...prev,
@@ -1672,7 +1672,7 @@ export default function IndustryTemplateEditor({
                       <div>
                         <FormattedTextInput
                           label="Description"
-                          value={project.description}
+                          value={project.description ?? ""}
                           onChange={(value) => {
                             setData((prev) => ({
                               ...prev,
@@ -1823,7 +1823,7 @@ export default function IndustryTemplateEditor({
                   <div>
                     <FormattedTextInput
                       label="Section Description"
-                      value={data.technologies.description}
+                      value={data.technologies.description ?? ""}
                       onChange={(value) =>
                         updateField(
                           "technologies",
