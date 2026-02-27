@@ -58,7 +58,7 @@ type NavItem =
 
 export default function AdminPanel() {
   const [activeTab, setActiveTab] = useState<
-    "pages" | "services" | "industries" | "blog"
+    "pages" | "services" | "industries" | "blog" | "settings"
   >("pages");
   const [pages, setPages] = useState<Page[]>([]);
   const [services, setServices] = useState<Service[]>([]);
@@ -81,12 +81,31 @@ export default function AdminPanel() {
     metaHeaderTags: "",
     allowIndexing: true,
   });
+  const [settingsGtmId, setSettingsGtmId] = useState("");
+  const [settingsSaving, setSettingsSaving] = useState(false);
+  const [settingsLoaded, setSettingsLoaded] = useState(false);
 
   useEffect(() => {
     checkAuth();
     fetchData();
   }, []);
 
+  useEffect(() => {
+    if (activeTab === "settings" && !settingsLoaded) {
+      fetch("/api/settings")
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.success && data.data) {
+            setSettingsGtmId(data.data.gtmId || "");
+          }
+          setSettingsLoaded(true);
+        })
+        .catch((err) => {
+          console.error("Failed to load site settings", err);
+          setSettingsLoaded(true);
+        });
+    }
+  }, [activeTab, settingsLoaded]);
 
   const checkAuth = async () => {
     try {
@@ -329,6 +348,28 @@ export default function AdminPanel() {
     setShowPageForm(true);
   };
 
+  const handleSaveSettings = async () => {
+    setSettingsSaving(true);
+    try {
+      const res = await fetch("/api/settings", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ gtmId: settingsGtmId.trim() }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setSettingsGtmId(data.data?.gtmId ?? settingsGtmId.trim());
+        alert("Settings saved.");
+      } else {
+        alert(data.error ?? "Failed to save settings");
+      }
+    } catch {
+      alert("Failed to save settings");
+    } finally {
+      setSettingsSaving(false);
+    }
+  };
+
   if (loading) {
     return <Loader />;
   }
@@ -400,6 +441,16 @@ export default function AdminPanel() {
               }`}
             >
               Blog
+            </button>
+            <button
+              onClick={() => setActiveTab("settings")}
+              className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
+                activeTab === "settings"
+                  ? "border-blue-500 text-blue-400"
+                  : "border-transparent text-gray-400 hover:text-gray-300 hover:border-gray-600"
+              }`}
+            >
+              Settings
             </button>
           </nav>
         </div>
@@ -1027,6 +1078,51 @@ export default function AdminPanel() {
                 </div>
               </div>
             )}
+          </div>
+        )}
+
+        {activeTab === "settings" && (
+          <div className="bg-gray-800 rounded-lg shadow p-6">
+            <div className="mb-6">
+              <h2 className="text-2xl font-semibold text-white mb-2">
+                Site Settings
+              </h2>
+              <p className="text-gray-400">
+                Configure site-wide settings. Changes apply across the whole
+                website.
+              </p>
+            </div>
+            <div className="space-y-6 max-w-2xl">
+              <div>
+                <label
+                  htmlFor="admin-gtm-id"
+                  className="block text-sm font-medium text-gray-300 mb-2"
+                >
+                  Google Tag Manager (GTM) Container ID
+                </label>
+                <input
+                  id="admin-gtm-id"
+                  type="text"
+                  value={settingsGtmId}
+                  onChange={(e) => setSettingsGtmId(e.target.value)}
+                  placeholder="e.g. GTM-XXXXXXX"
+                  className="w-full px-3 py-2 border rounded-md bg-gray-700 border-gray-600 text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                />
+                <p className="text-xs text-gray-400 mt-1">
+                  Optional. When set, GTM is loaded sitewide (all public pages).
+                  Leave empty to disable. Find your container ID in GTM → Admin
+                  → Container settings.
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={handleSaveSettings}
+                disabled={settingsSaving}
+                className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {settingsSaving ? "Saving…" : "Save settings"}
+              </button>
+            </div>
           </div>
         )}
 

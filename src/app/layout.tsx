@@ -13,7 +13,7 @@ import {
   MetaHeaderTags,
 } from "@/lib/meta-header-tags";
 import { getHomeHeroImageUrl } from "@/lib/home-hero";
-import Script from "next/script";
+import { getSiteSettings } from "@/lib/get-site-settings";
 
 function ShellFallback() {
   return (
@@ -64,28 +64,37 @@ export default async function RootLayout({
   let metaHeaderTags: string | null = null;
   let heroImageUrl: string | null = null;
 
+  let gtmId: string | null = null;
   if (!isAdminRoute) {
     try {
-      if (currentPath.startsWith("/services/")) {
-        const slug = currentPath.replace("/services/", "").split("/")[0];
-        if (slug) metaHeaderTags = await getMetaHeaderTagsByService(slug);
-      } else if (currentPath.startsWith("/industries/")) {
-        const slug = currentPath.replace("/industries/", "").split("/")[0];
-        if (slug) metaHeaderTags = await getMetaHeaderTagsByIndustry(slug);
-      } else if (currentPath.startsWith("/blog/")) {
-        const slug = currentPath.replace("/blog/", "").split("/")[0];
-        if (slug) metaHeaderTags = await getMetaHeaderTagsByBlog(slug);
-      } else if (currentPath === "/") {
-        [metaHeaderTags, heroImageUrl] = await Promise.all([
-          getMetaHeaderTagsBySlug("home"),
-          getHomeHeroImageUrl(),
-        ]);
-      } else if (currentPath && currentPath !== "/") {
-        const slug = currentPath.replace(/^\//, "").split("/")[0];
-        if (slug) metaHeaderTags = await getMetaHeaderTagsBySlug(slug);
-      }
+      const [siteSettings] = await Promise.all([
+        getSiteSettings(),
+        (async () => {
+          if (currentPath.startsWith("/services/")) {
+            const slug = currentPath.replace("/services/", "").split("/")[0];
+            if (slug) metaHeaderTags = await getMetaHeaderTagsByService(slug);
+          } else if (currentPath.startsWith("/industries/")) {
+            const slug = currentPath.replace("/industries/", "").split("/")[0];
+            if (slug) metaHeaderTags = await getMetaHeaderTagsByIndustry(slug);
+          } else if (currentPath.startsWith("/blog/")) {
+            const slug = currentPath.replace("/blog/", "").split("/")[0];
+            if (slug) metaHeaderTags = await getMetaHeaderTagsByBlog(slug);
+          } else if (currentPath === "/") {
+            const [meta, hero] = await Promise.all([
+              getMetaHeaderTagsBySlug("home"),
+              getHomeHeroImageUrl(),
+            ]);
+            metaHeaderTags = meta;
+            heroImageUrl = hero;
+          } else if (currentPath && currentPath !== "/") {
+            const slug = currentPath.replace(/^\//, "").split("/")[0];
+            if (slug) metaHeaderTags = await getMetaHeaderTagsBySlug(slug);
+          }
+        })(),
+      ]);
+      gtmId = siteSettings.gtmId;
     } catch (error) {
-      console.error("Error fetching meta header tags:", error);
+      console.error("Error fetching meta header tags or site settings:", error);
     }
   }
 
@@ -100,18 +109,31 @@ export default async function RootLayout({
             fetchPriority="high"
           />
         )}
-        <Script
-          src="https://www.googletagmanager.com/gtag/js?id=G-4L918V4SS2"
-          strategy="lazyOnload"
-        />
-        <Script id="gtag-init" strategy="lazyOnload">
-          {`
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-            gtag('config', 'G-4L918V4SS2');
-          `}
-        </Script>
+        {/* Google Tag Manager: script + noscript (plain script so both appear in initial HTML) */}
+        {gtmId && (
+          <>
+            {/* eslint-disable-next-line @next/next/next-script-for-ga */}
+            <script
+              id="gtm-script"
+              dangerouslySetInnerHTML={{
+                __html: `(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','${gtmId.replaceAll('"', '\\"')}');`,
+              }}
+            />
+            <noscript>
+              <iframe
+                src={`https://www.googletagmanager.com/ns.html?id=${encodeURIComponent(gtmId)}`}
+                height="0"
+                width="0"
+                style={{ display: "none", visibility: "hidden" }}
+                title="Google Tag Manager"
+              />
+            </noscript>
+          </>
+        )}
         {metaHeaderTags && <MetaHeaderTags html={metaHeaderTags} />}
       </head>
       <body className={`${sora.variable} ${inter.variable} antialiased`} suppressHydrationWarning>
