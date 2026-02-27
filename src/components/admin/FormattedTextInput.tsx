@@ -184,7 +184,35 @@ export default function FormattedTextInput({
     captureSelection();
   };
 
-  const handleApplySize = (size: "sm" | "base" | "lg") => {
+  const handleBoldMouseDown = () => {
+    captureSelection();
+  };
+
+  const handleApplyBold = () => {
+    const range = savedRangeRef.current ?? getSelectionRange();
+    savedRangeRef.current = null;
+
+    if (!range || range.collapsed) {
+      alert("Please select some text first, then click Bold.");
+      return;
+    }
+
+    try {
+      const strong = document.createElement("strong");
+      range.surroundContents(strong);
+    } catch {
+      const content = range.toString();
+      if (!content) return;
+      const wrapper = `<strong>${content}</strong>`;
+      range.deleteContents();
+      range.insertNode(document.createRange().createContextualFragment(wrapper));
+    }
+
+    editorRef.current?.focus();
+    setTimeout(syncContentToParent, 0);
+  };
+
+  const handleApplySize = (size: "xs" | "sm" | "base" | "lg" | "xl" | "2xl") => {
     const range = savedRangeRef.current ?? getSelectionRange();
     savedRangeRef.current = null;
 
@@ -197,7 +225,7 @@ export default function FormattedTextInput({
       if (size === "base") {
         const node = range.commonAncestorContainer;
         const startEl = node.nodeType === Node.TEXT_NODE ? node.parentElement : (node as Element);
-        const span = startEl?.closest?.("span.text-sm, span.text-base, span.text-lg");
+        const span = startEl?.closest?.("span[class^='text-']");
         if (span && editorRef.current?.contains(span)) {
           const parent = span.parentNode;
           if (parent) {
@@ -269,35 +297,76 @@ export default function FormattedTextInput({
             <span>Remove Link</span>
           </button>
           <div className="h-6 w-px bg-gray-500" aria-hidden />
+          <button
+            type="button"
+            onMouseDown={handleBoldMouseDown}
+            onClick={handleApplyBold}
+            className="flex items-center gap-2 px-3 py-2 bg-gray-600 hover:bg-gray-500 text-white text-sm font-bold rounded-lg transition-colors border border-gray-500"
+            title="Select text, then click to make it bold"
+          >
+            <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={3}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M6 4h8a4 4 0 014 4 4 4 0 01-4 4H6V4z" />
+              <path strokeLinecap="round" strokeLinejoin="round" d="M6 12h9a4 4 0 014 4 4 4 0 01-4 4H6v-8z" />
+            </svg>
+            <span>Bold</span>
+          </button>
+          <div className="h-6 w-px bg-gray-500" aria-hidden />
           <div className="flex items-center gap-2">
             <span className="text-gray-400 text-sm font-medium">Font size</span>
             <div className="flex items-center gap-1 rounded-lg border border-gray-500 p-0.5 bg-gray-600/50">
               <button
                 type="button"
                 onMouseDown={handleFontSizeMouseDown}
-                onClick={() => handleApplySize("sm")}
-                className="px-3 py-1.5 text-xs text-gray-200 hover:bg-gray-500 hover:text-white rounded-md transition-colors"
-                title="Select text, then click for Small"
+                onClick={() => handleApplySize("xs")}
+                className="px-2 py-1.5 text-xs text-gray-200 hover:bg-gray-500 hover:text-white rounded-md transition-colors"
+                title="Extra Small"
               >
-                Small
+                XS
+              </button>
+              <button
+                type="button"
+                onMouseDown={handleFontSizeMouseDown}
+                onClick={() => handleApplySize("sm")}
+                className="px-2 py-1.5 text-xs text-gray-200 hover:bg-gray-500 hover:text-white rounded-md transition-colors"
+                title="Small"
+              >
+                S
               </button>
               <button
                 type="button"
                 onMouseDown={handleFontSizeMouseDown}
                 onClick={() => handleApplySize("base")}
-                className="px-3 py-1.5 text-sm text-gray-200 hover:bg-gray-500 hover:text-white rounded-md transition-colors"
-                title="Select text, then click for Normal"
+                className="px-2 py-1.5 text-sm text-gray-200 hover:bg-gray-500 hover:text-white rounded-md transition-colors"
+                title="Normal (removes size formatting)"
               >
-                Normal
+                M
               </button>
               <button
                 type="button"
                 onMouseDown={handleFontSizeMouseDown}
                 onClick={() => handleApplySize("lg")}
-                className="px-3 py-1.5 text-base text-gray-200 hover:bg-gray-500 hover:text-white rounded-md transition-colors leading-tight"
-                title="Select text, then click for Large"
+                className="px-2 py-1.5 text-base text-gray-200 hover:bg-gray-500 hover:text-white rounded-md transition-colors leading-tight"
+                title="Large"
               >
-                Large
+                L
+              </button>
+              <button
+                type="button"
+                onMouseDown={handleFontSizeMouseDown}
+                onClick={() => handleApplySize("xl")}
+                className="px-2 py-1.5 text-lg text-gray-200 hover:bg-gray-500 hover:text-white rounded-md transition-colors leading-tight"
+                title="Extra Large"
+              >
+                XL
+              </button>
+              <button
+                type="button"
+                onMouseDown={handleFontSizeMouseDown}
+                onClick={() => handleApplySize("2xl")}
+                className="px-2 py-1.5 text-xl text-gray-200 hover:bg-gray-500 hover:text-white rounded-md transition-colors leading-tight"
+                title="Very Large"
+              >
+                2XL
               </button>
             </div>
           </div>

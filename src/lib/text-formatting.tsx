@@ -1,42 +1,82 @@
 import React from "react";
-import DOMPurify from "isomorphic-dompurify";
+
+// Safe URL schemes for links (no jsdom/DOMPurify - server-safe on Vercel)
+const SAFE_URL_PATTERN = /^(https?:\/\/|mailto:|tel:|#|\/)/i;
+const ALLOWED_SPAN_CLASSES = new Set(["text-xs", "text-sm", "text-base", "text-lg", "text-xl", "text-2xl"]);
+
+function escapeHtmlAttr(value: string): string {
+  return value
+    .replace(/&/g, "&amp;")
+    .replace(/"/g, "&quot;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+}
 
 /**
- * Sanitizes formatted text to only allow safe HTML subset:
- * - <a> tags with href, target, rel attributes
- * - <span> tags with class attribute (only text-sm, text-base, text-lg)
+ * Sanitizes formatted text using only string/regex (no jsdom/DOMPurify).
+ * Allows: <a> with safe href, <span> with class text-sm|text-base|text-lg.
+ * Safe for server (Vercel/Node) and client.
  */
 export function sanitizeFormattedText(html: string): string {
   if (!html) return "";
 
-  // Configure DOMPurify to only allow specific tags and attributes
-  const clean = DOMPurify.sanitize(html, {
-    ALLOWED_TAGS: ["a", "span"],
-    ALLOWED_ATTR: ["href", "target", "rel", "class"],
-    ALLOW_DATA_ATTR: false,
-    // Prevent javascript: and data: URLs
-    ALLOWED_URI_REGEXP: /^(?:(?:(?:f|ht)tps?|mailto|tel|callto|sms|cid|xmpp):|[^a-z]|[a-z+.\-]+(?:[^a-z+.\-:]|$))/i,
+  let out = html;
+
+  // 1. Remove dangerous tags and their content
+  out = out.replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, "");
+  out = out.replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi, "");
+  out = out.replace(/<iframe\b[^>]*>[\s\S]*?<\/iframe>/gi, "");
+  out = out.replace(/<object\b[^>]*>[\s\S]*?<\/object>/gi, "");
+  out = out.replace(/<embed\b[^>]*>/gi, "");
+
+  // 2. Sanitize <a> tags: only allow safe href
+  out = out.replace(/<a\s+([^>]+)>/gi, (_, attrs) => {
+    const hrefMatch = attrs.match(/href\s*=\s*["']([^"']*)["']/i);
+    if (!hrefMatch) return "";
+    const href = hrefMatch[1].trim();
+    if (!SAFE_URL_PATTERN.test(href)) return "";
+    return `<a href="${escapeHtmlAttr(href)}" target="_blank" rel="noopener noreferrer">`;
   });
 
-  // Additional validation using string/regex (server-safe, no document)
-  const allowedSpanClasses = new Set(["text-sm", "text-base", "text-lg"]);
-  let out = clean.replace(/<span\s+class="([^"]*)"\s*>/gi, (_, cls) => {
-    const c = cls.trim();
-    return allowedSpanClasses.has(c) ? `<span class="${c}">` : "<span>";
-  });
-
-  out = out.replace(/<a\s+([^>]+)>/gi, (match, attrs) => {
-    const rel = 'rel="noopener noreferrer"';
-    const hasRel = /rel\s*=\s*["'][^"']*["']/i.test(attrs);
-    let newAttrs = hasRel ? attrs.replace(/rel\s*=\s*["'][^"']*["']/gi, rel) : `${attrs.trim()} ${rel}`;
-    const hrefMatch = newAttrs.match(/href\s*=\s*["'](https?:[^"']*)["']/i);
-    if (hrefMatch) {
-      const hasTarget = /target\s*=\s*["'][^"']*["']/i.test(newAttrs);
-      if (!hasTarget) newAttrs = `${newAttrs.trim()} target="_blank"`;
-      else newAttrs = newAttrs.replace(/target\s*=\s*["'][^"']*["']/gi, 'target="_blank"');
+  // 3. Sanitize <span> tags: only allow class="text-sm|text-base|text-lg"
+  // Match <span ...> tags and extract class attribute if present
+  out = out.replace(/<span(\s[^>]*)?>/gi, (match, attrs) => {
+    if (!attrs) {
+      // <span> with no attributes
+      if (typeof window !== "undefined") {
+        console.log(`[sanitize] span no attrs: "${match}" -> "<span>"`);
+      }
+      return "<span>";
     }
-    return `<a ${newAttrs.trim()}>`;
+    
+    // Extract class attribute value
+    const classMatch = attrs.match(/class\s*=\s*["']([^"']*)["']/i);
+    if (!classMatch) {
+      // <span> with attributes but no class
+      if (typeof window !== "undefined") {
+        console.log(`[sanitize] span no class: "${match}" -> "<span>"`);
+      }
+      return "<span>";
+    }
+    
+    const className = classMatch[1].trim();
+    const isAllowed = ALLOWED_SPAN_CLASSES.has(className);
+    const result = isAllowed ? `<span class="${className}">` : "<span>";
+    
+    if (typeof window !== "undefined") {
+      console.log(`[sanitize] span with class: "${match}" -> class="${className}" -> keep=${isAllowed} -> "${result}"`);
+    }
+    
+    return result;
   });
+
+  // 4. Strip any other tags (leave only </a>, </span>, </div>, </br>, </strong>, </b> and our sanitized tags)
+  // Keep: a, span, div, br, strong, b (strong and b for bold)
+  out = out.replace(/<\/(?!a\b|span\b|div\b|strong\b|b\b)[^>]+>/gi, "");
+  out = out.replace(/<(?!a\b|span\b|div\b|br\b|strong\b|b\b|\/)[a-zA-Z][^>]*>/gi, "");
+  
+  // 5. Normalize strong/b tags (strip any attributes)
+  out = out.replace(/<(strong|b)\s[^>]*>/gi, "<$1>");
 
   return out;
 }
@@ -92,6 +132,13 @@ export function wrapTextWithTag(
     return {
       newText,
       newCursorPos: before.length + sizeHtml.length,
+    };
+  } else if (tag === "bold") {
+    const boldHtml = `<strong>${selected || "Text"}</strong>`;
+    const newText = before + boldHtml + after;
+    return {
+      newText,
+      newCursorPos: before.length + boldHtml.length,
     };
   }
 

@@ -834,20 +834,41 @@ a[class*="inline-block"][class*="px-"][class*="py-"][class*="rounded"] {
   text-decoration-color: var(--color-primary-start, #2a445e);
 }
 
-/* Font size utilities for formatted text */
-.formatted-text .text-sm {
-  font-size: 0.875rem;
-  line-height: 1.5;
+/* Font size utilities for formatted text (override parent Tailwind text-* classes) */
+.formatted-text span.text-xs {
+  font-size: 0.75rem !important;
+  line-height: 1.4 !important;
 }
 
-.formatted-text .text-base {
-  font-size: 1rem;
-  line-height: 1.625;
+.formatted-text span.text-sm {
+  font-size: 0.875rem !important;
+  line-height: 1.5 !important;
 }
 
-.formatted-text .text-lg {
-  font-size: 1.125rem;
-  line-height: 1.75;
+.formatted-text span.text-base {
+  font-size: 1rem !important;
+  line-height: 1.625 !important;
+}
+
+.formatted-text span.text-lg {
+  font-size: 1.125rem !important;
+  line-height: 1.75 !important;
+}
+
+.formatted-text span.text-xl {
+  font-size: 1.25rem !important;
+  line-height: 1.75 !important;
+}
+
+.formatted-text span.text-2xl {
+  font-size: 1.5rem !important;
+  line-height: 2 !important;
+}
+
+/* Bold text in formatted content */
+.formatted-text strong,
+.formatted-text b {
+  font-weight: 700 !important;
 }
 
 /* Ensure formatted text links work well on dark backgrounds */
@@ -863,15 +884,27 @@ a[class*="inline-block"][class*="px-"][class*="py-"][class*="rounded"] {
 
 /* Mobile responsive font sizes for formatted text */
 @media (max-width: 639px) {
-  .formatted-text .text-sm {
-    font-size: 0.8125rem;
+  .formatted-text span.text-xs {
+    font-size: 0.6875rem !important;
   }
 
-  .formatted-text .text-base {
-    font-size: 0.9375rem;
+  .formatted-text span.text-sm {
+    font-size: 0.8125rem !important;
   }
 
-  .formatted-text .text-lg {
-    font-size: 1.0625rem;
+  .formatted-text span.text-base {
+    font-size: 0.9375rem !important;
+  }
+
+  .formatted-text span.text-lg {
+    font-size: 1.0625rem !important;
+  }
+
+  .formatted-text span.text-xl {
+    font-size: 1.125rem !important;
+  }
+
+  .formatted-text span.text-2xl {
+    font-size: 1.25rem !important;
   }
 }
