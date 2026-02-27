@@ -5,6 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { getImageUrl } from "@/lib/image-utils";
+import { renderFormattedText } from "@/lib/text-formatting";
 
 interface HeroSectionProps {
   section: ISection;
@@ -178,12 +179,12 @@ export default function HeroSection({ section }: HeroSectionProps) {
           )}
 
           {content.description && (
-            <p
+            <div
               className="text-sm sm:text-lg md:text-xl theme-text-white mb-7 sm:mb-8 max-w-2xl mx-auto leading-relaxed px-2"
               style={{ opacity: 0.9 }}
             >
-              {content.description}
-            </p>
+              {renderFormattedText(content.description)}
+            </div>
           )}
 
           <div className="flex flex-col sm:flex-row gap-4 sm:gap-4 justify-center items-center px-2">

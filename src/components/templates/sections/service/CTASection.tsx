@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { getBackgroundStyle, getDefaultBackground } from "@/lib/section-helpers";
+import { renderFormattedText } from "@/lib/text-formatting";
 
 interface CTASectionProps {
   title: string;
@@ -24,7 +25,7 @@ export default function CTASection({
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 sm:mb-4 text-black">{title}</h2>
         {description && (
-          <p className="text-base sm:text-lg mb-6 sm:mb-8 opacity-90 text-black">{description}</p>
+          <div className="text-base sm:text-lg mb-6 sm:mb-8 opacity-90 text-black">{renderFormattedText(description)}</div>
         )}
         {buttonText && (
           <Link

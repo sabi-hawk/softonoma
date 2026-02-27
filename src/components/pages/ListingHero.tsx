@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { getImageUrl } from "@/lib/image-utils";
+import { renderFormattedText } from "@/lib/text-formatting";
 
 interface HeroConfig {
   title?: string;
@@ -77,9 +78,9 @@ export default function ListingHero({ hero, subtitle }: ListingHeroProps) {
             </h1>
           )}
           {hero.description && (
-            <p className="mt-3 text-sm sm:text-base md:text-lg text-white/75 max-w-2xl mx-auto leading-relaxed">
-              {hero.description}
-            </p>
+            <div className="mt-3 text-sm sm:text-base md:text-lg text-white/75 max-w-2xl mx-auto leading-relaxed">
+              {renderFormattedText(hero.description)}
+            </div>
           )}
         </div>
       </div>

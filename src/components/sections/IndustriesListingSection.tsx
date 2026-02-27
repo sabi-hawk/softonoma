@@ -4,6 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { ISection } from "@/models/Section";
 import { getImageUrl } from "@/lib/image-utils";
+import { renderFormattedText } from "@/lib/text-formatting";
 
 interface IndustriesListingSectionProps {
   readonly section: ISection;
@@ -28,9 +29,9 @@ export default function IndustriesListingSection({ section }: IndustriesListingS
               {content.title}
             </h2>
             {content.description && (
-              <p className="text-base sm:text-lg md:text-xl theme-text-muted max-w-3xl mx-auto px-2">
-                {content.description}
-              </p>
+              <div className="text-base sm:text-lg md:text-xl theme-text-muted max-w-3xl mx-auto px-2">
+                {renderFormattedText(content.description)}
+              </div>
             )}
           </div>
         )}

@@ -6,6 +6,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { getBackgroundStyle, getDefaultBackground } from "@/lib/section-helpers";
 import { getImageUrl } from "@/lib/image-utils";
+import { renderFormattedText } from "@/lib/text-formatting";
 
 interface BlogSectionProps {
   readonly section: ISection;
@@ -85,9 +86,9 @@ export default function BlogSection({ section }: BlogSectionProps) {
               {content.title}
             </h2>
             {content.description && (
-              <p className="text-base sm:text-lg md:text-xl theme-text-muted max-w-3xl mx-auto px-2">
-                {content.description}
-              </p>
+              <div className="text-base sm:text-lg md:text-xl theme-text-muted max-w-3xl mx-auto px-2">
+                {renderFormattedText(content.description)}
+              </div>
             )}
           </div>
         )}

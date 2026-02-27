@@ -8,6 +8,7 @@ import {
   getDefaultBackground,
 } from "@/lib/section-helpers";
 import { getImageUrl } from "@/lib/image-utils";
+import { renderFormattedText } from "@/lib/text-formatting";
 
 interface ServicesSectionProps {
   readonly section: ISection;
@@ -180,9 +181,9 @@ export default function ServicesSection({ section }: ServicesSectionProps) {
               {content.title}
             </h2>
             {content.description && (
-              <p className="text-base sm:text-lg md:text-xl theme-text-muted max-w-3xl mx-auto px-2">
-                {content.description}
-              </p>
+              <div className="text-base sm:text-lg md:text-xl theme-text-muted max-w-3xl mx-auto px-2">
+                {renderFormattedText(content.description)}
+              </div>
             )}
           </div>
         )}
@@ -274,11 +275,11 @@ export default function ServicesSection({ section }: ServicesSectionProps) {
                           </h3>
                         )}
                         {service.description && (
-                          <p
+                          <div
                             className="theme-text-muted leading-relaxed text-sm sm:text-base"
                           >
-                            {service.description}
-                          </p>
+                            {renderFormattedText(service.description)}
+                          </div>
                         )}
                       </div>
                     </div>
@@ -332,11 +333,11 @@ export default function ServicesSection({ section }: ServicesSectionProps) {
                           </h3>
                         )}
                         {service.description && (
-                          <p
+                          <div
                             className="theme-text-muted leading-relaxed text-sm sm:text-base"
                           >
-                            {service.description}
-                          </p>
+                            {renderFormattedText(service.description)}
+                          </div>
                         )}
                       </div>
                     </div>

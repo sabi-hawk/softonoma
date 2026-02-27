@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { getImageUrl } from "@/lib/image-utils";
+import { renderFormattedText } from "@/lib/text-formatting";
 
 interface ServiceHeroSectionProps {
   title: string;
@@ -94,12 +95,12 @@ export default function ServiceHeroSection({
           )}
 
           {description && (
-            <p
+            <div
               className="text-sm sm:text-base md:text-lg theme-text-white mb-4 sm:mb-6 max-w-3xl leading-relaxed"
               style={{ opacity: 0.9 }}
             >
-              {description}
-            </p>
+              {renderFormattedText(description)}
+            </div>
           )}
 
           <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 items-start">

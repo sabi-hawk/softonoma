@@ -2,6 +2,7 @@ import Image from "next/image";
 import { getBackgroundStyle, getDefaultBackground } from "@/lib/section-helpers";
 import { getImageUrl } from "@/lib/image-utils";
 import { isIconUrl } from "../../utils/helpers";
+import { renderFormattedText } from "@/lib/text-formatting";
 
 interface Step {
   number?: string;
@@ -29,9 +30,9 @@ export default function ProcessSection({ title, description, steps, backgroundCo
             {title}
           </h2>
           {description && (
-            <p className="text-base sm:text-lg md:text-xl theme-text-black max-w-3xl mx-auto px-2" style={{ opacity: 0.8 }}>
-              {description}
-            </p>
+            <div className="text-base sm:text-lg md:text-xl theme-text-black max-w-3xl mx-auto px-2" style={{ opacity: 0.8 }}>
+              {renderFormattedText(description)}
+            </div>
           )}
         </div>
 
@@ -79,9 +80,9 @@ export default function ProcessSection({ title, description, steps, backgroundCo
                     </h3>
                   )}
                   {step.description && (
-                    <p className="text-sm sm:text-base theme-text-black leading-relaxed wrap-break-word" style={{ opacity: 0.8 }}>
-                      {step.description}
-                    </p>
+                    <div className="text-sm sm:text-base theme-text-black leading-relaxed wrap-break-word" style={{ opacity: 0.8 }}>
+                      {renderFormattedText(step.description)}
+                    </div>
                   )}
                 </div>
               </div>

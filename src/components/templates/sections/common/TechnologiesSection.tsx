@@ -2,6 +2,7 @@ import Image from "next/image";
 import { getBackgroundStyle, getDefaultBackground } from "@/lib/section-helpers";
 import { getImageUrl } from "@/lib/image-utils";
 import { isIconUrl } from "../../utils/helpers";
+import { renderFormattedText } from "@/lib/text-formatting";
 
 interface TechItem {
   name: string;
@@ -89,11 +90,9 @@ export default function TechnologiesSection({
             )}
           </h2>
           {description && (
-            <p
-              className="text-base sm:text-lg md:text-xl theme-text-muted max-w-3xl mx-auto px-2"
-            >
-              {description}
-            </p>
+            <div className="text-base sm:text-lg md:text-xl theme-text-muted max-w-3xl mx-auto px-2">
+              {renderFormattedText(description)}
+            </div>
           )}
         </div>
 

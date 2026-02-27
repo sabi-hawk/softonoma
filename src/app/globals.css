@@ -793,3 +793,85 @@ a[class*="inline-block"][class*="px-"][class*="py-"][class*="rounded"] {
     margin: 1.25em 0;
   }
 }
+
+/* ----- Formatted Text Styles (for section descriptions with lightweight formatting) ----- */
+
+/* Admin WYSIWYG editor: block box so padding is respected, no focus ring */
+.formatted-text-editor {
+  display: block !important;
+  box-sizing: border-box !important;
+}
+
+.formatted-text-editor:focus {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* Prevent editor content from visually overflowing into padding */
+.formatted-text-editor > *:first-child {
+  margin-top: 0;
+}
+
+.formatted-text-editor > *:last-child {
+  margin-bottom: 0;
+}
+
+/* Container for formatted text (frontend display) */
+.formatted-text {
+  display: inline;
+}
+
+/* Link styles for formatted text - theme-aware */
+.formatted-text a {
+  color: var(--color-primary-end, #f3aa20);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  transition: color 0.15s ease, text-decoration-color 0.15s ease;
+}
+
+.formatted-text a:hover {
+  color: var(--color-primary-start, #2a445e);
+  text-decoration-color: var(--color-primary-start, #2a445e);
+}
+
+/* Font size utilities for formatted text */
+.formatted-text .text-sm {
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+.formatted-text .text-base {
+  font-size: 1rem;
+  line-height: 1.625;
+}
+
+.formatted-text .text-lg {
+  font-size: 1.125rem;
+  line-height: 1.75;
+}
+
+/* Ensure formatted text links work well on dark backgrounds */
+.theme-bg-black .formatted-text a,
+[class*="theme-bg-primary"] .formatted-text a {
+  color: var(--color-primary-end, #f3aa20);
+}
+
+.theme-bg-black .formatted-text a:hover,
+[class*="theme-bg-primary"] .formatted-text a:hover {
+  color: var(--color-white, #ffffff);
+}
+
+/* Mobile responsive font sizes for formatted text */
+@media (max-width: 639px) {
+  .formatted-text .text-sm {
+    font-size: 0.8125rem;
+  }
+
+  .formatted-text .text-base {
+    font-size: 0.9375rem;
+  }
+
+  .formatted-text .text-lg {
+    font-size: 1.0625rem;
+  }
+}

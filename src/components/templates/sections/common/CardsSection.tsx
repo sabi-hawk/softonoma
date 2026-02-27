@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { getBackgroundStyle, getDefaultBackground } from "@/lib/section-helpers";
 import { getImageUrl } from "@/lib/image-utils";
+import { renderFormattedText } from "@/lib/text-formatting";
 
 interface CardItem {
   quote?: string;
@@ -75,12 +76,12 @@ export default function CardsSection({
             </h2>
           )}
           {description && (
-            <p
+            <div
               className="text-sm sm:text-base md:text-lg theme-text-muted leading-relaxed"
               style={{ fontFamily: "var(--font-inter), sans-serif" }}
             >
-              {description}
-            </p>
+              {renderFormattedText(description)}
+            </div>
           )}
         </div>
 
@@ -138,12 +139,12 @@ export default function CardsSection({
                         </p>
                       )}
                       {item.quote && (
-                        <p
+                        <div
                           className="theme-text-muted mb-6 sm:mb-8 leading-relaxed text-sm sm:text-base"
                           style={{ fontFamily: "var(--font-inter), sans-serif" }}
                         >
-                          {item.quote}
-                        </p>
+                          {renderFormattedText(item.quote)}
+                        </div>
                       )}
                       {item.image && (
                         <div className="mt-6">
@@ -190,12 +191,12 @@ export default function CardsSection({
                       </p>
                     )}
                     {item.quote && (
-                      <p
+                      <div
                         className="theme-text-muted mb-6 sm:mb-8 leading-relaxed text-sm sm:text-base"
                         style={{ fontFamily: "var(--font-inter), sans-serif" }}
                       >
-                        {item.quote}
-                      </p>
+                        {renderFormattedText(item.quote)}
+                      </div>
                     )}
                     {item.image && (
                       <div className="mt-6">

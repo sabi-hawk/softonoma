@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { ISection } from "@/models/Section";
 import { getBackgroundStyle, getDefaultBackground } from "@/lib/section-helpers";
+import { renderFormattedText } from "@/lib/text-formatting";
 
 interface FAQSectionProps {
   section: ISection;
@@ -34,9 +35,9 @@ export default function FAQSection({ section }: FAQSectionProps) {
               {content.title}
             </h2>
             {content.description && (
-              <p className="text-sm sm:text-lg md:text-xl theme-text-muted max-w-3xl mx-auto px-1 sm:px-2">
-                {content.description}
-              </p>
+              <div className="text-sm sm:text-lg md:text-xl theme-text-muted max-w-3xl mx-auto px-1 sm:px-2">
+                {renderFormattedText(content.description)}
+              </div>
             )}
           </div>
         )}
@@ -111,9 +112,9 @@ export default function FAQSection({ section }: FAQSectionProps) {
                     {isExpanded && (
                       <div className="overflow-hidden transition-all duration-300">
                         <div className="px-4 py-3 sm:px-6 sm:py-5 theme-bg-secondary rounded-b-lg sm:rounded-b-xl">
-                          <p className="text-xs sm:text-base theme-text-muted leading-relaxed">
-                            {faq.answer || `Answer ${index + 1}`}
-                          </p>
+                          <div className="text-xs sm:text-base theme-text-muted leading-relaxed">
+                            {renderFormattedText(faq.answer || `Answer ${index + 1}`)}
+                          </div>
                         </div>
                       </div>
                     )}

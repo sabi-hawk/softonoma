@@ -4,6 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { ISection } from "@/models/Section";
 import { getImageUrl } from "@/lib/image-utils";
+import { renderFormattedText } from "@/lib/text-formatting";
 
 interface ServicesListingSectionProps {
   readonly section: ISection;
@@ -28,9 +29,9 @@ export default function ServicesListingSection({ section }: ServicesListingSecti
               {content.title}
             </h2>
             {content.description && (
-              <p className="text-base sm:text-lg md:text-xl theme-text-muted max-w-3xl mx-auto px-2">
-                {content.description}
-              </p>
+              <div className="text-base sm:text-lg md:text-xl theme-text-muted max-w-3xl mx-auto px-2">
+                {renderFormattedText(content.description)}
+              </div>
             )}
           </div>
         )}
@@ -82,9 +83,9 @@ export default function ServicesListingSection({ section }: ServicesListingSecti
                     </h3>
                   )}
                   {service.description && (
-                    <p className="theme-text-muted leading-relaxed text-sm sm:text-base line-clamp-3">
-                      {service.description}
-                    </p>
+                    <div className="theme-text-muted leading-relaxed text-sm sm:text-base line-clamp-3">
+                      {renderFormattedText(service.description)}
+                    </div>
                   )}
                   <div className="mt-4 flex items-center text-sm font-medium theme-text-primary-end opacity-0 group-hover:opacity-100 transition-opacity">
                     Learn more
